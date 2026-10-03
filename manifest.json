@@ -1,0 +1,15 @@
+{
+  "name": "Gym Bro Tracker",
+  "short_name": "Gym Bro",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#090A0F",
+  "theme_color": "#090A0F",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/hasaneyldrm/exercises-dataset/main/images/0001.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    }
+  ]
+}
