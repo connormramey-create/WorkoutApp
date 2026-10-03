@@ -1,0 +1,24 @@
+:root {
+  --bg-dark: #090a0f;
+  --panel-bg: #11131c;
+  --border-color: #232738;
+  --accent-neon: #39ff14;
+  --text-main: #f0f2f5;
+  --text-muted: #8a90a6;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+}
