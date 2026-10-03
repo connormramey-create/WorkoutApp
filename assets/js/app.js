@@ -10,11 +10,40 @@ class GymBroApp {
     this.init();
   }
 
-  async init() {
+async init() {
     this.registerServiceWorker();
     this.loadState();
     await this.fetchDataset();
     this.render();
+
+    // --- ADD THE TIMER EVENT LISTENERS HERE ---
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const seconds = parseInt(e.target.getAttribute('data-seconds'));
+        this.startRestTimer(seconds);
+      });
+    });
+
+    const closeBtn = document.getElementById('timer-close-btn');
+    if (closeBtn) closeBtn.addEventListener('click', () => this.stopRestTimer());
+
+    const plusBtn = document.getElementById('timer-plus-30');
+    if (plusBtn) plusBtn.addEventListener('click', () => this.adjustRestTime(30));
+
+    const minusBtn = document.getElementById('timer-minus-15');
+    if (minusBtn) minusBtn.addEventListener('click', () => this.adjustRestTime(-15));
+
+    const toggleBtn = document.getElementById('timer-toggle');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        if (this.state && this.state.isRunning) {
+          this.pauseRestTimer();
+        } else {
+          this.resumeRestTimer();
+        }
+      });
+    }
+    // ------------------------------------------
   }
 
   // Enables offline iOS capabilities
@@ -139,23 +168,36 @@ class GymBroApp {
     this.render();
   }
 
-  startRestTimer(seconds) {
-    clearInterval(this.state.restInterval);
+startRestTimer(seconds) {
+    if (this.state && this.state.restInterval) {
+      clearInterval(this.state.restInterval);
+    }
+    
+    // Initialize state if it doesn't exist
+    if (!this.state) this.state = {};
     this.state.restSeconds = seconds;
+    this.state.isRunning = true;
     
-    const display = document.getElementById('restTimerDisplay');
-    display.classList.remove('hidden');
-    display.classList.add('flex');
+    // Target the new modular container instead of restTimerDisplay
+    const container = document.getElementById('rest-timer-container');
+    if (container) {
+      container.classList.remove('translate-y-[150%]', 'opacity-0', 'pointer-events-none');
+    }
     
+    const toggleBtn = document.getElementById('timer-toggle');
+    if (toggleBtn) toggleBtn.textContent = 'Pause';
+
     this.updateRestClock();
 
     this.state.restInterval = setInterval(() => {
+      if (!this.state.isRunning) return;
+      
       this.state.restSeconds--;
       if (this.state.restSeconds <= 0) {
-        clearInterval(this.state.restInterval);
-        display.classList.add('hidden');
-        display.classList.remove('flex');
-        this.playSound(); // Audible completion alert
+        this.stopRestTimer();
+        if (typeof this.playSound === 'function') {
+          this.playSound(); // Audible completion alert
+        }
       } else {
         this.updateRestClock();
       }
@@ -163,11 +205,54 @@ class GymBroApp {
   }
 
   updateRestClock() {
+    if (!this.state || typeof this.state.restSeconds !== 'number') return;
     const m = Math.floor(this.state.restSeconds / 60).toString().padStart(2, '0');
     const s = (this.state.restSeconds % 60).toString().padStart(2, '0');
-    document.getElementById('restClock').innerText = `${m}:${s}`;
+    
+    // Target the new timer-display element
+    const displayEl = document.getElementById('timer-display');
+    if (displayEl) {
+      displayEl.textContent = `${m}:${s}`;
+    }
   }
 
+  pauseRestTimer() {
+    this.state.isRunning = false;
+    const toggleBtn = document.getElementById('timer-toggle');
+    if (toggleBtn) toggleBtn.textContent = 'Resume';
+  }
+
+  resumeRestTimer() {
+    if (this.state.restSeconds > 0) {
+      this.state.isRunning = true;
+      const toggleBtn = document.getElementById('timer-toggle');
+      if (toggleBtn) toggleBtn.textContent = 'Pause';
+    }
+  }
+
+  stopRestTimer() {
+    if (this.state && this.state.restInterval) {
+      clearInterval(this.state.restInterval);
+    }
+    if (this.state) this.state.isRunning = false;
+    
+    const container = document.getElementById('rest-timer-container');
+    if (container) {
+      container.classList.add('translate-y-[150%]', 'opacity-0', 'pointer-events-none');
+    }
+  }
+
+  adjustRestTime(amount) {
+    if (!this.state) return;
+    this.state.restSeconds = Math.max(0, this.state.restSeconds + amount);
+    this.updateRestClock();
+    if (this.state.restSeconds === 0) {
+      this.stopRestTimer();
+      if (typeof this.playSound === 'function') {
+        this.playSound();
+      }
+    }
+  }
   render() {
     const banner = document.getElementById('activeWorkoutBanner');
     banner.style.display = this.state.activeWorkout ? 'flex' : 'none';
