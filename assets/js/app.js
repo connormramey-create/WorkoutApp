@@ -122,6 +122,7 @@ async init() {
       const matchSplit = split === 'Full Body' || 
                          (split === 'Push' && ['chest', 'shoulders', 'triceps'].includes(ex.target)) ||
                          (split === 'Pull' && ['back', 'biceps', 'lats'].includes(ex.target)) ||
+                         (split === 'Upper' && ['back', 'biceps', 'lats','chest', 'shoulders', 'triceps'].includes(ex.target)) ||
                          (split === 'Legs' && ['quads', 'hamstrings', 'glutes', 'calves'].includes(ex.target));
       return matchEquip && matchSplit;
     });
