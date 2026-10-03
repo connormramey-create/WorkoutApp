@@ -110,11 +110,25 @@
     </section>
   </main>
 
-  <!-- Rest Timer Overlay -->
-  <div id="restTimerDisplay" class="hidden fixed bottom-6 right-6 z-50 bg-[#11131C]/95 border-2 border-[#39FF14] px-5 py-3 rounded-2xl shadow-2xl text-[#39FF14] font-mono text-xl font-bold items-center gap-3 animate-pulse">
-    <i data-lucide="timer" class="w-6 h-6"></i>
-    <span id="restClock">00:00</span>
+<!-- Rest Timer Component -->
+<div id="rest-timer-container" class="fixed bottom-6 right-6 z-50 bg-[#11131C]/95 border-2 border-[#39FF14] p-5 rounded-2xl shadow-2xl text-[#39FF14] font-mono w-80 text-center transition-all duration-300 transform translate-y-[150%] opacity-0 pointer-events-none">
+  <div class="flex justify-between items-center text-xs text-gray-400 mb-2">
+    <span>REST TIME</span>
+    <button id="timer-close-btn" class="text-gray-400 hover:text-white text-lg">&times;</button>
   </div>
+  <div id="timer-display" class="text-4xl font-bold tracking-wider my-2">00:00</div>
+  <div class="flex gap-2 justify-center mt-3">
+    <button class="preset-btn bg-[#1a1d2e] hover:bg-[#25283d] text-xs px-2.5 py-1.5 rounded border border-[#39FF14]/30 cursor-pointer transition-colors" data-seconds="30">30s</button>
+    <button class="preset-btn bg-[#1a1d2e] hover:bg-[#25283d] text-xs px-2.5 py-1.5 rounded border border-[#39FF14]/30 cursor-pointer transition-colors" data-seconds="60">60s</button>
+    <button class="preset-btn bg-[#1a1d2e] hover:bg-[#25283d] text-xs px-2.5 py-1.5 rounded border border-[#39FF14]/30 cursor-pointer transition-colors" data-seconds="90">90s</button>
+    <button class="preset-btn bg-[#1a1d2e] hover:bg-[#25283d] text-xs px-2.5 py-1.5 rounded border border-[#39FF14]/30 cursor-pointer transition-colors" data-seconds="120">2m</button>
+  </div>
+  <div class="flex gap-2 justify-center mt-3">
+    <button id="timer-minus-15" class="action-btn bg-[#1a1d2e] hover:bg-[#25283d] text-xs px-3 py-1.5 rounded border border-red-500/30 text-red-400 cursor-pointer transition-colors">-15s</button>
+    <button id="timer-toggle" class="action-btn primary bg-[#39FF14] text-[#11131C] font-bold text-xs px-4 py-1.5 rounded hover:bg-[#32cc10] cursor-pointer transition-colors">Pause</button>
+    <button id="timer-plus-30" class="action-btn bg-[#1a1d2e] hover:bg-[#25283d] text-xs px-3 py-1.5 rounded border border-[#39FF14]/30 cursor-pointer transition-colors">+30s</button>
+  </div>
+</div>
 
   <script src="./assets/js/app.js"></script>
 </body>
