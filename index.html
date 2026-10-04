@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GYM BRO TRACKER - Metallic Steel Edition</title>
+  <title>IRON BRO TRACKER - Metallic Gold Edition</title>
   <link rel="stylesheet" href="assets/css/styles.css">
   <link rel="manifest" href="manifest.json">
 </head>
@@ -130,7 +130,7 @@
   <div id="settings-modal" class="modal-overlay hidden">
     <div class="modal-content metal-modal">
       <header class="modal-header">
-        <h2>⚙️ GYM BRO SETTINGS</h2>
+        <h2>⚙️ IRON BRO SETTINGS</h2>
         <button id="close-settings-btn" class="close-btn">&times;</button>
       </header>
       
@@ -176,11 +176,17 @@
 
         <!-- Additional Options -->
         <div class="setting-group">
-          <label class="metal-checkbox"><input type="checkbox" id="setting-supersets"> Enable Supersets</label>
+          <label class="metal-checkbox"><input type="checkbox" id="setting-supersets"> Enable Antagonistic Supersets</label>
+        </div>
+
+        <!-- Data Export -->
+        <div class="setting-group margin-top">
+          <label class="setting-label">Data Management</label>
+          <button id="export-csv-btn" class="metal-btn primary-btn full-width">📥 EXPORT LOG TO CSV</button>
         </div>
       </div>
 
-      <div class="modal-footer">
+      <div class="modal-footer margin-top">
         <button id="save-settings-btn" class="metal-btn primary-btn full-width">SAVE SETTINGS</button>
       </div>
     </div>
