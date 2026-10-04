@@ -1,312 +1,479 @@
-class GymBroApp {
-  constructor() {
-    this.state = {
-      exerciseDatabase: [],
-      activeWorkout: null,
-      history: [],
-      restSeconds: 0,
-      restInterval: null
-    };
-    this.init();
-  }
+// State Management
+let exerciseDataset = [];
+let activeWorkout = null;
+let timerInterval = null;
 
-async init() {
-    this.registerServiceWorker();
-    this.loadState();
-    await this.fetchDataset();
-    this.render();
+const DEFAULT_SETTINGS = {
+  split: "upper_lower",
+  duration: 45,
+  equipment: ["barbell", "dumbbell", "cable", "leverage machine", "smith machine", "body weight", "kettlebell", "band", "other"],
+  supersets: false
+};
 
-    // --- ADD THE TIMER EVENT LISTENERS HERE ---
-    document.querySelectorAll('.preset-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const seconds = parseInt(e.target.getAttribute('data-seconds'));
-        this.startRestTimer(seconds);
-      });
-    });
+let userSettings = JSON.parse(localStorage.getItem("gymbro_settings")) || DEFAULT_SETTINGS;
+let activePlan = JSON.parse(localStorage.getItem("gymbro_active_plan")) || null;
+let workoutHistory = JSON.parse(localStorage.getItem("gymbro_history")) || [];
 
-    const closeBtn = document.getElementById('timer-close-btn');
-    if (closeBtn) closeBtn.addEventListener('click', () => this.stopRestTimer());
+// Muscle Group Categorization for Upper and Lower Splits
+const UPPER_BODY_TARGETS = ["chest", "upper chest", "lower chest", "pectorals", "lats", "upper back", "shoulders", "front delts", "side delts", "rear delts", "traps", "biceps", "brachialis", "triceps", "forearms"];
+const LOWER_BODY_TARGETS = ["quads", "hamstrings", "glutes", "glute medius", "calves", "soleus", "gastrocnemius", "adductors", "shin", "tibialis anterior", "abs", "obliques", "core", "lower back"];
 
-    const plusBtn = document.getElementById('timer-plus-30');
-    if (plusBtn) plusBtn.addEventListener('click', () => this.adjustRestTime(30));
+// Initialize App
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadExercises();
+  initSettingsUI();
+  initEventListeners();
+  renderPlanUI();
+  renderHistoryUI();
+  checkActiveSession();
+});
 
-    const minusBtn = document.getElementById('timer-minus-15');
-    if (minusBtn) minusBtn.addEventListener('click', () => this.adjustRestTime(-15));
-
-    const toggleBtn = document.getElementById('timer-toggle');
-    if (toggleBtn) {
-      toggleBtn.addEventListener('click', () => {
-        if (this.state && this.state.isRunning) {
-          this.pauseRestTimer();
-        } else {
-          this.resumeRestTimer();
-        }
-      });
-    }
-    // ------------------------------------------
-  }
-
-  // Enables offline iOS capabilities
-  registerServiceWorker() {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./assets/js/sw.js').catch(err => console.log('SW Registration Failed', err));
-    }
-  }
-
-  async fetchDataset() {
-    try {
-      const response = await fetch('./data/exercises.json');
-      if (response.ok) {
-        this.state.exerciseDatabase = await response.json();
-      }
-    } catch (e) {
-      console.warn("Using offline fallback or database empty.");
-    }
-  }
-
-  loadState() {
-    try {
-      const saved = localStorage.getItem('gym_bro_local_state');
-      if (saved) this.state = { ...this.state, ...JSON.parse(saved) };
-    } catch (e) {}
-  }
-
-  saveState() {
-    try {
-      localStorage.setItem('gym_bro_local_state', JSON.stringify(this.state));
-    } catch (e) {}
-  }
-
-  playSound() {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.frequency.setValueAtTime(880, ctx.currentTime);
-      gain.gain.setValueAtTime(0.3, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.5);
-    } catch (e) {}
-  }
-
-  switchTab(tab) {
-    const homeView = document.getElementById('homeView');
-    const workoutView = document.getElementById('workoutView');
-    const homeBtn = document.getElementById('navHomeBtn');
-    const workoutBtn = document.getElementById('navWorkoutBtn');
-
-    if (tab === 'home') {
-      homeView.classList.remove('hidden');
-      workoutView.classList.add('hidden');
-      homeBtn.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition bg-[#39FF14] text-black shadow-md";
-      workoutBtn.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition text-[#8A90A6] hover:text-white hover:bg-[#232738]/50";
-    } else {
-      homeView.classList.add('hidden');
-      workoutView.classList.remove('hidden');
-      workoutBtn.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition bg-[#39FF14] text-black shadow-md";
-      homeBtn.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition text-[#8A90A6] hover:text-white hover:bg-[#232738]/50";
-    }
-  }
-
-  generateWorkout() {
-    const split = document.getElementById('splitSelect').value;
-    const equip = document.getElementById('equipSelect').value;
-    const isSuperset = document.getElementById('supersetToggle').checked;
-
-    // Filter database based on user inputs
-    let pool = this.state.exerciseDatabase.filter(ex => {
-      const matchEquip = equip === 'all' || ex.equipment === equip;
-      const matchSplit = split === 'Full Body' || 
-                         (split === 'Push' && ['chest', 'shoulders', 'triceps'].includes(ex.target)) ||
-                         (split === 'Pull' && ['back', 'biceps', 'lats'].includes(ex.target)) ||
-                         (split === 'Upper' && ['back', 'biceps', 'lats','chest', 'shoulders', 'triceps'].includes(ex.target)) ||
-                         (split === 'Legs' && ['quads', 'hamstrings', 'glutes', 'calves'].includes(ex.target));
-      return matchEquip && matchSplit;
-    });
-
-    // Fallback static data if dataset is empty/loading
-    if (pool.length < 3) {
-      pool = [
-        { name: `Dumbbell ${split} Press`, target: split, gif_url: "" },
-        { name: `Cable ${split} Fly`, target: split, gif_url: "" },
-        { name: `Machine ${split} Extension`, target: split, gif_url: "" }
-      ];
-    }
-
-    // Shuffle and pick 4
-    let shuffled = pool.sort(() => 0.5 - Math.random());
-    let mainSets = shuffled.slice(0, 4).map(ex => ({
-      name: ex.name,
-      target: ex.target,
-      gif: ex.gif_url,
-      sets: [false, false, false],
-      isSuperset: isSuperset
-    }));
-
-    this.state.activeWorkout = {
-      title: `${split} Protocol ${isSuperset ? '(Supersets)' : ''}`,
-      warmup: [{ name: `Dynamic ${split} Activation`, duration: "3 Mins" }],
-      exercises: mainSets,
-      cooldown: [{ name: `Static ${split} Stretching`, duration: "3 Mins" }]
-    };
-
-    this.saveState();
-    this.switchTab('workout');
-    this.render();
-  }
-
-  toggleSet(exIdx, setIdx) {
-    if (!this.state.activeWorkout) return;
-    const current = this.state.activeWorkout.exercises[exIdx].sets[setIdx];
-    this.state.activeWorkout.exercises[exIdx].sets[setIdx] = !current;
-    
-    if (!current) this.startRestTimer(60); // Modular rest time triggering
-    
-    this.saveState();
-    this.render();
-  }
-
-startRestTimer(seconds) {
-    if (this.state && this.state.restInterval) {
-      clearInterval(this.state.restInterval);
-    }
-    
-    // Initialize state if it doesn't exist
-    if (!this.state) this.state = {};
-    this.state.restSeconds = seconds;
-    this.state.isRunning = true;
-    
-    // Target the new modular container instead of restTimerDisplay
-    const container = document.getElementById('rest-timer-container');
-    if (container) {
-      container.classList.remove('translate-y-[150%]', 'opacity-0', 'pointer-events-none');
-    }
-    
-    const toggleBtn = document.getElementById('timer-toggle');
-    if (toggleBtn) toggleBtn.textContent = 'Pause';
-
-    this.updateRestClock();
-
-    this.state.restInterval = setInterval(() => {
-      if (!this.state.isRunning) return;
-      
-      this.state.restSeconds--;
-      if (this.state.restSeconds <= 0) {
-        this.stopRestTimer();
-        if (typeof this.playSound === 'function') {
-          this.playSound(); // Audible completion alert
-        }
-      } else {
-        this.updateRestClock();
-      }
-    }, 1000);
-  }
-
-  updateRestClock() {
-    if (!this.state || typeof this.state.restSeconds !== 'number') return;
-    const m = Math.floor(this.state.restSeconds / 60).toString().padStart(2, '0');
-    const s = (this.state.restSeconds % 60).toString().padStart(2, '0');
-    
-    // Target the new timer-display element
-    const displayEl = document.getElementById('timer-display');
-    if (displayEl) {
-      displayEl.textContent = `${m}:${s}`;
-    }
-  }
-
-  pauseRestTimer() {
-    this.state.isRunning = false;
-    const toggleBtn = document.getElementById('timer-toggle');
-    if (toggleBtn) toggleBtn.textContent = 'Resume';
-  }
-
-  resumeRestTimer() {
-    if (this.state.restSeconds > 0) {
-      this.state.isRunning = true;
-      const toggleBtn = document.getElementById('timer-toggle');
-      if (toggleBtn) toggleBtn.textContent = 'Pause';
-    }
-  }
-
-  stopRestTimer() {
-    if (this.state && this.state.restInterval) {
-      clearInterval(this.state.restInterval);
-    }
-    if (this.state) this.state.isRunning = false;
-    
-    const container = document.getElementById('rest-timer-container');
-    if (container) {
-      container.classList.add('translate-y-[150%]', 'opacity-0', 'pointer-events-none');
-    }
-  }
-
-  adjustRestTime(amount) {
-    if (!this.state) return;
-    this.state.restSeconds = Math.max(0, this.state.restSeconds + amount);
-    this.updateRestClock();
-    if (this.state.restSeconds === 0) {
-      this.stopRestTimer();
-      if (typeof this.playSound === 'function') {
-        this.playSound();
-      }
-    }
-  }
-  render() {
-    const banner = document.getElementById('activeWorkoutBanner');
-    banner.style.display = this.state.activeWorkout ? 'flex' : 'none';
-
-    const container = document.getElementById('activeWorkoutContent');
-    if (!container) return;
-
-    if (this.state.activeWorkout) {
-      const w = this.state.activeWorkout;
-      container.innerHTML = `
-        <h2 class="font-black text-xl text-white uppercase italic mb-4">${w.title}</h2>
-        
-        <div class="bg-[#11131C] border border-[#232738] rounded-2xl p-4 mb-4">
-          <h3 class="font-bold text-[#39FF14] text-sm mb-2">🔥 Dynamic Warm-Up</h3>
-          ${w.warmup.map(item => `<p class="text-xs text-[#8A90A6] py-1">• ${item.name} (${item.duration})</p>`).join('')}
-        </div>
-
-        <div class="space-y-4 mb-4">
-          ${w.exercises.map((ex, exIdx) => `
-            <div class="bg-[#11131C] border ${ex.isSuperset ? 'border-orange-500/50' : 'border-[#232738]'} rounded-2xl p-4 shadow-lg">
-              <div class="flex justify-between items-start mb-3">
-                <div>
-                  <h4 class="font-bold text-white text-base capitalize">${ex.name}</h4>
-                  <p class="text-xs text-[#8A90A6]">Target: <span class="text-[#39FF14]">${ex.target}</span></p>
-                </div>
-                ${ex.isSuperset ? `<span class="text-[10px] font-bold bg-orange-950 text-orange-400 px-2 py-1 rounded">SUPERSET</span>` : ''}
-              </div>
-              
-              <div class="grid grid-cols-3 gap-2">
-                ${ex.sets.map((done, setIdx) => `
-                  <button onclick="app.toggleSet(${exIdx}, ${setIdx})" class="py-2.5 rounded-lg font-bold text-xs transition ${done ? 'bg-[#39FF14] text-black' : 'bg-[#090A0F] border border-[#232738] text-[#8A90A6] hover:border-[#39FF14]'}">
-                    ${done ? '✓ Done' : `Set ${setIdx + 1}`}
-                  </button>
-                `).join('')}
-              </div>
-            </div>
-          `).join('')}
-        </div>
-
-        <div class="bg-[#11131C] border border-[#232738] rounded-2xl p-4">
-          <h3 class="font-bold text-[#39FF14] text-sm mb-2">🧘 Static Stretching</h3>
-          ${w.cooldown.map(item => `<p class="text-xs text-[#8A90A6] py-1">• ${item.name} (${item.duration})</p>`).join('')}
-        </div>
-      `;
-    } else {
-      container.innerHTML = `<p class="text-sm text-[#8A90A6]">No active session. Generate a protocol from the home tab.</p>`;
-    }
-    
-    if (window.lucide) lucide.createIcons();
+// Load exercises from exercises.json
+async function loadExercises() {
+  try {
+    const response = await fetch("data/exercises.json");
+    exerciseDataset = await response.json();
+  } catch (err) {
+    console.error("Failed to load exercises dataset:", err);
   }
 }
 
-let app;
-window.addEventListener('DOMContentLoaded', () => {
-  app = new GymBroApp();
-});
+// Generate Exercise Routines based on Settings
+function generateWorkoutSession(splitTypeOverride) {
+  const split = splitTypeOverride || userSettings.split;
+  const duration = parseInt(userSettings.duration, 10);
+  
+  // Determine exercise count based on duration
+  const exerciseCount = Math.max(3, Math.floor(duration / 7.5)); // 30m=4, 45m=6, 60m=8, 90m=12
+
+  // Filter exercises by equipment settings
+  const availableExercises = exerciseDataset.filter(ex => 
+    userSettings.equipment.includes(ex.equipment.toLowerCase())
+  );
+
+  let targetMuscles = [];
+  let title = "FULL BODY SESSION";
+
+  if (split === "upper" || split === "upper_lower_upper") {
+    targetMuscles = UPPER_BODY_TARGETS;
+    title = "UPPER BODY SESSION";
+  } else if (split === "lower" || split === "upper_lower_lower") {
+    targetMuscles = LOWER_BODY_TARGETS;
+    title = "LOWER BODY SESSION";
+  } else if (split === "ppl_push") {
+    targetMuscles = ["chest", "upper chest", "lower chest", "pectorals", "shoulders", "front delts", "side delts", "triceps"];
+    title = "PUSH SESSION";
+  } else if (split === "ppl_pull") {
+    targetMuscles = ["lats", "upper back", "rear delts", "traps", "biceps", "brachialis", "forearms"];
+    title = "PULL SESSION";
+  } else if (split === "ppl_legs") {
+    targetMuscles = ["quads", "hamstrings", "glutes", "calves", "abs", "core"];
+    title = "LEGS SESSION";
+  }
+
+  // Filter by targets
+  let pool = availableExercises;
+  if (targetMuscles.length > 0) {
+    pool = availableExercises.filter(ex => 
+      targetMuscles.includes(ex.target.toLowerCase()) ||
+      (ex.muscle_groups && ex.muscle_groups.primary.some(p => targetMuscles.includes(p.toLowerCase())))
+    );
+  }
+
+  // Pick random exercises without repeating targets too quickly
+  const selected = [];
+  const poolCopy = [...pool];
+  
+  while (selected.length < exerciseCount && poolCopy.length > 0) {
+    const idx = Math.floor(Math.random() * poolCopy.length);
+    selected.push(poolCopy.splice(idx, 1)[0]);
+  }
+
+  const warmups = [
+    "Arm Circles & Shoulder Dislocates - 60s",
+    "Bodyweight Squats & Hip Openers - 60s",
+    "Dynamic Cat-Cow & Torso Twists - 60s"
+  ];
+
+  const cooldowns = [
+    "Doorway Chest/Shoulder Stretch - 45s per side",
+    "Hamstring & Hip Flexor Static Stretch - 45s per side",
+    "Deep Child's Pose & Lower Back Decompression - 60s"
+  ];
+
+  return { title, exercises: selected, warmups, cooldowns };
+}
+
+// UI Event Handlers
+function initEventListeners() {
+  // Tab Navigation
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      document.querySelectorAll(".tab-btn").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
+    });
+  });
+
+  // Settings Modal
+  document.getElementById("open-settings-btn").addEventListener("click", () => {
+    document.getElementById("settings-modal").classList.remove("hidden");
+  });
+  document.getElementById("close-settings-btn").addEventListener("click", () => {
+    document.getElementById("settings-modal").classList.add("hidden");
+  });
+  document.getElementById("save-settings-btn").addEventListener("click", saveSettingsUI);
+
+  // Quick Generator
+  document.getElementById("generate-workout-btn").addEventListener("click", () => {
+    const session = generateWorkoutSession();
+    renderGeneratedWorkout(session);
+  });
+
+  document.getElementById("start-workout-btn").addEventListener("click", () => {
+    const sessionData = window.currentGeneratedSession;
+    if (sessionData) startActiveWorkout(sessionData);
+  });
+
+  // Active Session Banner
+  document.getElementById("resume-workout-btn").addEventListener("click", () => {
+    document.getElementById("active-workout-modal").classList.remove("hidden");
+  });
+  document.getElementById("minimize-workout-btn").addEventListener("click", () => {
+    document.getElementById("active-workout-modal").classList.add("hidden");
+  });
+  document.getElementById("finish-workout-btn").addEventListener("click", finishActiveWorkout);
+
+  // Multi-Month Plan
+  document.getElementById("create-plan-btn").addEventListener("click", buildMultiMonthPlan);
+  document.getElementById("reset-plan-btn").addEventListener("click", () => {
+    if (confirm("Reset current program plan?")) {
+      activePlan = null;
+      localStorage.removeItem("gymbro_active_plan");
+      renderPlanUI();
+    }
+  });
+
+  // Rest Timer Quick Buttons
+  document.querySelectorAll(".timer-quick-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      startRestTimer(parseInt(btn.dataset.time, 10));
+    });
+  });
+  document.getElementById("stop-timer-btn").addEventListener("click", () => {
+    clearInterval(timerInterval);
+    document.getElementById("rest-timer-display").innerText = "00:00";
+  });
+}
+
+// Settings UI Management
+function initSettingsUI() {
+  document.getElementById("setting-split").value = userSettings.split;
+  document.getElementById("setting-duration").value = userSettings.duration;
+  document.getElementById("setting-supersets").checked = userSettings.supersets;
+
+  const eqCheckboxes = document.querySelectorAll("#equipment-toggles input");
+  eqCheckboxes.forEach(cb => {
+    cb.checked = userSettings.equipment.includes(cb.value);
+  });
+}
+
+function saveSettingsUI() {
+  userSettings.split = document.getElementById("setting-split").value;
+  userSettings.duration = parseInt(document.getElementById("setting-duration").value, 10);
+  userSettings.supersets = document.getElementById("setting-supersets").checked;
+
+  const selectedEquipment = [];
+  document.querySelectorAll("#equipment-toggles input:checked").forEach(cb => {
+    selectedEquipment.push(cb.value);
+  });
+  userSettings.equipment = selectedEquipment;
+
+  localStorage.setItem("gymbro_settings", JSON.stringify(userSettings));
+  document.getElementById("settings-modal").classList.add("hidden");
+  alert("Settings saved!");
+}
+
+// Render Generator View
+function renderGeneratedWorkout(session) {
+  window.currentGeneratedSession = session;
+  document.getElementById("workout-title").innerText = session.title;
+  document.getElementById("workout-meta").innerText = `${userSettings.duration} Mins | ${session.exercises.length} Exercises`;
+
+  const warmupUl = document.getElementById("warmup-list");
+  warmupUl.innerHTML = session.warmups.map(w => `<li>${w}</li>`).join("");
+
+  const cooldownUl = document.getElementById("cooldown-list");
+  cooldownUl.innerHTML = session.cooldowns.map(c => `<li>${c}</li>`).join("");
+
+  const exDiv = document.getElementById("exercise-list");
+  exDiv.innerHTML = session.exercises.map(ex => `
+    <div class="exercise-card">
+      <h5>${ex.name}</h5>
+      <div class="exercise-tags">
+        <span class="tag">Target: ${ex.target}</span>
+        <span class="tag">Equip: ${ex.equipment}</span>
+        <span class="tag">Symmetry: ${ex.symmetry}</span>
+        <span class="tag">Pattern: ${ex.movement_pattern}</span>
+      </div>
+    </div>
+  `).join("");
+
+  document.getElementById("generated-workout-view").classList.remove("hidden");
+}
+
+// Multi-Month Plan Logic (1, 2, or 3 Months)
+function buildMultiMonthPlan() {
+  const months = parseInt(document.getElementById("plan-duration").value, 10);
+  const totalWeeks = months * 4;
+  const split = userSettings.split;
+
+  let schedulePattern = [];
+  if (split === "upper_lower") {
+    schedulePattern = [
+      { name: "Upper Body A", type: "upper_lower_upper" },
+      { name: "Lower Body A", type: "upper_lower_lower" },
+      { name: "Rest Day", type: "rest" },
+      { name: "Upper Body B", type: "upper_lower_upper" },
+      { name: "Lower Body B", type: "upper_lower_lower" },
+      { name: "Rest Day", type: "rest" },
+      { name: "Rest Day", type: "rest" }
+    ];
+  } else if (split === "ppl") {
+    schedulePattern = [
+      { name: "Push Day", type: "ppl_push" },
+      { name: "Pull Day", type: "ppl_pull" },
+      { name: "Legs Day", type: "ppl_legs" },
+      { name: "Rest Day", type: "rest" },
+      { name: "Push Day B", type: "ppl_push" },
+      { name: "Pull Day B", type: "ppl_pull" },
+      { name: "Rest Day", type: "rest" }
+    ];
+  } else {
+    schedulePattern = [
+      { name: "Full Body A", type: "full_body" },
+      { name: "Rest Day", type: "rest" },
+      { name: "Full Body B", type: "full_body" },
+      { name: "Rest Day", type: "rest" },
+      { name: "Full Body C", type: "full_body" },
+      { name: "Rest Day", type: "rest" },
+      { name: "Rest Day", type: "rest" }
+    ];
+  }
+
+  const weeks = [];
+  for (let w = 1; w <= totalWeeks; w++) {
+    const days = schedulePattern.map((day, idx) => ({
+      id: `w${w}_d${idx + 1}`,
+      dayNum: idx + 1,
+      title: day.name,
+      type: day.type,
+      completed: false
+    }));
+    weeks.push({ weekNum: w, days });
+  }
+
+  activePlan = {
+    months,
+    totalWeeks,
+    split,
+    weeks,
+    createdAt: new Date().toISOString()
+  };
+
+  localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
+  renderPlanUI();
+}
+
+function renderPlanUI() {
+  const container = document.getElementById("active-plan-container");
+  if (!activePlan) {
+    container.classList.add("hidden");
+    return;
+  }
+
+  container.classList.remove("hidden");
+  document.getElementById("plan-title").innerText = `${activePlan.months}-MONTH (${activePlan.totalWeeks} WEEKS) ${activePlan.split.replace('_', '/').toUpperCase()} PROGRAM`;
+
+  let totalWorkouts = 0;
+  let completedWorkouts = 0;
+
+  const accordion = document.getElementById("plan-weeks-accordion");
+  accordion.innerHTML = activePlan.weeks.map(week => {
+    const weekDaysHtml = week.days.map(day => {
+      if (day.type !== "rest") totalWorkouts++;
+      if (day.completed) completedWorkouts++;
+
+      return `
+        <div class="day-row ${day.completed ? 'completed' : ''}">
+          <span>Day ${day.dayNum}: ${day.title}</span>
+          ${day.type !== "rest" ? `
+            <button class="metal-btn small-btn ${day.completed ? 'danger-btn' : 'primary-btn'}" onclick="togglePlanDay('${week.weekNum}', '${day.id}')">
+              ${day.completed ? 'UNDO' : 'START / LOG'}
+            </button>
+          ` : '<span class="tag">REST</span>'}
+        </div>
+      `;
+    }).join("");
+
+    return `
+      <div class="week-card">
+        <div class="week-header">WEEK ${week.weekNum}</div>
+        <div class="week-body">${weekDaysHtml}</div>
+      </div>
+    `;
+  }).join("");
+
+  const percent = totalWorkouts > 0 ? Math.round((completedWorkouts / totalWorkouts) * 100) : 0;
+  document.getElementById("plan-progress-fill").style.width = `${percent}%`;
+  document.getElementById("plan-stats-text").innerText = `${completedWorkouts} of ${totalWorkouts} Workouts Completed (${percent}%)`;
+}
+
+window.togglePlanDay = function(weekNum, dayId) {
+  const week = activePlan.weeks.find(w => w.weekNum == weekNum);
+  if (!week) return;
+  const day = week.days.find(d => d.id === dayId);
+  if (!day) return;
+
+  if (day.completed) {
+    day.completed = false;
+  } else {
+    const session = generateWorkoutSession(day.type);
+    session.title = `Week ${weekNum} - ${day.title}`;
+    session.planDayRef = dayId;
+    startActiveWorkout(session);
+    return;
+  }
+
+  localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
+  renderPlanUI();
+};
+
+// Active Session Tracking
+function startActiveWorkout(session) {
+  activeWorkout = {
+    ...session,
+    startTime: new Date().toISOString(),
+    logs: session.exercises.map(ex => ({
+      id: ex.id,
+      name: ex.name,
+      sets: [
+        { reps: 10, weight: 100 },
+        { reps: 10, weight: 100 },
+        { reps: 10, weight: 100 }
+      ]
+    }))
+  };
+
+  localStorage.setItem("gymbro_active_session", JSON.stringify(activeWorkout));
+  checkActiveSession();
+  document.getElementById("active-workout-modal").classList.remove("hidden");
+}
+
+function checkActiveSession() {
+  const stored = localStorage.getItem("gymbro_active_session");
+  const banner = document.getElementById("active-session-banner");
+  
+  if (stored) {
+    activeWorkout = JSON.parse(stored);
+    banner.classList.remove("hidden");
+    renderActiveWorkoutModal();
+  } else {
+    banner.classList.add("hidden");
+  }
+}
+
+function renderActiveWorkoutModal() {
+  if (!activeWorkout) return;
+  document.getElementById("active-workout-name").innerText = activeWorkout.title;
+
+  const container = document.getElementById("active-exercise-container");
+  container.innerHTML = activeWorkout.logs.map((ex, exIdx) => `
+    <div class="exercise-card margin-top">
+      <h5>${ex.name}</h5>
+      <div class="sets-table">
+        ${ex.sets.map((set, setIdx) => `
+          <div class="day-row" style="padding: 5px 0;">
+            <span>Set ${setIdx + 1}</span>
+            <input type="number" value="${set.weight}" style="width: 70px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'weight', this.value)"> lbs
+            <input type="number" value="${set.reps}" style="width: 60px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'reps', this.value)"> reps
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `).join("");
+}
+
+window.updateSetData = function(exIdx, setIdx, field, val) {
+  if (!activeWorkout) return;
+  activeWorkout.logs[exIdx].sets[setIdx][field] = parseFloat(val) || 0;
+  localStorage.setItem("gymbro_active_session", JSON.stringify(activeWorkout));
+};
+
+function finishActiveWorkout() {
+  if (!activeWorkout) return;
+
+  if (activeWorkout.planDayRef && activePlan) {
+    activePlan.weeks.forEach(w => {
+      w.days.forEach(d => {
+        if (d.id === activeWorkout.planDayRef) d.completed = true;
+      });
+    });
+    localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
+    renderPlanUI();
+  }
+
+  workoutHistory.unshift({
+    title: activeWorkout.title,
+    date: new Date().toLocaleDateString(),
+    exerciseCount: activeWorkout.logs.length
+  });
+
+  localStorage.setItem("gymbro_history", JSON.stringify(workoutHistory));
+  localStorage.removeItem("gymbro_active_session");
+  activeWorkout = null;
+
+  document.getElementById("active-workout-modal").classList.add("hidden");
+  checkActiveSession();
+  renderHistoryUI();
+  alert("Workout Completed & Logged!");
+}
+
+function renderHistoryUI() {
+  const container = document.getElementById("history-list");
+  if (workoutHistory.length === 0) {
+    container.innerHTML = '<p class="empty-msg">No completed workouts logged yet.</p>';
+    return;
+  }
+
+  container.innerHTML = workoutHistory.map(item => `
+    <div class="day-row" style="background: #181b20; margin-bottom: 8px; border-radius: 4px;">
+      <div>
+        <strong>${item.title}</strong><br>
+        <small style="color: #888;">${item.date} • ${item.exerciseCount} Exercises Completed</small>
+      </div>
+    </div>
+  `).join("");
+}
+
+// Timer
+function startRestTimer(seconds) {
+  clearInterval(timerInterval);
+  let remaining = seconds;
+  const display = document.getElementById("rest-timer-display");
+
+  const update = () => {
+    const mins = Math.floor(remaining / 60);
+    const secs = remaining % 60;
+    display.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    if (remaining <= 0) {
+      clearInterval(timerInterval);
+      display.innerText = "TIME UP!";
+    }
+    remaining--;
+  };
+
+  update();
+  timerInterval = setInterval(update, 1000);
+}
