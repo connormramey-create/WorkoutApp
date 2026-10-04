@@ -2,134 +2,190 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>GYM BRO - Training Systems</title>
-
-  <!-- Offline Web App Manifest -->
-  <link rel="manifest" href="./manifest.json">
-
-  <!-- Frameworks & Icons -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  
-  <link rel="stylesheet" href="./assets/css/styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GYM BRO TRACKER - Metallic Steel Edition</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="manifest" href="manifest.json">
 </head>
-<body class="bg-[#090A0F] text-[#F0F2F5] min-h-screen pb-24 selection:bg-[#39FF14] selection:text-black font-sans">
-
-  <!-- Header Banner -->
-  <header class="sticky top-0 z-40 bg-[#090A0F]/90 backdrop-blur-md border-b border-[#232738] px-4 py-3 shadow-lg shadow-black/50">
-    <div class="max-w-4xl mx-auto flex items-center justify-between">
-      <h1 class="font-black text-xl text-[#39FF14] tracking-wider uppercase italic">GYM BRO TRACKER</h1>
-      <button onclick="app.openSettingsModal?.()" class="p-2 rounded-xl bg-[#11131C] border border-[#232738] text-[#8A90A6] hover:text-white transition">
-        <i data-lucide="settings" class="w-5 h-5"></i>
-      </button>
-    </div>
+<body class="metallic-theme">
+  <header class="top-nav">
+    <h1 class="logo-text">IRON BRO <span>TRACKER</span></h1>
+    <button id="open-settings-btn" class="metal-btn icon-btn">⚙️ SETTINGS</button>
   </header>
 
-  <!-- Non-Destructive Active Workout Banner -->
-  <div id="activeWorkoutBanner" class="hidden bg-gradient-to-r from-[#11131C] via-[#1a1f2e] to-[#11131C] border-b border-[#39FF14]/50 py-3 px-4 flex items-center justify-between cursor-pointer" onclick="app.switchTab('workout')">
-    <span class="text-xs font-bold text-white flex items-center gap-2">
-      <span class="relative flex h-2.5 w-2.5">
-        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#39FF14] opacity-75"></span>
-        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#39FF14]"></span>
-      </span>
-      ⚡ SESSION IN PROGRESS
-    </span>
-    <span class="text-xs font-bold text-[#39FF14]">RESUME &rarr;</span>
-  </div>
-
-  <!-- Navigation -->
-  <nav class="max-w-4xl mx-auto px-4 mt-4">
-    <div class="grid grid-cols-2 gap-2 p-1.5 bg-[#11131C] border border-[#232738] rounded-2xl">
-      <button id="navHomeBtn" onclick="app.switchTab('home')" class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition-all duration-200 bg-[#39FF14] text-black shadow-md">
-        <i data-lucide="home" class="w-4 h-4"></i> Home
-      </button>
-      <button id="navWorkoutBtn" onclick="app.switchTab('workout')" class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm transition-all duration-200 text-[#8A90A6] hover:text-white hover:bg-[#232738]/50">
-        <i data-lucide="dumbbell" class="w-4 h-4"></i> Active Workout
-      </button>
+  <main class="container">
+    <!-- Active Workout Banner -->
+    <div id="active-session-banner" class="active-banner hidden">
+      <span>⚡ WORKOUT IN PROGRESS</span>
+      <button id="resume-workout-btn" class="metal-btn primary-btn">RESUME →</button>
     </div>
-  </nav>
 
-  <!-- Main Views -->
-  <main class="max-w-4xl mx-auto px-4 py-5">
-    
-    <!-- Home / Setup View -->
-    <section id="homeView" class="space-y-4">
-      <div class="bg-[#11131C] border border-[#232738] rounded-2xl p-5 shadow-xl">
-        <h3 class="font-bold text-lg text-white uppercase italic">Workout Generator</h3>
-        <p class="text-xs text-[#8A90A6] my-2">Dynamic routines with built-in mobility and modular filtering.</p>
+    <!-- Navigation Tabs -->
+    <nav class="tab-bar">
+      <button class="tab-btn active" data-tab="generator-tab">WORKOUT GENERATOR</button>
+      <button class="tab-btn" data-tab="plan-tab">MULTI-MONTH PLAN</button>
+      <button class="tab-btn" data-tab="tracker-tab">PROGRESS LOG</button>
+    </nav>
+
+    <!-- Tab 1: Generator -->
+    <section id="generator-tab" class="tab-content active">
+      <div class="metal-card">
+        <h2 class="section-header">QUICK WORKOUT GENERATOR</h2>
+        <p class="subtitle">Generates workouts dynamically based on your active Settings filters.</p>
+        <div class="card-actions">
+          <button id="generate-workout-btn" class="metal-btn primary-btn large-btn full-width">⚡ GENERATE SESSION</button>
+        </div>
+      </div>
+
+      <div id="generated-workout-view" class="metal-card hidden">
+        <h3 id="workout-title" class="workout-title">UPPER BODY SESSION</h3>
+        <div id="workout-meta" class="workout-meta"></div>
         
-        <div class="space-y-3 my-4">
-          <!-- Modifiers -->
-          <div>
-            <label class="text-xs font-bold text-[#39FF14] uppercase">Split</label>
-            <select id="splitSelect" class="w-full mt-1 bg-[#090A0F] border border-[#232738] text-white text-sm rounded-lg p-2.5">
-              <option value="Push">Push</option>
-              <option value="Pull">Pull</option>
-              <option value="Legs">Legs</option>
-              <option value="Full Body">Random Full Body</option>
-            </select>
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="text-xs font-bold text-[#39FF14] uppercase">Equipment</label>
-              <select id="equipSelect" class="w-full mt-1 bg-[#090A0F] border border-[#232738] text-white text-sm rounded-lg p-2.5">
-                <option value="all">Full Gym</option>
-                <option value="body weight">Bodyweight Only</option>
-                <option value="dumbbell">Dumbbells</option>
-              </select>
-            </div>
-            <div>
-              <label class="text-xs font-bold text-[#39FF14] uppercase">Skill Level</label>
-              <select id="skillSelect" class="w-full mt-1 bg-[#090A0F] border border-[#232738] text-white text-sm rounded-lg p-2.5">
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="expert">Expert</option>
-              </select>
-            </div>
-          </div>
-          <div>
-             <label class="flex items-center gap-2 text-sm text-white mt-2">
-               <input type="checkbox" id="supersetToggle" class="rounded bg-[#090A0F] border-[#232738] text-[#39FF14]">
-               Enable Supersets
-             </label>
-          </div>
+        <div class="workout-section">
+          <h4>🔥 DYNAMIC WARM-UP</h4>
+          <ul id="warmup-list" class="steel-list"></ul>
         </div>
 
-        <button onclick="app.generateWorkout()" class="w-full py-4 px-4 rounded-xl bg-[#39FF14] text-black font-black uppercase tracking-wide text-sm shadow-lg shadow-[#39FF14]/20 transition active:scale-[0.98]">
-          Generate Protocol
-        </button>
+        <div class="workout-section">
+          <h4>🏋️ EXERCISES</h4>
+          <div id="exercise-list" class="exercise-grid"></div>
+        </div>
+
+        <div class="workout-section">
+          <h4>🧊 STATIC STRETCHING</h4>
+          <ul id="cooldown-list" class="steel-list"></ul>
+        </div>
+
+        <button id="start-workout-btn" class="metal-btn action-btn full-width margin-top">🚀 START THIS WORKOUT</button>
       </div>
     </section>
 
-    <!-- Active Workout View -->
-    <section id="workoutView" class="hidden space-y-4">
-      <div id="activeWorkoutContent"></div>
+    <!-- Tab 2: Multi-Month Plan -->
+    <section id="plan-tab" class="tab-content">
+      <div class="metal-card">
+        <h2 class="section-header">MULTI-MONTH PLAN CREATOR</h2>
+        <div class="plan-setup-form">
+          <label for="plan-duration" class="setting-label">Select Plan Duration:</label>
+          <select id="plan-duration" class="metal-input">
+            <option value="1">1 Month (4 Weeks)</option>
+            <option value="2">2 Months (8 Weeks)</option>
+            <option value="3" selected>3 Months (12 Weeks)</option>
+          </select>
+          <button id="create-plan-btn" class="metal-btn primary-btn full-width">BUILD PROGRAM PLAN</button>
+        </div>
+      </div>
+
+      <div id="active-plan-container" class="metal-card hidden">
+        <div class="plan-header">
+          <h3 id="plan-title">PROGRAM PLAN</h3>
+          <button id="reset-plan-btn" class="metal-btn danger-btn small-btn">RESET PLAN</button>
+        </div>
+        <div id="plan-progress-bar" class="progress-bar-container">
+          <div id="plan-progress-fill" class="progress-fill"></div>
+        </div>
+        <p id="plan-stats-text" class="plan-stats">0 of 0 Workouts Completed (0%)</p>
+
+        <div id="plan-weeks-accordion" class="weeks-accordion"></div>
+      </div>
+    </section>
+
+    <!-- Tab 3: Tracker Log -->
+    <section id="tracker-tab" class="tab-content">
+      <div class="metal-card">
+        <h2 class="section-header">WORKOUT LOG & HISTORY</h2>
+        <div id="history-list" class="history-container">
+          <p class="empty-msg">No completed workouts logged yet.</p>
+        </div>
+      </div>
     </section>
   </main>
 
-<!-- Rest Timer Component -->
-<div id="rest-timer-container" class="fixed bottom-6 right-6 z-50 bg-[#11131C]/95 border-2 border-[#39FF14] p-5 rounded-2xl shadow-2xl text-[#39FF14] font-mono w-80 text-center transition-all duration-300 transform translate-y-[150%] opacity-0 pointer-events-none">
-  <div class="flex justify-between items-center text-xs text-gray-400 mb-2">
-    <span>REST TIME</span>
-    <button id="timer-close-btn" class="text-gray-400 hover:text-white text-lg">&times;</button>
-  </div>
-  <div id="timer-display" class="text-4xl font-bold tracking-wider my-2">00:00</div>
-  <div class="flex gap-2 justify-center mt-3">
-    <button class="preset-btn bg-[#1a1d2e] hover:bg-[#25283d] text-xs px-2.5 py-1.5 rounded border border-[#39FF14]/30 cursor-pointer transition-colors" data-seconds="30">30s</button>
-    <button class="preset-btn bg-[#1a1d2e] hover:bg-[#25283d] text-xs px-2.5 py-1.5 rounded border border-[#39FF14]/30 cursor-pointer transition-colors" data-seconds="60">60s</button>
-    <button class="preset-btn bg-[#1a1d2e] hover:bg-[#25283d] text-xs px-2.5 py-1.5 rounded border border-[#39FF14]/30 cursor-pointer transition-colors" data-seconds="90">90s</button>
-    <button class="preset-btn bg-[#1a1d2e] hover:bg-[#25283d] text-xs px-2.5 py-1.5 rounded border border-[#39FF14]/30 cursor-pointer transition-colors" data-seconds="120">2m</button>
-  </div>
-  <div class="flex gap-2 justify-center mt-3">
-    <button id="timer-minus-15" class="action-btn bg-[#1a1d2e] hover:bg-[#25283d] text-xs px-3 py-1.5 rounded border border-red-500/30 text-red-400 cursor-pointer transition-colors">-15s</button>
-    <button id="timer-toggle" class="action-btn primary bg-[#39FF14] text-[#11131C] font-bold text-xs px-4 py-1.5 rounded hover:bg-[#32cc10] cursor-pointer transition-colors">Pause</button>
-    <button id="timer-plus-30" class="action-btn bg-[#1a1d2e] hover:bg-[#25283d] text-xs px-3 py-1.5 rounded border border-[#39FF14]/30 cursor-pointer transition-colors">+30s</button>
-  </div>
-</div>
+  <!-- Active Workout Modal / Overlay -->
+  <div id="active-workout-modal" class="modal-overlay hidden">
+    <div class="modal-content metal-modal large-modal">
+      <header class="modal-header">
+        <h2 id="active-workout-name">SESSION IN PROGRESS</h2>
+        <button id="minimize-workout-btn" class="metal-btn small-btn">🗕 MINIMIZE</button>
+      </header>
+      <div class="timer-card metal-subcard">
+        <div class="timer-label">REST TIMER</div>
+        <div class="timer-display" id="rest-timer-display">00:00</div>
+        <div class="timer-controls">
+          <button class="metal-btn timer-quick-btn" data-time="30">+30s</button>
+          <button class="metal-btn timer-quick-btn" data-time="60">+60s</button>
+          <button class="metal-btn timer-quick-btn" data-time="90">+90s</button>
+          <button id="stop-timer-btn" class="metal-btn danger-btn">STOP</button>
+        </div>
+      </div>
 
-  <script src="./assets/js/app.js"></script>
+      <div id="active-exercise-container" class="active-exercises-list"></div>
+
+      <div class="modal-footer">
+        <button id="finish-workout-btn" class="metal-btn primary-btn full-width">✅ COMPLETE WORKOUT</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settings-modal" class="modal-overlay hidden">
+    <div class="modal-content metal-modal">
+      <header class="modal-header">
+        <h2>⚙️ GYM BRO SETTINGS</h2>
+        <button id="close-settings-btn" class="close-btn">&times;</button>
+      </header>
+      
+      <div class="settings-body">
+        <!-- Workout Split -->
+        <div class="setting-group">
+          <label class="setting-label">Active Workout Split</label>
+          <select id="setting-split" class="metal-input">
+            <option value="upper_lower">Upper / Lower Split (4-Day Cycle)</option>
+            <option value="upper">Upper Body Only</option>
+            <option value="lower">Lower Body Only</option>
+            <option value="ppl">Push / Pull / Legs (PPL)</option>
+            <option value="full_body">Full Body Split</option>
+          </select>
+        </div>
+
+        <!-- Workout Duration -->
+        <div class="setting-group">
+          <label class="setting-label">Workout Duration</label>
+          <select id="setting-duration" class="metal-input">
+            <option value="30">30 Minutes (Short & Intense - 4 Exercises)</option>
+            <option value="45" selected>45 Minutes (Standard - 6 Exercises)</option>
+            <option value="60">60 Minutes (High Volume - 8 Exercises)</option>
+            <option value="90">90 Minutes (Beast Mode - 10 Exercises)</option>
+          </select>
+        </div>
+
+        <!-- Equipment Selection -->
+        <div class="setting-group">
+          <label class="setting-label">Equipment Available</label>
+          <div id="equipment-toggles" class="checkbox-grid">
+            <label class="metal-checkbox"><input type="checkbox" value="barbell" checked> Barbell</label>
+            <label class="metal-checkbox"><input type="checkbox" value="dumbbell" checked> Dumbbell</label>
+            <label class="metal-checkbox"><input type="checkbox" value="cable" checked> Cable Machine</label>
+            <label class="metal-checkbox"><input type="checkbox" value="leverage machine" checked> Leverage Machine</label>
+            <label class="metal-checkbox"><input type="checkbox" value="smith machine" checked> Smith Machine</label>
+            <label class="metal-checkbox"><input type="checkbox" value="body weight" checked> Bodyweight</label>
+            <label class="metal-checkbox"><input type="checkbox" value="kettlebell" checked> Kettlebell</label>
+            <label class="metal-checkbox"><input type="checkbox" value="band" checked> Resistance Bands</label>
+            <label class="metal-checkbox"><input type="checkbox" value="other" checked> Other / Specialty</label>
+          </div>
+        </div>
+
+        <!-- Additional Options -->
+        <div class="setting-group">
+          <label class="metal-checkbox"><input type="checkbox" id="setting-supersets"> Enable Supersets</label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="save-settings-btn" class="metal-btn primary-btn full-width">SAVE SETTINGS</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js"></script>
 </body>
 </html>
