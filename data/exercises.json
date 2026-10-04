@@ -1,1037 +1,402 @@
 [
-  {
-    "id": "0001",
-    "name": "3/4 sit-up",
-    "category": "waist",
-    "body_part": "waist",
-    "equipment": "body weight",
-    "instructions": {
-      "en": "Lie flat on your back with your knees bent and feet flat on the ground. Place your hands behind your head with your elbows pointing outwards. Engaging your abs, slowly lift your upper body off the ground, curling forward until your torso is at a 45-degree angle. Pause for a moment at the top, then slowly lower your upper body back down to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Lie flat on your back with your knees bent and feet flat on the ground.",
-        "Place your hands behind your head with your elbows pointing outwards.",
-        "Engaging your abs, slowly lift your upper body off the ground, curling forward until your torso is at a 45-degree angle.",
-        "Pause for a moment at the top, then slowly lower your upper body back down to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "hip flexors",
-    "secondary_muscles": [
-      "hip flexors",
-      "lower back"
-    ],
-    "target": "abs",
-    "image": "images/0001-2gPfomN.jpg",
-    "gif_url": "videos/0001-2gPfomN.gif",
-    "media_id": "2gPfomN",
-    "created_at": "2026-03-18T12:31:32.854798+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0002",
-    "name": "45° side bend",
-    "category": "waist",
-    "body_part": "waist",
-    "equipment": "body weight",
-    "instructions": {
-      "en": "Stand with your feet shoulder-width apart and your arms extended straight down by your sides. Keeping your back straight and your core engaged, slowly bend your torso to one side, lowering your hand towards your knee. Pause for a moment at the bottom, then slowly return to the starting position. Repeat on the other side. Continue alternating sides for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Stand with your feet shoulder-width apart and your arms extended straight down by your sides.",
-        "Keeping your back straight and your core engaged, slowly bend your torso to one side, lowering your hand towards your knee.",
-        "Pause for a moment at the bottom, then slowly return to the starting position.",
-        "Repeat on the other side.",
-        "Continue alternating sides for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "obliques",
-    "secondary_muscles": [
-      "obliques"
-    ],
-    "target": "abs",
-    "image": "images/0002-Hy9D21L.jpg",
-    "gif_url": "videos/0002-Hy9D21L.gif",
-    "media_id": "Hy9D21L",
-    "created_at": "2026-03-18T12:31:32.854953+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0003",
-    "name": "air bike",
-    "category": "waist",
-    "body_part": "waist",
-    "equipment": "body weight",
-    "instructions": {
-      "en": "Lie flat on your back with your hands placed behind your head. Lift your legs off the ground and bend your knees at a 90-degree angle. Bring your right elbow towards your left knee while simultaneously straightening your right leg. Return to the starting position and repeat the movement on the opposite side, bringing your left elbow towards your right knee while straightening your left leg. Continue alternating sides in a pedaling motion for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Lie flat on your back with your hands placed behind your head.",
-        "Lift your legs off the ground and bend your knees at a 90-degree angle.",
-        "Bring your right elbow towards your left knee while simultaneously straightening your right leg.",
-        "Return to the starting position and repeat the movement on the opposite side, bringing your left elbow towards your right knee while straightening your left leg.",
-        "Continue alternating sides in a pedaling motion for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "hip flexors",
-    "secondary_muscles": [
-      "hip flexors"
-    ],
-    "target": "abs",
-    "image": "images/0003-1ZFqTDN.jpg",
-    "gif_url": "videos/0003-1ZFqTDN.gif",
-    "media_id": "1ZFqTDN",
-    "created_at": "2026-03-18T12:31:32.854977+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "1512",
-    "name": "all fours squad stretch",
-    "category": "upper legs",
-    "body_part": "upper legs",
-    "equipment": "body weight",
-    "instructions": {
-      "en": "Start on all fours with your hands directly under your shoulders and your knees directly under your hips. Extend one leg straight back, keeping your knee bent and your foot flexed. Slowly lower your hips towards the ground, feeling a stretch in your quads. Hold this position for 20-30 seconds. Switch legs and repeat the stretch on the other side."
-    },
-    "instruction_steps": {
-      "en": [
-        "Start on all fours with your hands directly under your shoulders and your knees directly under your hips.",
-        "Extend one leg straight back, keeping your knee bent and your foot flexed.",
-        "Slowly lower your hips towards the ground, feeling a stretch in your quads.",
-        "Hold this position for 20-30 seconds.",
-        "Switch legs and repeat the stretch on the other side."
-      ]
-    },
-    "muscle_group": "hamstrings",
-    "secondary_muscles": [
-      "hamstrings",
-      "glutes"
-    ],
-    "target": "quads",
-    "image": "images/1512-qBcKorM.jpg",
-    "gif_url": "videos/1512-qBcKorM.gif",
-    "media_id": "qBcKorM",
-    "created_at": "2026-03-18T12:31:32.854997+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0006",
-    "name": "alternate heel touchers",
-    "category": "waist",
-    "body_part": "waist",
-    "equipment": "body weight",
-    "instructions": {
-      "en": "Lie flat on your back with your knees bent and feet flat on the ground. Extend your arms straight out to the sides, parallel to the ground. Engaging your abs, lift your shoulders off the ground and reach your right hand towards your right heel. Return to the starting position and repeat on the left side, reaching your left hand towards your left heel. Continue alternating sides for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Lie flat on your back with your knees bent and feet flat on the ground.",
-        "Extend your arms straight out to the sides, parallel to the ground.",
-        "Engaging your abs, lift your shoulders off the ground and reach your right hand towards your right heel.",
-        "Return to the starting position and repeat on the left side, reaching your left hand towards your left heel.",
-        "Continue alternating sides for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "obliques",
-    "secondary_muscles": [
-      "obliques"
-    ],
-    "target": "abs",
-    "image": "images/0006-qaZVsGk.jpg",
-    "gif_url": "videos/0006-qaZVsGk.gif",
-    "media_id": "qaZVsGk",
-    "created_at": "2026-03-18T12:31:32.855018+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0007",
-    "name": "alternate lateral pulldown",
-    "category": "back",
-    "body_part": "back",
-    "equipment": "cable",
-    "instructions": {
-      "en": "Sit on the cable machine with your back straight and feet flat on the ground. Grasp the handles with an overhand grip, slightly wider than shoulder-width apart. Lean back slightly and pull the handles towards your chest, squeezing your shoulder blades together. Pause for a moment at the peak of the movement, then slowly release the handles back to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Sit on the cable machine with your back straight and feet flat on the ground.",
-        "Grasp the handles with an overhand grip, slightly wider than shoulder-width apart.",
-        "Lean back slightly and pull the handles towards your chest, squeezing your shoulder blades together.",
-        "Pause for a moment at the peak of the movement, then slowly release the handles back to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "biceps",
-    "secondary_muscles": [
-      "biceps",
-      "rhomboids"
-    ],
-    "target": "lats",
-    "image": "images/0007-4IKbhHV.jpg",
-    "gif_url": "videos/0007-4IKbhHV.gif",
-    "media_id": "4IKbhHV",
-    "created_at": "2026-03-18T12:31:32.855038+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "1368",
-    "name": "ankle circles",
-    "category": "lower legs",
-    "body_part": "lower legs",
-    "equipment": "body weight",
-    "instructions": {
-      "en": "Sit on the ground with your legs extended in front of you. Lift one leg off the ground and rotate your ankle in a circular motion. Perform the desired number of circles in one direction, then switch to the other direction. Repeat with the other leg."
-    },
-    "instruction_steps": {
-      "en": [
-        "Sit on the ground with your legs extended in front of you.",
-        "Lift one leg off the ground and rotate your ankle in a circular motion.",
-        "Perform the desired number of circles in one direction, then switch to the other direction.",
-        "Repeat with the other leg."
-      ]
-    },
-    "muscle_group": "ankle stabilizers",
-    "secondary_muscles": [
-      "ankle stabilizers"
-    ],
-    "target": "calves",
-    "image": "images/1368-uL9CsKm.jpg",
-    "gif_url": "videos/1368-uL9CsKm.gif",
-    "media_id": "uL9CsKm",
-    "created_at": "2026-03-18T12:31:32.855057+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "3293",
-    "name": "archer pull up",
-    "category": "back",
-    "body_part": "back",
-    "equipment": "body weight",
-    "instructions": {
-      "en": "Start by hanging from a pull-up bar with an overhand grip, slightly wider than shoulder-width apart. Engage your core and pull your shoulder blades down and back. As you pull yourself up, bend one arm and bring your elbow towards your side, while keeping the other arm straight. Continue pulling until your chin is above the bar and your bent arm is fully flexed. Lower yourself back down with control, straightening the bent arm and repeating the movement on the other side. Alternate sides with each repetition."
-    },
-    "instruction_steps": {
-      "en": [
-        "Start by hanging from a pull-up bar with an overhand grip, slightly wider than shoulder-width apart.",
-        "Engage your core and pull your shoulder blades down and back.",
-        "As you pull yourself up, bend one arm and bring your elbow towards your side, while keeping the other arm straight.",
-        "Continue pulling until your chin is above the bar and your bent arm is fully flexed.",
-        "Lower yourself back down with control, straightening the bent arm and repeating the movement on the other side.",
-        "Alternate sides with each repetition."
-      ]
-    },
-    "muscle_group": "biceps",
-    "secondary_muscles": [
-      "biceps",
-      "forearms"
-    ],
-    "target": "lats",
-    "image": "images/3293-72BC5Za.jpg",
-    "gif_url": "videos/3293-72BC5Za.gif",
-    "media_id": "72BC5Za",
-    "created_at": "2026-03-18T12:31:32.855077+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "3294",
-    "name": "archer push up",
-    "category": "chest",
-    "body_part": "chest",
-    "equipment": "body weight",
-    "instructions": {
-      "en": "Start in a push-up position with your hands slightly wider than shoulder-width apart. Extend one arm straight out to the side, parallel to the ground. Lower your body by bending your elbows, keeping your back straight and core engaged. Push back up to the starting position. Repeat on the other side, extending the opposite arm out to the side. Continue alternating sides for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Start in a push-up position with your hands slightly wider than shoulder-width apart.",
-        "Extend one arm straight out to the side, parallel to the ground.",
-        "Lower your body by bending your elbows, keeping your back straight and core engaged.",
-        "Push back up to the starting position.",
-        "Repeat on the other side, extending the opposite arm out to the side.",
-        "Continue alternating sides for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "triceps",
-    "secondary_muscles": [
-      "triceps",
-      "shoulders",
-      "core"
-    ],
-    "target": "pectorals",
-    "image": "images/3294-A9qxk2F.jpg",
-    "gif_url": "videos/3294-A9qxk2F.gif",
-    "media_id": "A9qxk2F",
-    "created_at": "2026-03-18T12:31:32.855098+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "2355",
-    "name": "arm slingers hanging bent knee legs",
-    "category": "waist",
-    "body_part": "waist",
-    "equipment": "body weight",
-    "instructions": {
-      "en": "Hang from a pull-up bar with your arms fully extended and your knees bent at a 90-degree angle. Engage your core and lift your knees towards your chest, bringing them as close to your elbows as possible. Slowly lower your legs back down to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Hang from a pull-up bar with your arms fully extended and your knees bent at a 90-degree angle.",
-        "Engage your core and lift your knees towards your chest, bringing them as close to your elbows as possible.",
-        "Slowly lower your legs back down to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "shoulders",
-    "secondary_muscles": [
-      "shoulders",
-      "back"
-    ],
-    "target": "abs",
-    "image": "images/2355-uWpxD4v.jpg",
-    "gif_url": "videos/2355-uWpxD4v.gif",
-    "media_id": "uWpxD4v",
-    "created_at": "2026-03-18T12:31:32.855118+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "2333",
-    "name": "arm slingers hanging straight legs",
-    "category": "waist",
-    "body_part": "waist",
-    "equipment": "body weight",
-    "instructions": {
-      "en": "Hang from a pull-up bar with your arms fully extended and your legs straight down. Engage your core and lift your legs up in front of you until they are parallel to the ground. Hold for a moment at the top, then slowly lower your legs back down to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Hang from a pull-up bar with your arms fully extended and your legs straight down.",
-        "Engage your core and lift your legs up in front of you until they are parallel to the ground.",
-        "Hold for a moment at the top, then slowly lower your legs back down to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "shoulders",
-    "secondary_muscles": [
-      "shoulders",
-      "back"
-    ],
-    "target": "abs",
-    "image": "images/2333-PXTIwgu.jpg",
-    "gif_url": "videos/2333-PXTIwgu.gif",
-    "media_id": "PXTIwgu",
-    "created_at": "2026-03-18T12:31:32.855138+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "3214",
-    "name": "arms apart circular toe touch (male)",
-    "category": "upper legs",
-    "body_part": "upper legs",
-    "equipment": "body weight",
-    "instructions": {
-      "en": "Stand with your feet shoulder-width apart and arms extended to the sides. Keeping your legs straight, bend forward at the waist and reach down towards your toes with your right hand. As you reach down, simultaneously lift your left leg straight up behind you, maintaining balance. Return to the starting position and repeat the movement with your left hand reaching towards your toes and your right leg lifting up behind you. Continue alternating sides for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Stand with your feet shoulder-width apart and arms extended to the sides.",
-        "Keeping your legs straight, bend forward at the waist and reach down towards your toes with your right hand.",
-        "As you reach down, simultaneously lift your left leg straight up behind you, maintaining balance.",
-        "Return to the starting position and repeat the movement with your left hand reaching towards your toes and your right leg lifting up behind you.",
-        "Continue alternating sides for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "hamstrings",
-    "secondary_muscles": [
-      "hamstrings",
-      "quadriceps",
-      "calves"
-    ],
-    "target": "glutes",
-    "image": "images/3214-RtyAsy1.jpg",
-    "gif_url": "videos/3214-RtyAsy1.gif",
-    "media_id": "RtyAsy1",
-    "created_at": "2026-03-18T12:31:32.855158+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "3204",
-    "name": "arms overhead full sit-up (male)",
-    "category": "waist",
-    "body_part": "waist",
-    "equipment": "body weight",
-    "instructions": {
-      "en": "Lie flat on your back with your knees bent and feet flat on the ground. Extend your arms overhead, keeping them straight. Engaging your abs, slowly lift your upper body off the ground, curling forward until your torso is upright. Pause for a moment at the top, then slowly lower your upper body back down to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Lie flat on your back with your knees bent and feet flat on the ground.",
-        "Extend your arms overhead, keeping them straight.",
-        "Engaging your abs, slowly lift your upper body off the ground, curling forward until your torso is upright.",
-        "Pause for a moment at the top, then slowly lower your upper body back down to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "hip flexors",
-    "secondary_muscles": [
-      "hip flexors",
-      "lower back"
-    ],
-    "target": "abs",
-    "image": "images/3204-NAkmgdx.jpg",
-    "gif_url": "videos/3204-NAkmgdx.gif",
-    "media_id": "NAkmgdx",
-    "created_at": "2026-03-18T12:31:32.855178+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0009",
-    "name": "assisted chest dip (kneeling)",
-    "category": "chest",
-    "body_part": "chest",
-    "equipment": "leverage machine",
-    "instructions": {
-      "en": "Adjust the machine to your desired height and secure your knees on the pad. Grasp the handles with your palms facing down and your arms fully extended. Lower your body by bending your elbows until your upper arms are parallel to the floor. Pause for a moment, then push yourself back up to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Adjust the machine to your desired height and secure your knees on the pad.",
-        "Grasp the handles with your palms facing down and your arms fully extended.",
-        "Lower your body by bending your elbows until your upper arms are parallel to the floor.",
-        "Pause for a moment, then push yourself back up to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "triceps",
-    "secondary_muscles": [
-      "triceps",
-      "shoulders"
-    ],
-    "target": "pectorals",
-    "image": "images/0009-PAgTVaK.jpg",
-    "gif_url": "videos/0009-PAgTVaK.gif",
-    "media_id": "PAgTVaK",
-    "created_at": "2026-03-18T12:31:32.855196+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0011",
-    "name": "assisted hanging knee raise",
-    "category": "waist",
-    "body_part": "waist",
-    "equipment": "assisted",
-    "instructions": {
-      "en": "Hang from a pull-up bar with your arms fully extended and your palms facing away from you. Engage your core muscles and lift your knees towards your chest, bending at the hips and knees. Pause for a moment at the top of the movement, squeezing your abs. Slowly lower your legs back down to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Hang from a pull-up bar with your arms fully extended and your palms facing away from you.",
-        "Engage your core muscles and lift your knees towards your chest, bending at the hips and knees.",
-        "Pause for a moment at the top of the movement, squeezing your abs.",
-        "Slowly lower your legs back down to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "hip flexors",
-    "secondary_muscles": [
-      "hip flexors"
-    ],
-    "target": "abs",
-    "image": "images/0011-03lzqwk.jpg",
-    "gif_url": "videos/0011-03lzqwk.gif",
-    "media_id": "03lzqwk",
-    "created_at": "2026-03-18T12:31:32.855215+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0010",
-    "name": "assisted hanging knee raise with throw down",
-    "category": "waist",
-    "body_part": "waist",
-    "equipment": "assisted",
-    "instructions": {
-      "en": "Hang from a pull-up bar with your arms fully extended and your palms facing away from you. Engage your core and lift your knees towards your chest, keeping your legs together. Once your knees are at chest level, explosively throw your legs down towards the ground, extending them fully. Allow your legs to swing back up and repeat the movement for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Hang from a pull-up bar with your arms fully extended and your palms facing away from you.",
-        "Engage your core and lift your knees towards your chest, keeping your legs together.",
-        "Once your knees are at chest level, explosively throw your legs down towards the ground, extending them fully.",
-        "Allow your legs to swing back up and repeat the movement for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "hip flexors",
-    "secondary_muscles": [
-      "hip flexors",
-      "lower back"
-    ],
-    "target": "abs",
-    "image": "images/0010-8K0w2yA.jpg",
-    "gif_url": "videos/0010-8K0w2yA.gif",
-    "media_id": "8K0w2yA",
-    "created_at": "2026-03-18T12:31:32.855234+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "1708",
-    "name": "assisted lying calves stretch",
-    "category": "lower legs",
-    "body_part": "lower legs",
-    "equipment": "assisted",
-    "instructions": {
-      "en": "Lie on your back with your legs extended. Bend one knee and place your foot flat on the ground. Using your hands or a towel, gently pull your toes towards your body, feeling a stretch in your calf. Hold the stretch for 20-30 seconds. Release the stretch and repeat on the other leg."
-    },
-    "instruction_steps": {
-      "en": [
-        "Lie on your back with your legs extended.",
-        "Bend one knee and place your foot flat on the ground.",
-        "Using your hands or a towel, gently pull your toes towards your body, feeling a stretch in your calf.",
-        "Hold the stretch for 20-30 seconds.",
-        "Release the stretch and repeat on the other leg."
-      ]
-    },
-    "muscle_group": "hamstrings",
-    "secondary_muscles": [
-      "hamstrings"
-    ],
-    "target": "calves",
-    "image": "images/1708-GxDwDX0.jpg",
-    "gif_url": "videos/1708-GxDwDX0.gif",
-    "media_id": "GxDwDX0",
-    "created_at": "2026-03-18T12:31:32.855254+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "1709",
-    "name": "assisted lying glutes stretch",
-    "category": "upper legs",
-    "body_part": "upper legs",
-    "equipment": "assisted",
-    "instructions": {
-      "en": "Lie on your back with your legs extended. Bend your right knee and place your right ankle on your left thigh, just above the knee. Grasp your left thigh with both hands and gently pull it towards your chest. Hold the stretch for 20-30 seconds. Release and repeat on the other side."
-    },
-    "instruction_steps": {
-      "en": [
-        "Lie on your back with your legs extended.",
-        "Bend your right knee and place your right ankle on your left thigh, just above the knee.",
-        "Grasp your left thigh with both hands and gently pull it towards your chest.",
-        "Hold the stretch for 20-30 seconds.",
-        "Release and repeat on the other side."
-      ]
-    },
-    "muscle_group": "hamstrings",
-    "secondary_muscles": [
-      "hamstrings"
-    ],
-    "target": "glutes",
-    "image": "images/1709-yn0LjwL.jpg",
-    "gif_url": "videos/1709-yn0LjwL.gif",
-    "media_id": "yn0LjwL",
-    "created_at": "2026-03-18T12:31:32.855272+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "1710",
-    "name": "assisted lying gluteus and piriformis stretch",
-    "category": "upper legs",
-    "body_part": "upper legs",
-    "equipment": "assisted",
-    "instructions": {
-      "en": "Lie on your back with your legs extended. Bend your right knee and place your right ankle on your left thigh, just above the knee. Grasp your left thigh with both hands and gently pull it towards your chest. Hold the stretch for 20-30 seconds. Release the stretch and repeat on the other side."
-    },
-    "instruction_steps": {
-      "en": [
-        "Lie on your back with your legs extended.",
-        "Bend your right knee and place your right ankle on your left thigh, just above the knee.",
-        "Grasp your left thigh with both hands and gently pull it towards your chest.",
-        "Hold the stretch for 20-30 seconds.",
-        "Release the stretch and repeat on the other side."
-      ]
-    },
-    "muscle_group": "hamstrings",
-    "secondary_muscles": [
-      "hamstrings"
-    ],
-    "target": "glutes",
-    "image": "images/1710-RQNVT10.jpg",
-    "gif_url": "videos/1710-RQNVT10.gif",
-    "media_id": "RQNVT10",
-    "created_at": "2026-03-18T12:31:32.855292+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0012",
-    "name": "assisted lying leg raise with lateral throw down",
-    "category": "waist",
-    "body_part": "waist",
-    "equipment": "assisted",
-    "instructions": {
-      "en": "Lie flat on your back with your legs extended and your arms by your sides. Place your hands under your glutes for support. Engage your abs and lift your legs off the ground, keeping them straight. While keeping your legs together, lower them to one side until they are a few inches above the ground. Pause for a moment, then lift your legs back to the starting position. Repeat the movement to the other side. Continue alternating sides for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Lie flat on your back with your legs extended and your arms by your sides.",
-        "Place your hands under your glutes for support.",
-        "Engage your abs and lift your legs off the ground, keeping them straight.",
-        "While keeping your legs together, lower them to one side until they are a few inches above the ground.",
-        "Pause for a moment, then lift your legs back to the starting position.",
-        "Repeat the movement to the other side.",
-        "Continue alternating sides for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "hip flexors",
-    "secondary_muscles": [
-      "hip flexors",
-      "obliques"
-    ],
-    "target": "abs",
-    "image": "images/0012-UGhRD1A.jpg",
-    "gif_url": "videos/0012-UGhRD1A.gif",
-    "media_id": "UGhRD1A",
-    "created_at": "2026-03-18T12:31:32.855311+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0013",
-    "name": "assisted lying leg raise with throw down",
-    "category": "waist",
-    "body_part": "waist",
-    "equipment": "assisted",
-    "instructions": {
-      "en": "Lie flat on your back with your legs extended and your arms by your sides. Place your hands under your glutes for support. Engage your core and lift your legs off the ground, keeping them straight. Raise your legs until they are perpendicular to the ground. Lower your legs back down to the starting position. Simultaneously, throw your legs down towards the ground, keeping them straight. Raise your legs back up to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Lie flat on your back with your legs extended and your arms by your sides.",
-        "Place your hands under your glutes for support.",
-        "Engage your core and lift your legs off the ground, keeping them straight.",
-        "Raise your legs until they are perpendicular to the ground.",
-        "Lower your legs back down to the starting position.",
-        "Simultaneously, throw your legs down towards the ground, keeping them straight.",
-        "Raise your legs back up to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "hip flexors",
-    "secondary_muscles": [
-      "hip flexors",
-      "quadriceps"
-    ],
-    "target": "abs",
-    "image": "images/0013-VX5YKR5.jpg",
-    "gif_url": "videos/0013-VX5YKR5.gif",
-    "media_id": "VX5YKR5",
-    "created_at": "2026-03-18T12:31:32.85533+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0014",
-    "name": "assisted motion russian twist",
-    "category": "waist",
-    "body_part": "waist",
-    "equipment": "medicine ball",
-    "instructions": {
-      "en": "Sit on the ground with your knees bent and feet flat on the floor. Hold the medicine ball with both hands in front of your chest. Lean back slightly, engaging your abs and keeping your back straight. Slowly twist your torso to the right, bringing the medicine ball towards the right side of your body. Pause for a moment, then twist your torso to the left, bringing the medicine ball towards the left side of your body. Continue alternating sides for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Sit on the ground with your knees bent and feet flat on the floor.",
-        "Hold the medicine ball with both hands in front of your chest.",
-        "Lean back slightly, engaging your abs and keeping your back straight.",
-        "Slowly twist your torso to the right, bringing the medicine ball towards the right side of your body.",
-        "Pause for a moment, then twist your torso to the left, bringing the medicine ball towards the left side of your body.",
-        "Continue alternating sides for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "obliques",
-    "secondary_muscles": [
-      "obliques",
-      "lower back"
-    ],
-    "target": "abs",
-    "image": "images/0014-r7cT9YD.jpg",
-    "gif_url": "videos/0014-r7cT9YD.gif",
-    "media_id": "r7cT9YD",
-    "created_at": "2026-03-18T12:31:32.855349+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0015",
-    "name": "assisted parallel close grip pull-up",
-    "category": "back",
-    "body_part": "back",
-    "equipment": "leverage machine",
-    "instructions": {
-      "en": "Adjust the machine to your desired weight and height. Place your hands on the parallel bars with a close grip, palms facing each other. Hang from the bars with your arms fully extended and your feet off the ground. Engage your back muscles and pull your body up towards the bars, keeping your elbows close to your body. Continue pulling until your chin is above the bars. Pause for a moment at the top, then slowly lower your body back down to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Adjust the machine to your desired weight and height.",
-        "Place your hands on the parallel bars with a close grip, palms facing each other.",
-        "Hang from the bars with your arms fully extended and your feet off the ground.",
-        "Engage your back muscles and pull your body up towards the bars, keeping your elbows close to your body.",
-        "Continue pulling until your chin is above the bars.",
-        "Pause for a moment at the top, then slowly lower your body back down to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "biceps",
-    "secondary_muscles": [
-      "biceps",
-      "forearms"
-    ],
-    "target": "lats",
-    "image": "images/0015-vrhHa6D.jpg",
-    "gif_url": "videos/0015-vrhHa6D.gif",
-    "media_id": "vrhHa6D",
-    "created_at": "2026-03-18T12:31:32.855368+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0016",
-    "name": "assisted prone hamstring",
-    "category": "upper legs",
-    "body_part": "upper legs",
-    "equipment": "assisted",
-    "instructions": {
-      "en": "Lie face down on a mat or bench with your legs fully extended. Have a partner or use a resistance band to secure your ankles. Engage your hamstrings and lift your legs towards your glutes, keeping your knees straight. Pause for a moment at the top, then slowly lower your legs back down to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Lie face down on a mat or bench with your legs fully extended.",
-        "Have a partner or use a resistance band to secure your ankles.",
-        "Engage your hamstrings and lift your legs towards your glutes, keeping your knees straight.",
-        "Pause for a moment at the top, then slowly lower your legs back down to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "glutes",
-    "secondary_muscles": [
-      "glutes",
-      "lower back"
-    ],
-    "target": "hamstrings",
-    "image": "images/0016-VedGSby.jpg",
-    "gif_url": "videos/0016-VedGSby.gif",
-    "media_id": "VedGSby",
-    "created_at": "2026-03-18T12:31:32.855385+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "1713",
-    "name": "assisted prone lying quads stretch",
-    "category": "upper legs",
-    "body_part": "upper legs",
-    "equipment": "assisted",
-    "instructions": {
-      "en": "Lie face down on the ground with your legs extended. Bend your left knee and reach back with your left hand to grab your left foot or ankle. Gently pull your left foot towards your glutes, feeling a stretch in your left quad. Hold the stretch for 20-30 seconds, then release. Repeat with your right leg."
-    },
-    "instruction_steps": {
-      "en": [
-        "Lie face down on the ground with your legs extended.",
-        "Bend your left knee and reach back with your left hand to grab your left foot or ankle.",
-        "Gently pull your left foot towards your glutes, feeling a stretch in your left quad.",
-        "Hold the stretch for 20-30 seconds, then release.",
-        "Repeat with your right leg."
-      ]
-    },
-    "muscle_group": "hamstrings",
-    "secondary_muscles": [
-      "hamstrings",
-      "glutes"
-    ],
-    "target": "quads",
-    "image": "images/1713-YUYAMEj.jpg",
-    "gif_url": "videos/1713-YUYAMEj.gif",
-    "media_id": "YUYAMEj",
-    "created_at": "2026-03-18T12:31:32.855403+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "1714",
-    "name": "assisted prone rectus femoris stretch",
-    "category": "waist",
-    "body_part": "waist",
-    "equipment": "assisted",
-    "instructions": {
-      "en": "Lie face down on the ground with your legs straight. Bend your right knee and reach back with your right hand to grab your right foot or ankle. Gently pull your right foot or ankle towards your glutes, feeling a stretch in the front of your right thigh. Hold the stretch for 20-30 seconds. Release and repeat on the other side."
-    },
-    "instruction_steps": {
-      "en": [
-        "Lie face down on the ground with your legs straight.",
-        "Bend your right knee and reach back with your right hand to grab your right foot or ankle.",
-        "Gently pull your right foot or ankle towards your glutes, feeling a stretch in the front of your right thigh.",
-        "Hold the stretch for 20-30 seconds.",
-        "Release and repeat on the other side."
-      ]
-    },
-    "muscle_group": "quadriceps",
-    "secondary_muscles": [
-      "quadriceps"
-    ],
-    "target": "abs",
-    "image": "images/1714-2Ryn564.jpg",
-    "gif_url": "videos/1714-2Ryn564.gif",
-    "media_id": "2Ryn564",
-    "created_at": "2026-03-18T12:31:32.855419+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0017",
-    "name": "assisted pull-up",
-    "category": "back",
-    "body_part": "back",
-    "equipment": "leverage machine",
-    "instructions": {
-      "en": "Adjust the machine to your desired weight and height settings. Grasp the handles with an overhand grip, slightly wider than shoulder-width apart. Hang with your arms fully extended and your feet off the ground. Engage your back muscles and pull your body up towards the handles, keeping your elbows close to your body. Continue pulling until your chin is above the handles. Pause for a moment at the top, then slowly lower your body back down to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Adjust the machine to your desired weight and height settings.",
-        "Grasp the handles with an overhand grip, slightly wider than shoulder-width apart.",
-        "Hang with your arms fully extended and your feet off the ground.",
-        "Engage your back muscles and pull your body up towards the handles, keeping your elbows close to your body.",
-        "Continue pulling until your chin is above the handles.",
-        "Pause for a moment at the top, then slowly lower your body back down to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "biceps",
-    "secondary_muscles": [
-      "biceps",
-      "forearms"
-    ],
-    "target": "lats",
-    "image": "images/0017-kiJ4Z2K.jpg",
-    "gif_url": "videos/0017-kiJ4Z2K.gif",
-    "media_id": "kiJ4Z2K",
-    "created_at": "2026-03-18T12:31:32.855436+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "1716",
-    "name": "assisted seated pectoralis major stretch with stability ball",
-    "category": "chest",
-    "body_part": "chest",
-    "equipment": "assisted",
-    "instructions": {
-      "en": "Sit on a stability ball with your feet flat on the ground and your back straight. Hold a stability ball with both hands and extend your arms straight out in front of you. Slowly lower the stability ball towards your chest, feeling a stretch in your pectoral muscles. Hold the stretch for a few seconds, then slowly return to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Sit on a stability ball with your feet flat on the ground and your back straight.",
-        "Hold a stability ball with both hands and extend your arms straight out in front of you.",
-        "Slowly lower the stability ball towards your chest, feeling a stretch in your pectoral muscles.",
-        "Hold the stretch for a few seconds, then slowly return to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "shoulders",
-    "secondary_muscles": [
-      "shoulders",
-      "triceps"
-    ],
-    "target": "pectorals",
-    "image": "images/1716-RoV1Rfa.jpg",
-    "gif_url": "videos/1716-RoV1Rfa.gif",
-    "media_id": "RoV1Rfa",
-    "created_at": "2026-03-18T12:31:32.855456+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "1712",
-    "name": "assisted side lying adductor stretch",
-    "category": "upper legs",
-    "body_part": "upper legs",
-    "equipment": "assisted",
-    "instructions": {
-      "en": "Lie on your side with your legs straight and stacked on top of each other. Bend your bottom leg slightly for stability. Place your top foot on a stable surface, such as a bench or step. Keeping your top leg straight, slowly lower it towards the ground, feeling a stretch in your inner thigh. Hold the stretch for 20-30 seconds. Return to the starting position and repeat on the other side."
-    },
-    "instruction_steps": {
-      "en": [
-        "Lie on your side with your legs straight and stacked on top of each other.",
-        "Bend your bottom leg slightly for stability.",
-        "Place your top foot on a stable surface, such as a bench or step.",
-        "Keeping your top leg straight, slowly lower it towards the ground, feeling a stretch in your inner thigh.",
-        "Hold the stretch for 20-30 seconds.",
-        "Return to the starting position and repeat on the other side."
-      ]
-    },
-    "muscle_group": "hamstrings",
-    "secondary_muscles": [
-      "hamstrings",
-      "glutes"
-    ],
-    "target": "adductors",
-    "image": "images/1712-hC6oYY5.jpg",
-    "gif_url": "videos/1712-hC6oYY5.gif",
-    "media_id": "hC6oYY5",
-    "created_at": "2026-03-18T12:31:32.855473+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "1758",
-    "name": "assisted sit-up",
-    "category": "waist",
-    "body_part": "waist",
-    "equipment": "assisted",
-    "instructions": {
-      "en": "Sit on the edge of a bench or have someone hold your feet down. Lie flat on your back with your knees bent and feet flat on the ground. Place your hands behind your head with your elbows pointing outwards. Engaging your abs, slowly lift your upper body off the ground, curling forward until your torso is at a 45-degree angle. Pause for a moment at the top, then slowly lower your upper body back down to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Sit on the edge of a bench or have someone hold your feet down.",
-        "Lie flat on your back with your knees bent and feet flat on the ground.",
-        "Place your hands behind your head with your elbows pointing outwards.",
-        "Engaging your abs, slowly lift your upper body off the ground, curling forward until your torso is at a 45-degree angle.",
-        "Pause for a moment at the top, then slowly lower your upper body back down to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "hip flexors",
-    "secondary_muscles": [
-      "hip flexors"
-    ],
-    "target": "abs",
-    "image": "images/1758-aumB2IV.jpg",
-    "gif_url": "videos/1758-aumB2IV.gif",
-    "media_id": "aumB2IV",
-    "created_at": "2026-03-18T12:31:32.855494+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "1431",
-    "name": "assisted standing chin-up",
-    "category": "back",
-    "body_part": "back",
-    "equipment": "leverage machine",
-    "instructions": {
-      "en": "Adjust the machine to your desired assistance level. Stand on the foot platform and grip the handles with an overhand grip, slightly wider than shoulder-width apart. Keep your chest up and shoulders back, engage your core, and slightly bend your knees. Pull your body up by flexing your elbows and driving your elbows down towards your sides. Continue pulling until your chin is above the bar. Pause for a moment at the top, then slowly lower your body back down to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Adjust the machine to your desired assistance level.",
-        "Stand on the foot platform and grip the handles with an overhand grip, slightly wider than shoulder-width apart.",
-        "Keep your chest up and shoulders back, engage your core, and slightly bend your knees.",
-        "Pull your body up by flexing your elbows and driving your elbows down towards your sides.",
-        "Continue pulling until your chin is above the bar.",
-        "Pause for a moment at the top, then slowly lower your body back down to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "biceps",
-    "secondary_muscles": [
-      "biceps",
-      "forearms"
-    ],
-    "target": "lats",
-    "image": "images/1431-7OeHptV.jpg",
-    "gif_url": "videos/1431-7OeHptV.gif",
-    "media_id": "7OeHptV",
-    "created_at": "2026-03-18T12:31:32.855515+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "1432",
-    "name": "assisted standing pull-up",
-    "category": "back",
-    "body_part": "back",
-    "equipment": "leverage machine",
-    "instructions": {
-      "en": "Adjust the machine to your desired weight and height settings. Stand facing the machine with your feet shoulder-width apart. Grasp the handles with an overhand grip, slightly wider than shoulder-width apart. Engage your lats and biceps, and pull yourself up towards the handles. Pause for a moment at the top, squeezing your back muscles. Slowly lower yourself back down to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Adjust the machine to your desired weight and height settings.",
-        "Stand facing the machine with your feet shoulder-width apart.",
-        "Grasp the handles with an overhand grip, slightly wider than shoulder-width apart.",
-        "Engage your lats and biceps, and pull yourself up towards the handles.",
-        "Pause for a moment at the top, squeezing your back muscles.",
-        "Slowly lower yourself back down to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "biceps",
-    "secondary_muscles": [
-      "biceps",
-      "forearms"
-    ],
-    "target": "lats",
-    "image": "images/1432-f4xtKBj.jpg",
-    "gif_url": "videos/1432-f4xtKBj.gif",
-    "media_id": "f4xtKBj",
-    "created_at": "2026-03-18T12:31:32.855533+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0018",
-    "name": "assisted standing triceps extension (with towel)",
-    "category": "upper arms",
-    "body_part": "upper arms",
-    "equipment": "assisted",
-    "instructions": {
-      "en": "Stand with your feet shoulder-width apart and hold a towel with both hands behind your head. Keep your elbows close to your ears and your upper arms stationary. Slowly extend your forearms upward, squeezing your triceps at the top. Pause for a moment, then slowly lower the towel back down to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Stand with your feet shoulder-width apart and hold a towel with both hands behind your head.",
-        "Keep your elbows close to your ears and your upper arms stationary.",
-        "Slowly extend your forearms upward, squeezing your triceps at the top.",
-        "Pause for a moment, then slowly lower the towel back down to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "shoulders",
-    "secondary_muscles": [
-      "shoulders"
-    ],
-    "target": "triceps",
-    "image": "images/0018-7HcfMBP.jpg",
-    "gif_url": "videos/0018-7HcfMBP.gif",
-    "media_id": "7HcfMBP",
-    "created_at": "2026-03-18T12:31:32.85555+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "0019",
-    "name": "assisted triceps dip (kneeling)",
-    "category": "upper arms",
-    "body_part": "upper arms",
-    "equipment": "leverage machine",
-    "instructions": {
-      "en": "Adjust the machine to your desired weight and height. Kneel down on the pad facing the machine, with your hands gripping the handles. Lower your body by bending your elbows, keeping your back straight and close to the machine. Pause for a moment at the bottom, then push yourself back up to the starting position. Repeat for the desired number of repetitions."
-    },
-    "instruction_steps": {
-      "en": [
-        "Adjust the machine to your desired weight and height.",
-        "Kneel down on the pad facing the machine, with your hands gripping the handles.",
-        "Lower your body by bending your elbows, keeping your back straight and close to the machine.",
-        "Pause for a moment at the bottom, then push yourself back up to the starting position.",
-        "Repeat for the desired number of repetitions."
-      ]
-    },
-    "muscle_group": "chest",
-    "secondary_muscles": [
-      "chest",
-      "shoulders"
-    ],
-    "target": "triceps",
-    "image": "images/0019-J60bN17.jpg",
-    "gif_url": "videos/0019-J60bN17.gif",
-    "media_id": "J60bN17",
-    "created_at": "2026-03-18T12:31:32.855567+00:00",
-    "attribution": "© Gym visual — https://gymvisual.com/"
-  },
-  {
-    "id": "2364",
-    "name": "assisted wide-grip chest dip (kneeling)",
-    "category": "chest",
-    "body_part": "chest",
-    "equipment": "leverage machine",
-    "instructions": {
-      "en": "Adjust the machine to your desired height and secure your knees on the pad. Grasp the handles with a wide grip and keep your elbows slightly bent. Lower your body by bending your elbows until your upper arms are parallel to the floor. Push yourself back up to the starting position by extending your arms. Repeat for the desired number of repetitions."
-    }
-  }
+  {"id": "ex_001", "name": "Barbell Bench Press", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_002", "name": "Incline Barbell Bench Press", "target": "upper chest", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_003", "name": "Decline Barbell Bench Press", "target": "lower chest", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_004", "name": "Flat Dumbbell Fly", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_005", "name": "Incline Dumbbell Fly", "target": "upper chest", "muscle_groups": {"primary": ["chest"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_006", "name": "Flat Dumbbell Bench Press", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_007", "name": "Incline Dumbbell Press", "target": "upper chest", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_008", "name": "Decline Dumbbell Bench Press", "target": "lower chest", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_009", "name": "Cable Crossover", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_010", "name": "Low Cable Fly", "target": "upper chest", "muscle_groups": {"primary": ["chest"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_011", "name": "High Cable Fly", "target": "lower chest", "muscle_groups": {"primary": ["chest"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_012", "name": "Pec Deck Machine Fly", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_013", "name": "Chest Press Machine", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_014", "name": "Incline Chest Press Machine", "target": "upper chest", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_015", "name": "Push-Up", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts", "core"]}, "movement_pattern": "horizontal push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_016", "name": "Incline Push-Up", "target": "lower chest", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts", "core"]}, "movement_pattern": "horizontal push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_017", "name": "Decline Push-Up", "target": "upper chest", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts", "core"]}, "movement_pattern": "horizontal push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_018", "name": "Diamond Push-Up", "target": "triceps", "muscle_groups": {"primary": ["triceps", "chest"], "secondary": ["front delts", "core"]}, "movement_pattern": "horizontal push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_019", "name": "Archer Push-Up", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts", "core"]}, "movement_pattern": "horizontal push", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_020", "name": "Chest Dip", "target": "lower chest", "muscle_groups": {"primary": ["chest", "triceps"], "secondary": ["front delts"]}, "movement_pattern": "vertical push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_021", "name": "Weighted Chest Dip", "target": "lower chest", "muscle_groups": {"primary": ["chest", "triceps"], "secondary": ["front delts"]}, "movement_pattern": "vertical push", "equipment": "other", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_022", "name": "Dumbbell Pullover", "target": "lats", "muscle_groups": {"primary": ["lats", "chest"], "secondary": ["triceps"]}, "movement_pattern": "vertical pull", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_023", "name": "Landmine Press", "target": "upper chest", "muscle_groups": {"primary": ["chest", "front delts"], "secondary": ["triceps"]}, "movement_pattern": "horizontal push", "equipment": "barbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_024", "name": "Single-Arm Cable Fly", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["core"]}, "movement_pattern": "horizontal push", "equipment": "cable", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_025", "name": "Smith Machine Bench Press", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "smith machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_026", "name": "Smith Machine Incline Press", "target": "upper chest", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "smith machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_027", "name": "Barbell Back Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["hamstrings", "lower back", "core"]}, "movement_pattern": "squat", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_028", "name": "Barbell Front Squat", "target": "quads", "muscle_groups": {"primary": ["quads"], "secondary": ["glutes", "core", "upper back"]}, "movement_pattern": "squat", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_029", "name": "Goblet Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["core"]}, "movement_pattern": "squat", "equipment": "kettlebell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_030", "name": "Dumbbell Goblet Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["core"]}, "movement_pattern": "squat", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_031", "name": "Leg Press", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["hamstrings"]}, "movement_pattern": "squat", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_032", "name": "Hack Squat Machine", "target": "quads", "muscle_groups": {"primary": ["quads"], "secondary": ["glutes"]}, "movement_pattern": "squat", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_033", "name": "Leg Extension", "target": "quads", "muscle_groups": {"primary": ["quads"], "secondary": []}, "movement_pattern": "knee extension", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_034", "name": "Single-Leg Extension", "target": "quads", "muscle_groups": {"primary": ["quads"], "secondary": []}, "movement_pattern": "knee extension", "equipment": "leverage machine", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_035", "name": "Bulgarian Split Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["hamstrings", "calves"]}, "movement_pattern": "squat", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_036", "name": "Barbell Walking Lunge", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["hamstrings", "calves", "core"]}, "movement_pattern": "squat", "equipment": "barbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_037", "name": "Dumbbell Walking Lunge", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["hamstrings", "calves"]}, "movement_pattern": "squat", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_038", "name": "Reverse Lunge", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["hamstrings"]}, "movement_pattern": "squat", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_039", "name": "Step-Up", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["calves"]}, "movement_pattern": "squat", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_040", "name": "Sissy Squat", "target": "quads", "muscle_groups": {"primary": ["quads"], "secondary": ["core"]}, "movement_pattern": "squat", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_041", "name": "Pistol Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["core", "calves"]}, "movement_pattern": "squat", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_042", "name": "Box Jump", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["calves"]}, "movement_pattern": "squat", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_043", "name": "Zercher Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "core"], "secondary": ["upper back", "glutes"]}, "movement_pattern": "squat", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_044", "name": "Smith Machine Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["hamstrings"]}, "movement_pattern": "squat", "equipment": "smith machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_045", "name": "Landmine Hack Squat", "target": "quads", "muscle_groups": {"primary": ["quads"], "secondary": ["glutes"]}, "movement_pattern": "squat", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_046", "name": "Side Lunge", "target": "quads", "muscle_groups": {"primary": ["quads", "adductors"], "secondary": ["glutes"]}, "movement_pattern": "squat", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_047", "name": "Barbell Conventional Deadlift", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings", "glutes", "lower back"], "secondary": ["traps", "forearms", "quads"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_048", "name": "Barbell Sumo Deadlift", "target": "glutes", "muscle_groups": {"primary": ["glutes", "adductors"], "secondary": ["quads", "hamstrings", "lower back"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_049", "name": "Barbell Romanian Deadlift", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings", "glutes"], "secondary": ["lower back", "forearms"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_050", "name": "Dumbbell Romanian Deadlift", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings", "glutes"], "secondary": ["lower back", "forearms"]}, "movement_pattern": "hinge", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_051", "name": "Single-Leg Romanian Deadlift", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings", "glutes"], "secondary": ["core", "ankle stabilizers"]}, "movement_pattern": "hinge", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_052", "name": "Barbell Stiff-Legged Deadlift", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings"], "secondary": ["lower back", "glutes"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_053", "name": "Lying Leg Curl", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings"], "secondary": ["calves"]}, "movement_pattern": "knee flexion", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_054", "name": "Seated Leg Curl", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings"], "secondary": ["calves"]}, "movement_pattern": "knee flexion", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_055", "name": "Standing Single-Leg Curl", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings"], "secondary": []}, "movement_pattern": "knee flexion", "equipment": "leverage machine", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_056", "name": "Nordic Hamstring Curl", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings"], "secondary": ["glutes", "core"]}, "movement_pattern": "knee flexion", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_057", "name": "Stability Ball Leg Curl", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings", "glutes"], "secondary": ["core"]}, "movement_pattern": "knee flexion", "equipment": "stability ball", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_058", "name": "Good Morning", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings", "lower back"], "secondary": ["glutes"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_059", "name": "Kettlebell Swing", "target": "glutes", "muscle_groups": {"primary": ["glutes", "hamstrings"], "secondary": ["core", "lower back", "shoulders"]}, "movement_pattern": "hinge", "equipment": "kettlebell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_060", "name": "Barbell Hip Thrust", "target": "glutes", "muscle_groups": {"primary": ["glutes"], "secondary": ["hamstrings", "quads"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_061", "name": "Single-Leg Hip Thrust", "target": "glutes", "muscle_groups": {"primary": ["glutes"], "secondary": ["hamstrings", "core"]}, "movement_pattern": "hinge", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_062", "name": "Barbell Glute Bridge", "target": "glutes", "muscle_groups": {"primary": ["glutes"], "secondary": ["hamstrings"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_063", "name": "Cable Pull-Through", "target": "glutes", "muscle_groups": {"primary": ["glutes", "hamstrings"], "secondary": ["lower back"]}, "movement_pattern": "hinge", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_064", "name": "Cable Glute Kickback", "target": "glutes", "muscle_groups": {"primary": ["glutes"], "secondary": ["hamstrings"]}, "movement_pattern": "hip extension", "equipment": "cable", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_065", "name": "Abductor Machine", "target": "glute medius", "muscle_groups": {"primary": ["glutes"], "secondary": []}, "movement_pattern": "hip abduction", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_066", "name": "Adductor Machine", "target": "adductors", "muscle_groups": {"primary": ["adductors"], "secondary": []}, "movement_pattern": "hip adduction", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_067", "name": "45-Degree Back Extension", "target": "lower back", "muscle_groups": {"primary": ["lower back", "glutes"], "secondary": ["hamstrings"]}, "movement_pattern": "hinge", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_068", "name": "Overhand Pull-Up", "target": "lats", "muscle_groups": {"primary": ["lats", "upper back"], "secondary": ["biceps", "forearms", "core"]}, "movement_pattern": "vertical pull", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_069", "name": "Underhand Chin-Up", "target": "lats", "muscle_groups": {"primary": ["lats", "biceps"], "secondary": ["forearms", "upper back"]}, "movement_pattern": "vertical pull", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_070", "name": "Neutral Grip Pull-Up", "target": "lats", "muscle_groups": {"primary": ["lats"], "secondary": ["biceps", "brachialis", "forearms"]}, "movement_pattern": "vertical pull", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_071", "name": "Lat Pulldown (Wide Grip)", "target": "lats", "muscle_groups": {"primary": ["lats"], "secondary": ["biceps", "rear delts", "rhomboids"]}, "movement_pattern": "vertical pull", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_072", "name": "Lat Pulldown (Close Neutral Grip)", "target": "lats", "muscle_groups": {"primary": ["lats"], "secondary": ["biceps", "rhomboids"]}, "movement_pattern": "vertical pull", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_073", "name": "Reverse Grip Lat Pulldown", "target": "lats", "muscle_groups": {"primary": ["lats", "biceps"], "secondary": ["rear delts"]}, "movement_pattern": "vertical pull", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_074", "name": "Single-Arm Cable Lat Pulldown", "target": "lats", "muscle_groups": {"primary": ["lats"], "secondary": ["biceps", "core"]}, "movement_pattern": "vertical pull", "equipment": "cable", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_075", "name": "Straight-Arm Cable Pushdown", "target": "lats", "muscle_groups": {"primary": ["lats"], "secondary": ["triceps", "core"]}, "movement_pattern": "vertical pull", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_076", "name": "Bent-Over Barbell Row", "target": "upper back", "muscle_groups": {"primary": ["lats", "rhomboids"], "secondary": ["biceps", "rear delts", "lower back"]}, "movement_pattern": "horizontal pull", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_077", "name": "Pendlay Row", "target": "upper back", "muscle_groups": {"primary": ["lats", "rhomboids"], "secondary": ["biceps", "lower back"]}, "movement_pattern": "horizontal pull", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_078", "name": "T-Bar Row", "target": "upper back", "muscle_groups": {"primary": ["rhomboids", "lats"], "secondary": ["biceps", "rear delts", "lower back"]}, "movement_pattern": "horizontal pull", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_079", "name": "Single-Arm Dumbbell Row", "target": "lats", "muscle_groups": {"primary": ["lats", "rhomboids"], "secondary": ["biceps", "core"]}, "movement_pattern": "horizontal pull", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_080", "name": "Chest-Supported Dumbbell Row", "target": "upper back", "muscle_groups": {"primary": ["rhomboids", "rear delts"], "secondary": ["biceps", "lats"]}, "movement_pattern": "horizontal pull", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_081", "name": "Seated Cable Row", "target": "upper back", "muscle_groups": {"primary": ["rhomboids", "lats"], "secondary": ["biceps", "rear delts"]}, "movement_pattern": "horizontal pull", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_082", "name": "Single-Arm Seated Cable Row", "target": "lats", "muscle_groups": {"primary": ["lats"], "secondary": ["biceps", "obliques"]}, "movement_pattern": "horizontal pull", "equipment": "cable", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_083", "name": "Inverted Row", "target": "upper back", "muscle_groups": {"primary": ["rhomboids", "lats"], "secondary": ["biceps", "core"]}, "movement_pattern": "horizontal pull", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_084", "name": "Face Pull", "target": "rear delts", "muscle_groups": {"primary": ["rear delts", "rhomboids"], "secondary": ["traps", "rotator cuff"]}, "movement_pattern": "horizontal pull", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_085", "name": "Barbell Shrug", "target": "traps", "muscle_groups": {"primary": ["traps"], "secondary": ["forearms"]}, "movement_pattern": "vertical pull", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_086", "name": "Dumbbell Shrug", "target": "traps", "muscle_groups": {"primary": ["traps"], "secondary": ["forearms"]}, "movement_pattern": "vertical pull", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_087", "name": "Rack Pull", "target": "lower back", "muscle_groups": {"primary": ["lower back", "traps", "glutes"], "secondary": ["forearms", "hamstrings"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_088", "name": "Overhead Barbell Press", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "side delts"], "secondary": ["triceps", "upper chest", "core"]}, "movement_pattern": "vertical push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_089", "name": "Seated Barbell Overhead Press", "target": "shoulders", "muscle_groups": {"primary": ["front delts"], "secondary": ["triceps"]}, "movement_pattern": "vertical push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_090", "name": "Seated Dumbbell Shoulder Press", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "side delts"], "secondary": ["triceps"]}, "movement_pattern": "vertical push", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_091", "name": "Standing Dumbbell Arnold Press", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "side delts"], "secondary": ["triceps"]}, "movement_pattern": "vertical push", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_092", "name": "Dumbbell Lateral Raise", "target": "side delts", "muscle_groups": {"primary": ["side delts"], "secondary": ["traps"]}, "movement_pattern": "shoulder abduction", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_093", "name": "Cable Lateral Raise", "target": "side delts", "muscle_groups": {"primary": ["side delts"], "secondary": ["traps"]}, "movement_pattern": "shoulder abduction", "equipment": "cable", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_094", "name": "Machine Lateral Raise", "target": "side delts", "muscle_groups": {"primary": ["side delts"], "secondary": []}, "movement_pattern": "shoulder abduction", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_095", "name": "Dumbbell Front Raise", "target": "front delts", "muscle_groups": {"primary": ["front delts"], "secondary": ["upper chest"]}, "movement_pattern": "vertical push", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_096", "name": "Cable Front Raise", "target": "front delts", "muscle_groups": {"primary": ["front delts"], "secondary": []}, "movement_pattern": "vertical push", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_097", "name": "Bent-Over Dumbbell Rear Delt Fly", "target": "rear delts", "muscle_groups": {"primary": ["rear delts"], "secondary": ["rhomboids"]}, "movement_pattern": "horizontal pull", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_098", "name": "Reverse Cable Fly", "target": "rear delts", "muscle_groups": {"primary": ["rear delts"], "secondary": ["rhomboids"]}, "movement_pattern": "horizontal pull", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_099", "name": "Reverse Pec Deck Fly", "target": "rear delts", "muscle_groups": {"primary": ["rear delts"], "secondary": ["rhomboids"]}, "movement_pattern": "horizontal pull", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_100", "name": "Push Press", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "quads"], "secondary": ["triceps", "glutes", "core"]}, "movement_pattern": "vertical push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_101", "name": "Upright Row", "target": "side delts", "muscle_groups": {"primary": ["side delts", "traps"], "secondary": ["biceps"]}, "movement_pattern": "vertical pull", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_102", "name": "Cable Upright Row", "target": "side delts", "muscle_groups": {"primary": ["side delts", "traps"], "secondary": ["biceps"]}, "movement_pattern": "vertical pull", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_103", "name": "Handstand Push-Up", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "triceps"], "secondary": ["upper chest", "core"]}, "movement_pattern": "vertical push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_104", "name": "Pike Push-Up", "target": "shoulders", "muscle_groups": {"primary": ["front delts"], "secondary": ["triceps", "core"]}, "movement_pattern": "vertical push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_105", "name": "Barbell Biceps Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_106", "name": "EZ Bar Biceps Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_107", "name": "Alternating Dumbbell Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_108", "name": "Incline Dumbbell Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps (long head)"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_109", "name": "Dumbbell Hammer Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps", "brachialis"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_110", "name": "Cable Hammer Curl (Rope)", "target": "brachialis", "muscle_groups": {"primary": ["brachialis", "biceps"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_111", "name": "Preacher Curl (EZ Bar)", "target": "biceps", "muscle_groups": {"primary": ["biceps (short head)"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_112", "name": "Concentration Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": []}, "movement_pattern": "elbow flexion", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_113", "name": "Standing Cable Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_114", "name": "High Cable Biceps Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": []}, "movement_pattern": "elbow flexion", "equipment": "cable", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_115", "name": "Reverse Grip Barbell Curl", "target": "forearms", "muscle_groups": {"primary": ["brachioradialis", "forearms"], "secondary": ["biceps"]}, "movement_pattern": "elbow flexion", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_116", "name": "Barbell Wrist Curl", "target": "forearms", "muscle_groups": {"primary": ["wrist flexors"], "secondary": []}, "movement_pattern": "elbow flexion", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_117", "name": "Barbell Reverse Wrist Curl", "target": "forearms", "muscle_groups": {"primary": ["wrist extensors"], "secondary": []}, "movement_pattern": "elbow flexion", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_118", "name": "Spider Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_119", "name": "Triceps Cable Pushdown (Straight Bar)", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_120", "name": "Triceps Cable Pushdown (Rope)", "target": "triceps", "muscle_groups": {"primary": ["triceps (lateral head)"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_121", "name": "Overhead Cable Triceps Extension", "target": "triceps", "muscle_groups": {"primary": ["triceps (long head)"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_122", "name": "Skull Crushers (EZ Bar)", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": ["forearms"]}, "movement_pattern": "elbow extension", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_123", "name": "Single-Arm Dumbbell Overhead Extension", "target": "triceps", "muscle_groups": {"primary": ["triceps (long head)"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_124", "name": "Dumbbell Triceps Kickback", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_125", "name": "Close-Grip Barbell Bench Press", "target": "triceps", "muscle_groups": {"primary": ["triceps", "chest"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_126", "name": "Triceps Bench Dip", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": ["front delts", "chest"]}, "movement_pattern": "vertical push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_127", "name": "Single-Arm Cable Kickback", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "cable", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_128", "name": "JM Press", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": ["chest", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_129", "name": "Standing Calf Raise", "target": "calves", "muscle_groups": {"primary": ["gastrocnemius"], "secondary": ["soleus"]}, "movement_pattern": "ankle extension", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_130", "name": "Seated Calf Raise", "target": "calves", "muscle_groups": {"primary": ["soleus"], "secondary": []}, "movement_pattern": "ankle extension", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_131", "name": "Donkey Calf Raise", "target": "calves", "muscle_groups": {"primary": ["gastrocnemius"], "secondary": ["soleus"]}, "movement_pattern": "ankle extension", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_132", "name": "Leg Press Calf Raise", "target": "calves", "muscle_groups": {"primary": ["gastrocnemius"], "secondary": ["soleus"]}, "movement_pattern": "ankle extension", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_133", "name": "Single-Leg Bodyweight Calf Raise", "target": "calves", "muscle_groups": {"primary": ["calves"], "secondary": []}, "movement_pattern": "ankle extension", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_134", "name": "Dumbbell Single-Leg Calf Raise", "target": "calves", "muscle_groups": {"primary": ["calves"], "secondary": []}, "movement_pattern": "ankle extension", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_135", "name": "Tibialis Raise", "target": "shin", "muscle_groups": {"primary": ["tibialis anterior"], "secondary": []}, "movement_pattern": "ankle flexion", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_136", "name": "Hanging Leg Raise", "target": "abs", "muscle_groups": {"primary": ["abs", "hip flexors"], "secondary": ["forearms"]}, "movement_pattern": "flexion", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_137", "name": "Hanging Knee Raise", "target": "abs", "muscle_groups": {"primary": ["abs", "hip flexors"], "secondary": ["forearms"]}, "movement_pattern": "flexion", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_138", "name": "Captain's Chair Leg Raise", "target": "abs", "muscle_groups": {"primary": ["abs", "hip flexors"], "secondary": []}, "movement_pattern": "flexion", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_139", "name": "Ab Wheel Rollout", "target": "abs", "muscle_groups": {"primary": ["abs"], "secondary": ["lats", "lower back", "shoulders"]}, "movement_pattern": "anti-extension", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_140", "name": "Cable Crunch", "target": "abs", "muscle_groups": {"primary": ["abs"], "secondary": []}, "movement_pattern": "flexion", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_141", "name": "Decline Sit-Up", "target": "abs", "muscle_groups": {"primary": ["abs", "hip flexors"], "secondary": []}, "movement_pattern": "flexion", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_142", "name": "Weighted Decline Sit-Up", "target": "abs", "muscle_groups": {"primary": ["abs", "hip flexors"], "secondary": []}, "movement_pattern": "flexion", "equipment": "other", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_143", "name": "Air Bike / Bicycle Crunch", "target": "abs", "muscle_groups": {"primary": ["abs", "obliques"], "secondary": ["hip flexors"]}, "movement_pattern": "rotation / flexion", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_144", "name": "Russian Twist", "target": "obliques", "muscle_groups": {"primary": ["obliques"], "secondary": ["abs"]}, "movement_pattern": "rotation", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_145", "name": "Weighted Russian Twist", "target": "obliques", "muscle_groups": {"primary": ["obliques"], "secondary": ["abs"]}, "movement_pattern": "rotation", "equipment": "medicine ball", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_146", "name": "Cable Woodchopper (High-to-Low)", "target": "obliques", "muscle_groups": {"primary": ["obliques"], "secondary": ["abs", "shoulders"]}, "movement_pattern": "rotation", "equipment": "cable", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_147", "name": "Cable Woodchopper (Low-to-High)", "target": "obliques", "muscle_groups": {"primary": ["obliques"], "secondary": ["abs", "shoulders"]}, "movement_pattern": "rotation", "equipment": "cable", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_148", "name": "Plank", "target": "abs", "muscle_groups": {"primary": ["abs", "core"], "secondary": ["shoulders", "glutes"]}, "movement_pattern": "anti-extension", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_149", "name": "Side Plank", "target": "obliques", "muscle_groups": {"primary": ["obliques"], "secondary": ["core", "glute medius"]}, "movement_pattern": "anti-lateral flexion", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_150", "name": "Dragon Flag", "target": "abs", "muscle_groups": {"primary": ["abs"], "secondary": ["lower back", "lats"]}, "movement_pattern": "anti-extension", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_151", "name": "Toes to Bar", "target": "abs", "muscle_groups": {"primary": ["abs", "hip flexors"], "secondary": ["lats", "forearms"]}, "movement_pattern": "flexion", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_152", "name": "Dead Bug", "target": "abs", "muscle_groups": {"primary": ["abs"], "secondary": ["hip flexors"]}, "movement_pattern": "anti-extension", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_153", "name": "Bird Dog", "target": "lower back", "muscle_groups": {"primary": ["lower back", "glutes"], "secondary": ["core", "shoulders"]}, "movement_pattern": "anti-rotation", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_154", "name": "Farmer's Walk", "target": "traps", "muscle_groups": {"primary": ["forearms", "traps", "core"], "secondary": ["calves", "shoulders"]}, "movement_pattern": "anti-lateral flexion", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_155", "name": "Suitcase Carry", "target": "obliques", "muscle_groups": {"primary": ["obliques", "core", "forearms"], "secondary": ["traps"]}, "movement_pattern": "anti-lateral flexion", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_156", "name": "Lying Leg Raise", "target": "abs", "muscle_groups": {"primary": ["abs", "hip flexors"], "secondary": []}, "movement_pattern": "flexion", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_157", "name": "Reverse Crunch", "target": "abs", "muscle_groups": {"primary": ["abs"], "secondary": []}, "movement_pattern": "flexion", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_158", "name": "Mountain Climber", "target": "abs", "muscle_groups": {"primary": ["abs", "hip flexors"], "secondary": ["shoulders"]}, "movement_pattern": "flexion", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_159", "name": "Paloff Press", "target": "core", "muscle_groups": {"primary": ["obliques", "core"], "secondary": ["shoulders"]}, "movement_pattern": "anti-rotation", "equipment": "cable", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_160", "name": "Hollow Body Hold", "target": "abs", "muscle_groups": {"primary": ["abs"], "secondary": ["hip flexors"]}, "movement_pattern": "anti-extension", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_161", "name": "Band Pull-Apart", "target": "rear delts", "muscle_groups": {"primary": ["rear delts", "rhomboids"], "secondary": ["rotator cuff"]}, "movement_pattern": "horizontal pull", "equipment": "band", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_162", "name": "Banded Face Pull", "target": "rear delts", "muscle_groups": {"primary": ["rear delts", "traps"], "secondary": ["rotator cuff"]}, "movement_pattern": "horizontal pull", "equipment": "band", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_163", "name": "Resistance Band Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["hamstrings"]}, "movement_pattern": "squat", "equipment": "band", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_164", "name": "Resistance Band Biceps Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "band", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_165", "name": "Resistance Band Triceps Extension", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "band", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_166", "name": "Kettlebell Goblet Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["core"]}, "movement_pattern": "squat", "equipment": "kettlebell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_167", "name": "Kettlebell Turkish Get-Up", "target": "core", "muscle_groups": {"primary": ["core", "shoulders"], "secondary": ["glutes", "quads"]}, "movement_pattern": "anti-rotation", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_168", "name": "Kettlebell Sumo Deadlift High Pull", "target": "traps", "muscle_groups": {"primary": ["traps", "glutes", "side delts"], "secondary": ["hamstrings", "biceps"]}, "movement_pattern": "hinge / vertical pull", "equipment": "kettlebell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_169", "name": "Kettlebell Clean and Press", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "glutes"], "secondary": ["triceps", "core"]}, "movement_pattern": "vertical push", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_170", "name": "Kettlebell Windmill", "target": "obliques", "muscle_groups": {"primary": ["obliques", "hamstrings"], "secondary": ["shoulders", "lower back"]}, "movement_pattern": "hinge / rotation", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_171", "name": "Trap Bar Deadlift", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes", "lower back"], "secondary": ["traps", "hamstrings", "forearms"]}, "movement_pattern": "hinge / squat", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_172", "name": "Trap Bar Shrug", "target": "traps", "muscle_groups": {"primary": ["traps"], "secondary": ["forearms"]}, "movement_pattern": "vertical pull", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_173", "name": "Landmine Single-Arm Row", "target": "lats", "muscle_groups": {"primary": ["lats", "rhomboids"], "secondary": ["biceps", "core"]}, "movement_pattern": "horizontal pull", "equipment": "barbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_174", "name": "Landmine Rotation / Twist", "target": "obliques", "muscle_groups": {"primary": ["obliques"], "secondary": ["abs", "shoulders"]}, "movement_pattern": "rotation", "equipment": "barbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_175", "name": "Glute Ham Raise (GHR)", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings", "glutes"], "secondary": ["lower back", "calves"]}, "movement_pattern": "knee flexion", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_176", "name": "Reverse Hyperextension", "target": "glutes", "muscle_groups": {"primary": ["glutes", "lower back"], "secondary": ["hamstrings"]}, "movement_pattern": "hip extension", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_177", "name": "Belt Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["hamstrings"]}, "movement_pattern": "squat", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_178", "name": "Preacher Curl Machine", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": []}, "movement_pattern": "elbow flexion", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_179", "name": "Triceps Dip Machine", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": ["chest", "front delts"]}, "movement_pattern": "vertical push", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_180", "name": "Abdominal Crunch Machine", "target": "abs", "muscle_groups": {"primary": ["abs"], "secondary": []}, "movement_pattern": "flexion", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_181", "name": "Rotary Torso Machine", "target": "obliques", "muscle_groups": {"primary": ["obliques"], "secondary": ["abs"]}, "movement_pattern": "rotation", "equipment": "leverage machine", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_182", "name": "Assisted Pull-Up Machine", "target": "lats", "muscle_groups": {"primary": ["lats"], "secondary": ["biceps", "rhomboids"]}, "movement_pattern": "vertical pull", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_183", "name": "Assisted Dip Machine", "target": "triceps", "muscle_groups": {"primary": ["triceps", "chest"], "secondary": ["front delts"]}, "movement_pattern": "vertical push", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_184", "name": "Kettlebell Snatch", "target": "shoulders", "muscle_groups": {"primary": ["shoulders", "glutes", "hamstrings"], "secondary": ["core", "traps"]}, "movement_pattern": "hinge / vertical push", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_185", "name": "Dumbbell Floor Press", "target": "triceps", "muscle_groups": {"primary": ["chest", "triceps"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_186", "name": "Barbell Floor Press", "target": "triceps", "muscle_groups": {"primary": ["triceps", "chest"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_187", "name": "Dumbbell Incline Row", "target": "upper back", "muscle_groups": {"primary": ["rhomboids", "lats"], "secondary": ["biceps", "rear delts"]}, "movement_pattern": "horizontal pull", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_188", "name": "Cable Overhead Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": []}, "movement_pattern": "elbow flexion", "equipment": "cable", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_189", "name": "Plate Front Raise", "target": "front delts", "muscle_groups": {"primary": ["front delts"], "secondary": ["traps"]}, "movement_pattern": "vertical push", "equipment": "other", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_190", "name": "Landmine Meadows Row", "target": "lats", "muscle_groups": {"primary": ["lats", "rhomboids"], "secondary": ["biceps", "forearms"]}, "movement_pattern": "horizontal pull", "equipment": "barbell", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_191", "name": "Kettlebell Bottoms-Up Press", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "rotator cuff"], "secondary": ["forearms"]}, "movement_pattern": "vertical push", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_192", "name": "Seated Calf Raise (Dumbbell on Knees)", "target": "calves", "muscle_groups": {"primary": ["soleus"], "secondary": []}, "movement_pattern": "ankle extension", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_193", "name": "Barbell Overhead Carry", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "traps", "core"], "secondary": ["triceps"]}, "movement_pattern": "anti-extension", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_194", "name": "Zercher Carry", "target": "core", "muscle_groups": {"primary": ["core", "upper back"], "secondary": ["biceps", "quads"]}, "movement_pattern": "anti-extension", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_195", "name": "Standing Cable Fly", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_196", "name": "Seal Row", "target": "upper back", "muscle_groups": {"primary": ["rhomboids", "lats"], "secondary": ["biceps", "rear delts"]}, "movement_pattern": "horizontal pull", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_197", "name": "Ring Dip", "target": "lower chest", "muscle_groups": {"primary": ["chest", "triceps"], "secondary": ["front delts", "core"]}, "movement_pattern": "vertical push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_198", "name": "Muscle-Up", "target": "lats", "muscle_groups": {"primary": ["lats", "chest", "triceps"], "secondary": ["biceps", "core"]}, "movement_pattern": "vertical pull", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_199", "name": "GHD Sit-Up", "target": "abs", "muscle_groups": {"primary": ["abs", "hip flexors"], "secondary": ["quads"]}, "movement_pattern": "flexion", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_200", "name": "Copenhagen Side Plank", "target": "adductors", "muscle_groups": {"primary": ["adductors", "obliques"], "secondary": ["core"]}, "movement_pattern": "anti-lateral flexion", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_201", "name": "Guillotine Bench Press", "target": "upper chest", "muscle_groups": {"primary": ["chest"], "secondary": ["front delts", "triceps"]}, "movement_pattern": "horizontal push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_202", "name": "Reverse-Grip Bench Press", "target": "upper chest", "muscle_groups": {"primary": ["chest", "triceps"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_203", "name": "Cable Incline Press", "target": "upper chest", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_204", "name": "Single-Arm Dumbbell Bench Press", "target": "pectorals", "muscle_groups": {"primary": ["chest", "core"], "secondary": ["triceps"]}, "movement_pattern": "horizontal push", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_205", "name": "Svend Press", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "other", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_206", "name": "Pause Bench Press", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_207", "name": "Spoto Press", "target": "pectorals", "muscle_groups": {"primary": ["chest", "triceps"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_208", "name": "Close-Neutral Grip Dumbbell Press", "target": "triceps", "muscle_groups": {"primary": ["chest", "triceps"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_209", "name": "Plyometric Push-Up", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_210", "name": "Feet-Elevated Push-Up", "target": "upper chest", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts", "core"]}, "movement_pattern": "horizontal push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_211", "name": "Hand-Release Push-Up", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "core"]}, "movement_pattern": "horizontal push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_212", "name": "Band-Resisted Push-Up", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "band", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_213", "name": "Decline Cable Fly", "target": "lower chest", "muscle_groups": {"primary": ["chest"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_214", "name": "Pin Bench Press", "target": "pectorals", "muscle_groups": {"primary": ["chest", "triceps"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_215", "name": "Single-Arm Incline Dumbbell Press", "target": "upper chest", "muscle_groups": {"primary": ["chest", "core"], "secondary": ["triceps"]}, "movement_pattern": "horizontal push", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_216", "name": "Low-to-High Dumbbell Fly", "target": "upper chest", "muscle_groups": {"primary": ["chest"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_217", "name": "Machine Incline Chest Fly", "target": "upper chest", "muscle_groups": {"primary": ["chest"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_218", "name": "Kettlebell Press", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "chest"], "secondary": ["triceps"]}, "movement_pattern": "vertical push", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_219", "name": "Deficit Push-Up", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_220", "name": "Single-Arm Push-Up", "target": "pectorals", "muscle_groups": {"primary": ["chest", "core"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_221", "name": "Safety Bar Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "upper back"], "secondary": ["glutes", "core"]}, "movement_pattern": "squat", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_222", "name": "Pause Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["core", "hamstrings"]}, "movement_pattern": "squat", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_223", "name": "Box Squat", "target": "glutes", "muscle_groups": {"primary": ["glutes", "quads"], "secondary": ["hamstrings", "lower back"]}, "movement_pattern": "squat", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_224", "name": "Pin Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["core"]}, "movement_pattern": "squat", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_225", "name": "Forward Lunge", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["hamstrings"]}, "movement_pattern": "squat", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_226", "name": "Curtsy Lunge", "target": "glute medius", "muscle_groups": {"primary": ["glutes", "quads"], "secondary": ["adductors"]}, "movement_pattern": "squat", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_227", "name": "Pendulum Squat", "target": "quads", "muscle_groups": {"primary": ["quads"], "secondary": ["glutes"]}, "movement_pattern": "squat", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_228", "name": "V-Squat Machine", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["hamstrings"]}, "movement_pattern": "squat", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_229", "name": "Single-Leg Leg Press", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": []}, "movement_pattern": "squat", "equipment": "leverage machine", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_230", "name": "Goblet Forward Lunge", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["core"]}, "movement_pattern": "squat", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_231", "name": "Overhead Barbell Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "shoulders", "core"], "secondary": ["upper back", "glutes"]}, "movement_pattern": "squat", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_232", "name": "Anderson Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["core"]}, "movement_pattern": "squat", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_233", "name": "Kettlebell Front Rack Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "core"], "secondary": ["upper back", "glutes"]}, "movement_pattern": "squat", "equipment": "kettlebell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_234", "name": "Wall Sit", "target": "quads", "muscle_groups": {"primary": ["quads"], "secondary": ["calves"]}, "movement_pattern": "squat", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_235", "name": "Jump Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["calves"]}, "movement_pattern": "squat", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_236", "name": "Skater Hop", "target": "glute medius", "muscle_groups": {"primary": ["glutes", "quads"], "secondary": ["calves", "ankle stabilizers"]}, "movement_pattern": "squat", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_237", "name": "Deficit Reverse Lunge", "target": "glutes", "muscle_groups": {"primary": ["glutes", "quads"], "secondary": ["hamstrings"]}, "movement_pattern": "squat", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_238", "name": "Landmine Goblet Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["core"]}, "movement_pattern": "squat", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_239", "name": "Step-Down (Eccentric Focus)", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["ankle stabilizers"]}, "movement_pattern": "squat", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_240", "name": "Spanish Squat", "target": "quads", "muscle_groups": {"primary": ["quads"], "secondary": []}, "movement_pattern": "squat", "equipment": "band", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_241", "name": "Deficit Deadlift", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings", "glutes", "quads"], "secondary": ["lower back", "traps"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_242", "name": "Pause Deadlift", "target": "lower back", "muscle_groups": {"primary": ["lower back", "hamstrings", "glutes"], "secondary": ["forearms", "traps"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_243", "name": "Reeves Deadlift", "target": "upper back", "muscle_groups": {"primary": ["upper back", "traps", "forearms"], "secondary": ["hamstrings", "glutes"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_244", "name": "Single-Leg Leg Curl", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings"], "secondary": []}, "movement_pattern": "knee flexion", "equipment": "leverage machine", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_245", "name": "Band Hamstring Curl", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings"], "secondary": []}, "movement_pattern": "knee flexion", "equipment": "band", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_246", "name": "Dumbbell Lying Leg Curl", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings"], "secondary": ["calves"]}, "movement_pattern": "knee flexion", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_247", "name": "Kettlebell Romanian Deadlift", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings", "glutes"], "secondary": ["lower back"]}, "movement_pattern": "hinge", "equipment": "kettlebell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_248", "name": "Single-Leg Glute Bridge", "target": "glutes", "muscle_groups": {"primary": ["glutes"], "secondary": ["hamstrings", "core"]}, "movement_pattern": "hinge", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_249", "name": "Frog Pump", "target": "glutes", "muscle_groups": {"primary": ["glutes"], "secondary": []}, "movement_pattern": "hinge", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_250", "name": "Standing Cable Hip Extension", "target": "glutes", "muscle_groups": {"primary": ["glutes"], "secondary": ["hamstrings"]}, "movement_pattern": "hip extension", "equipment": "cable", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_251", "name": "Clamshell", "target": "glute medius", "muscle_groups": {"primary": ["glute medius"], "secondary": []}, "movement_pattern": "hip abduction", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_252", "name": "Banded Clamshell", "target": "glute medius", "muscle_groups": {"primary": ["glute medius"], "secondary": []}, "movement_pattern": "hip abduction", "equipment": "band", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_253", "name": "Banded Lateral Monster Walk", "target": "glute medius", "muscle_groups": {"primary": ["glute medius"], "secondary": ["quads"]}, "movement_pattern": "hip abduction", "equipment": "band", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_254", "name": "Fire Hydrant", "target": "glute medius", "muscle_groups": {"primary": ["glute medius"], "secondary": ["core"]}, "movement_pattern": "hip abduction", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_255", "name": "Cable Hip Abduction", "target": "glute medius", "muscle_groups": {"primary": ["glute medius"], "secondary": []}, "movement_pattern": "hip abduction", "equipment": "cable", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_256", "name": "Hyperextension with Weight", "target": "lower back", "muscle_groups": {"primary": ["lower back", "glutes"], "secondary": ["hamstrings"]}, "movement_pattern": "hinge", "equipment": "other", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_257", "name": "Good Morning with Safety Bar", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings", "lower back"], "secondary": ["glutes"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_258", "name": "Single-Leg Kettlebell Deadlift", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings", "glutes"], "secondary": ["core"]}, "movement_pattern": "hinge", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_259", "name": "Banded Good Morning", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings", "lower back"], "secondary": ["glutes"]}, "movement_pattern": "hinge", "equipment": "band", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_260", "name": "Smith Machine Hip Thrust", "target": "glutes", "muscle_groups": {"primary": ["glutes"], "secondary": ["hamstrings"]}, "movement_pattern": "hinge", "equipment": "smith machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_261", "name": "Weighted Pull-Up", "target": "lats", "muscle_groups": {"primary": ["lats", "upper back"], "secondary": ["biceps", "forearms"]}, "movement_pattern": "vertical pull", "equipment": "other", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_262", "name": "Weighted Chin-Up", "target": "lats", "muscle_groups": {"primary": ["lats", "biceps"], "secondary": ["forearms"]}, "movement_pattern": "vertical pull", "equipment": "other", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_263", "name": "Commando Pull-Up", "target": "lats", "muscle_groups": {"primary": ["lats", "biceps"], "secondary": ["core", "forearms"]}, "movement_pattern": "vertical pull", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_264", "name": "Kneeling Cable Lat Pulldown", "target": "lats", "muscle_groups": {"primary": ["lats"], "secondary": ["biceps", "core"]}, "movement_pattern": "vertical pull", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_265", "name": "Lat Pulldown behind the Neck", "target": "lats", "muscle_groups": {"primary": ["lats", "upper back"], "secondary": ["biceps"]}, "movement_pattern": "vertical pull", "equipment": "cable", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_266", "name": "Wide-Grip Seated Cable Row", "target": "upper back", "muscle_groups": {"primary": ["rhomboids", "rear delts"], "secondary": ["biceps", "lats"]}, "movement_pattern": "horizontal pull", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_267", "name": "Chest-Supported Barbell Row", "target": "upper back", "muscle_groups": {"primary": ["rhomboids", "lats"], "secondary": ["biceps"]}, "movement_pattern": "horizontal pull", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_268", "name": "Single-Arm Dumbbell Row on Bench", "target": "lats", "muscle_groups": {"primary": ["lats"], "secondary": ["biceps", "core"]}, "movement_pattern": "horizontal pull", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_269", "name": "Kettlebell Gorilla Row", "target": "lats", "muscle_groups": {"primary": ["lats", "rhomboids"], "secondary": ["biceps", "core", "lower back"]}, "movement_pattern": "horizontal pull", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_270", "name": "Kettlebell Single-Arm Row", "target": "lats", "muscle_groups": {"primary": ["lats"], "secondary": ["biceps", "core"]}, "movement_pattern": "horizontal pull", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_271", "name": "Helms Row", "target": "upper back", "muscle_groups": {"primary": ["rhomboids", "rear delts"], "secondary": ["biceps"]}, "movement_pattern": "horizontal pull", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_272", "name": "Y-Raise (Incline Bench)", "target": "traps", "muscle_groups": {"primary": ["lower traps", "rear delts"], "secondary": ["shoulders"]}, "movement_pattern": "vertical pull", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_273", "name": "T-Raise (Incline Bench)", "target": "upper back", "muscle_groups": {"primary": ["rhomboids", "rear delts"], "secondary": ["traps"]}, "movement_pattern": "horizontal pull", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_274", "name": "Scapular Pull-Up", "target": "traps", "muscle_groups": {"primary": ["lower traps", "rhomboids"], "secondary": ["forearms"]}, "movement_pattern": "vertical pull", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_275", "name": "Behind-the-Back Barbell Shrug", "target": "traps", "muscle_groups": {"primary": ["traps"], "secondary": ["forearms"]}, "movement_pattern": "vertical pull", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_276", "name": "Overhead Dumbbell Shrug", "target": "traps", "muscle_groups": {"primary": ["upper traps"], "secondary": ["shoulders"]}, "movement_pattern": "vertical push", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_277", "name": "Cable Shrug", "target": "traps", "muscle_groups": {"primary": ["traps"], "secondary": ["forearms"]}, "movement_pattern": "vertical pull", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_278", "name": "Jefferson Curl", "target": "lower back", "muscle_groups": {"primary": ["lower back", "hamstrings"], "secondary": ["core"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_279", "name": "Superman", "target": "lower back", "muscle_groups": {"primary": ["lower back", "glutes"], "secondary": []}, "movement_pattern": "hinge", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_280", "name": "Prone Y-T-W Raise", "target": "upper back", "muscle_groups": {"primary": ["lower traps", "rhomboids", "rear delts"], "secondary": []}, "movement_pattern": "horizontal pull", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_281", "name": "Viking Press", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "side delts"], "secondary": ["triceps"]}, "movement_pattern": "vertical push", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_282", "name": "Single-Arm Landmine Shoulder Press", "target": "shoulders", "muscle_groups": {"primary": ["front delts"], "secondary": ["triceps", "core"]}, "movement_pattern": "vertical push", "equipment": "barbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_283", "name": "Z Press", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "core"], "secondary": ["triceps", "upper back"]}, "movement_pattern": "vertical push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_284", "name": "Dumbbell Z Press", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "core"], "secondary": ["triceps"]}, "movement_pattern": "vertical push", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_285", "name": "Incline Dumbbell Lateral Raise", "target": "side delts", "muscle_groups": {"primary": ["side delts"], "secondary": []}, "movement_pattern": "shoulder abduction", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_286", "name": "Behind-the-Back Cable Lateral Raise", "target": "side delts", "muscle_groups": {"primary": ["side delts"], "secondary": []}, "movement_pattern": "shoulder abduction", "equipment": "cable", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_287", "name": "Lu Raise", "target": "side delts", "muscle_groups": {"primary": ["side delts", "front delts"], "secondary": ["traps"]}, "movement_pattern": "shoulder abduction", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_288", "name": "Plate Steering Wheel", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "side delts"], "secondary": ["forearms"]}, "movement_pattern": "rotation", "equipment": "other", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_289", "name": "Cable Face Pull with External Rotation", "target": "rear delts", "muscle_groups": {"primary": ["rear delts", "rotator cuff"], "secondary": ["rhomboids"]}, "movement_pattern": "horizontal pull", "equipment": "cable", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_290", "name": "Seated Bent-Over Rear Delt Fly", "target": "rear delts", "muscle_groups": {"primary": ["rear delts"], "secondary": ["rhomboids"]}, "movement_pattern": "horizontal pull", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_291", "name": "Lying Cable Lateral Raise", "target": "side delts", "muscle_groups": {"primary": ["side delts"], "secondary": []}, "movement_pattern": "shoulder abduction", "equipment": "cable", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_292", "name": "Smith Machine Overhead Press", "target": "shoulders", "muscle_groups": {"primary": ["front delts"], "secondary": ["triceps"]}, "movement_pattern": "vertical push", "equipment": "smith machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_293", "name": "Single-Arm Dumbbell Arnold Press", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "side delts"], "secondary": ["triceps", "core"]}, "movement_pattern": "vertical push", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_294", "name": "Halos (Kettlebell)", "target": "shoulders", "muscle_groups": {"primary": ["rotator cuff", "shoulders"], "secondary": ["core"]}, "movement_pattern": "rotation", "equipment": "kettlebell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_295", "name": "Scapular Push-Up", "target": "serratus anterior", "muscle_groups": {"primary": ["serratus anterior"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_296", "name": "Band External Rotation", "target": "rotator cuff", "muscle_groups": {"primary": ["infraspinatus", "teres minor"], "secondary": []}, "movement_pattern": "rotation", "equipment": "band", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_297", "name": "Band Internal Rotation", "target": "rotator cuff", "muscle_groups": {"primary": ["subscapularis"], "secondary": []}, "movement_pattern": "rotation", "equipment": "band", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_298", "name": "Cable External Rotation", "target": "rotator cuff", "muscle_groups": {"primary": ["rotator cuff"], "secondary": []}, "movement_pattern": "rotation", "equipment": "cable", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_299", "name": "Cuban Press", "target": "rotator cuff", "muscle_groups": {"primary": ["rotator cuff", "rear delts"], "secondary": ["side delts"]}, "movement_pattern": "vertical push", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_300", "name": "Dumbbell Overhead Carry", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "core"], "secondary": ["triceps", "traps"]}, "movement_pattern": "anti-extension", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_301", "name": "Zottman Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps", "brachioradialis"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_302", "name": "Drag Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_303", "name": "Cable Preacher Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": []}, "movement_pattern": "elbow flexion", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_304", "name": "Single-Arm Cable Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": []}, "movement_pattern": "elbow flexion", "equipment": "cable", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_305", "name": "Bayesian Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps (long head)"], "secondary": []}, "movement_pattern": "elbow flexion", "equipment": "cable", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_306", "name": "Plate Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "other", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_307", "name": "Cross-Body Hammer Curl", "target": "brachialis", "muscle_groups": {"primary": ["brachialis", "biceps"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_308", "name": "Waiters Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps (short head)"], "secondary": []}, "movement_pattern": "elbow flexion", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_309", "name": "Kettlebell Biceps Curl", "target": "biceps", "muscle_groups": {"primary": ["biceps"], "secondary": ["forearms"]}, "movement_pattern": "elbow flexion", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_310", "name": "Farmer's Handle Wrist Roller", "target": "forearms", "muscle_groups": {"primary": ["forearms"], "secondary": []}, "movement_pattern": "elbow flexion", "equipment": "other", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_311", "name": "Behind-the-Back Barbell Wrist Curl", "target": "forearms", "muscle_groups": {"primary": ["wrist flexors"], "secondary": []}, "movement_pattern": "elbow flexion", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_312", "name": "Plate Pinch Hold", "target": "forearms", "muscle_groups": {"primary": ["grip strength", "forearms"], "secondary": []}, "movement_pattern": "anti-extension", "equipment": "other", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_313", "name": "Dead Hang", "target": "forearms", "muscle_groups": {"primary": ["grip strength", "forearms"], "secondary": ["lats", "shoulders"]}, "movement_pattern": "vertical pull", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_314", "name": "Towel Pull-Up", "target": "forearms", "muscle_groups": {"primary": ["grip strength", "forearms", "lats"], "secondary": ["biceps"]}, "movement_pattern": "vertical pull", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_315", "name": "Single-Arm Overhead Cable Triceps Extension", "target": "triceps", "muscle_groups": {"primary": ["triceps (long head)"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "cable", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_316", "name": "Incline Dumbbell Triceps Extension", "target": "triceps", "muscle_groups": {"primary": ["triceps (long head)"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_317", "name": "Cross-Body Cable Extension", "target": "triceps", "muscle_groups": {"primary": ["triceps (lateral head)"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "cable", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_318", "name": "Tate Press", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_319", "name": "Board Press", "target": "triceps", "muscle_groups": {"primary": ["triceps", "chest"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_320", "name": "California Press", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": ["chest"]}, "movement_pattern": "elbow extension", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_321", "name": "Bodyweight Triceps Extension (Bar)", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": ["core"]}, "movement_pattern": "elbow extension", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_322", "name": "Reverse-Grip Cable Pushdown", "target": "triceps", "muscle_groups": {"primary": ["triceps (medial head)"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_323", "name": "EZ Bar Overhead Triceps Extension", "target": "triceps", "muscle_groups": {"primary": ["triceps (long head)"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_324", "name": "Dumbbell Skull Crusher", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_325", "name": "Diamond Push-Up on Incline", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": ["chest"]}, "movement_pattern": "horizontal push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_326", "name": "Cable Overhead Triceps Extension (Rope)", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "cable", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_327", "name": "Barbell Overhead Triceps Extension", "target": "triceps", "muscle_groups": {"primary": ["triceps (long head)"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_328", "name": "Decline Skull Crusher", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_329", "name": "Single-Arm Cable Pushdown", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "cable", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_330", "name": "Machine Triceps Extension", "target": "triceps", "muscle_groups": {"primary": ["triceps"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "leverage machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_331", "name": "Smith Machine Standing Calf Raise", "target": "calves", "muscle_groups": {"primary": ["gastrocnemius"], "secondary": ["soleus"]}, "movement_pattern": "ankle extension", "equipment": "smith machine", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_332", "name": "Barbell Standing Calf Raise", "target": "calves", "muscle_groups": {"primary": ["gastrocnemius"], "secondary": ["soleus"]}, "movement_pattern": "ankle extension", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_333", "name": "Dumbbell Standing Calf Raise", "target": "calves", "muscle_groups": {"primary": ["gastrocnemius"], "secondary": ["soleus"]}, "movement_pattern": "ankle extension", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_334", "name": "Seated Calf Raise with Barbell on Knees", "target": "calves", "muscle_groups": {"primary": ["soleus"], "secondary": []}, "movement_pattern": "ankle extension", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_335", "name": "Single-Leg Leg Press Calf Raise", "target": "calves", "muscle_groups": {"primary": ["calves"], "secondary": []}, "movement_pattern": "ankle extension", "equipment": "leverage machine", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_336", "name": "Farmer's Walk on Toes", "target": "calves", "muscle_groups": {"primary": ["calves", "forearms"], "secondary": ["core"]}, "movement_pattern": "ankle extension", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_337", "name": "Jump Rope", "target": "calves", "muscle_groups": {"primary": ["calves"], "secondary": ["cardio", "forearms"]}, "movement_pattern": "ankle extension", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_338", "name": "Box Calf Jumps", "target": "calves", "muscle_groups": {"primary": ["calves"], "secondary": ["quads"]}, "movement_pattern": "ankle extension", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_339", "name": "Band Ankle Dorsiflexion", "target": "shin", "muscle_groups": {"primary": ["tibialis anterior"], "secondary": []}, "movement_pattern": "ankle flexion", "equipment": "band", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_340", "name": "Kettlebell Tibialis Raise", "target": "shin", "muscle_groups": {"primary": ["tibialis anterior"], "secondary": []}, "movement_pattern": "ankle flexion", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_341", "name": "Hanging Oblique Knee Raise", "target": "obliques", "muscle_groups": {"primary": ["obliques"], "secondary": ["abs", "forearms"]}, "movement_pattern": "rotation / flexion", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_342", "name": "L-Sit", "target": "abs", "muscle_groups": {"primary": ["abs", "hip flexors"], "secondary": ["triceps", "quads"]}, "movement_pattern": "anti-extension", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_343", "name": "V-Up", "target": "abs", "muscle_groups": {"primary": ["abs", "hip flexors"], "secondary": []}, "movement_pattern": "flexion", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_344", "name": "Weighted Planks", "target": "abs", "muscle_groups": {"primary": ["abs", "core"], "secondary": ["lower back"]}, "movement_pattern": "anti-extension", "equipment": "other", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_345", "name": "RKC Plank", "target": "abs", "muscle_groups": {"primary": ["abs", "glutes"], "secondary": ["shoulders"]}, "movement_pattern": "anti-extension", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_346", "name": "Plank to Push-Up", "target": "abs", "muscle_groups": {"primary": ["core", "triceps"], "secondary": ["chest", "shoulders"]}, "movement_pattern": "anti-extension", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_347", "name": "Spiderman Plank", "target": "obliques", "muscle_groups": {"primary": ["obliques", "abs"], "secondary": ["hip flexors"]}, "movement_pattern": "flexion", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_348", "name": "Cable Side Bend", "target": "obliques", "muscle_groups": {"primary": ["obliques"], "secondary": ["lower back"]}, "movement_pattern": "lateral flexion", "equipment": "cable", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_349", "name": "Dumbbell Side Bend", "target": "obliques", "muscle_groups": {"primary": ["obliques"], "secondary": ["lower back"]}, "movement_pattern": "lateral flexion", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_350", "name": "45-Degree Side Bend", "target": "obliques", "muscle_groups": {"primary": ["obliques"], "secondary": ["lower back"]}, "movement_pattern": "lateral flexion", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_351", "name": "Ab Wheel Rollout from Feet", "target": "abs", "muscle_groups": {"primary": ["abs"], "secondary": ["lats", "shoulders", "lower back"]}, "movement_pattern": "anti-extension", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_352", "name": "Barbell Rollout", "target": "abs", "muscle_groups": {"primary": ["abs"], "secondary": ["lats", "shoulders"]}, "movement_pattern": "anti-extension", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_353", "name": "Stability Ball Ab Rollout", "target": "abs", "muscle_groups": {"primary": ["abs"], "secondary": ["shoulders"]}, "movement_pattern": "anti-extension", "equipment": "stability ball", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_354", "name": "Jackknife on Stability Ball", "target": "abs", "muscle_groups": {"primary": ["abs", "hip flexors"], "secondary": ["shoulders"]}, "movement_pattern": "flexion", "equipment": "stability ball", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_355", "name": "Pike on Stability Ball", "target": "abs", "muscle_groups": {"primary": ["abs"], "secondary": ["shoulders"]}, "movement_pattern": "flexion", "equipment": "stability ball", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_356", "name": "Flutter Kicks", "target": "abs", "muscle_groups": {"primary": ["abs", "hip flexors"], "secondary": []}, "movement_pattern": "anti-extension", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_357", "name": "Scissor Kicks", "target": "abs", "muscle_groups": {"primary": ["abs", "hip flexors"], "secondary": ["adductors"]}, "movement_pattern": "anti-extension", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_358", "name": "Toe Touches (Lying)", "target": "abs", "muscle_groups": {"primary": ["abs"], "secondary": []}, "movement_pattern": "flexion", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_359", "name": "Windshield Wipers (Lying)", "target": "obliques", "muscle_groups": {"primary": ["obliques"], "secondary": ["abs", "lower back"]}, "movement_pattern": "rotation", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_360", "name": "Hanging Windshield Wipers", "target": "obliques", "muscle_groups": {"primary": ["obliques", "abs"], "secondary": ["lats", "forearms"]}, "movement_pattern": "rotation", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_361", "name": "Bear Crawl Hold", "target": "core", "muscle_groups": {"primary": ["abs", "quads"], "secondary": ["shoulders"]}, "movement_pattern": "anti-extension", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_362", "name": "Bear Crawl Movement", "target": "core", "muscle_groups": {"primary": ["core", "shoulders", "quads"], "secondary": []}, "movement_pattern": "anti-rotation", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_363", "name": "Stir the Pot (Stability Ball)", "target": "abs", "muscle_groups": {"primary": ["abs", "obliques"], "secondary": ["shoulders"]}, "movement_pattern": "anti-extension", "equipment": "stability ball", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_364", "name": "Overhead Kettlebell Carry", "target": "core", "muscle_groups": {"primary": ["core", "shoulders"], "secondary": ["traps"]}, "movement_pattern": "anti-lateral flexion", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_365", "name": "Waiter Carry", "target": "core", "muscle_groups": {"primary": ["core", "shoulders"], "secondary": ["forearms"]}, "movement_pattern": "anti-lateral flexion", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_366", "name": "Barbell Zercher Squat Hold", "target": "core", "muscle_groups": {"primary": ["core", "upper back"], "secondary": ["biceps", "quads"]}, "movement_pattern": "anti-extension", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_367", "name": "Half-Kneeling Pallof Press", "target": "core", "muscle_groups": {"primary": ["obliques", "core"], "secondary": ["glutes"]}, "movement_pattern": "anti-rotation", "equipment": "cable", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_368", "name": "Tall-Kneeling Cable Overhead Triceps Extension", "target": "triceps", "muscle_groups": {"primary": ["triceps", "core"], "secondary": []}, "movement_pattern": "elbow extension", "equipment": "cable", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_369", "name": "Landmine Rainbow", "target": "obliques", "muscle_groups": {"primary": ["obliques"], "secondary": ["shoulders", "abs"]}, "movement_pattern": "rotation", "equipment": "barbell", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_370", "name": "Single-Arm Overhead Kettlebell Squat", "target": "core", "muscle_groups": {"primary": ["core", "quads", "shoulders"], "secondary": ["glutes"]}, "movement_pattern": "squat", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_371", "name": "Single-Leg Balance Drive", "target": "ankle stabilizers", "muscle_groups": {"primary": ["ankle stabilizers", "glute medius"], "secondary": ["core"]}, "movement_pattern": "squat", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_372", "name": "TRX Suspension Row", "target": "upper back", "muscle_groups": {"primary": ["rhomboids", "lats"], "secondary": ["biceps", "core"]}, "movement_pattern": "horizontal pull", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_373", "name": "TRX Push-Up", "target": "pectorals", "muscle_groups": {"primary": ["chest", "core"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_374", "name": "TRX Atomic Push-Up", "target": "pectorals", "muscle_groups": {"primary": ["chest", "abs"], "secondary": ["triceps", "hip flexors"]}, "movement_pattern": "horizontal push / flexion", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_375", "name": "TRX Hamstring Runner", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings", "glutes"], "secondary": ["core"]}, "movement_pattern": "knee flexion", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_376", "name": "TRX Y-Fly", "target": "rear delts", "muscle_groups": {"primary": ["rear delts", "lower traps"], "secondary": ["core"]}, "movement_pattern": "vertical pull", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_377", "name": "Band-Resisted Barbell Deadlift", "target": "hamstrings", "muscle_groups": {"primary": ["hamstrings", "glutes"], "secondary": ["lower back", "traps"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_378", "name": "Chain-Resisted Bench Press", "target": "triceps", "muscle_groups": {"primary": ["chest", "triceps"], "secondary": ["front delts"]}, "movement_pattern": "horizontal push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_379", "name": "Sled Push", "target": "quads", "muscle_groups": {"primary": ["quads", "calves", "glutes"], "secondary": ["hamstrings", "core"]}, "movement_pattern": "squat", "equipment": "other", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_380", "name": "Sled Pull (Backward)", "target": "quads", "muscle_groups": {"primary": ["quads"], "secondary": ["calves", "grip strength"]}, "movement_pattern": "knee extension", "equipment": "other", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_381", "name": "Medicine Ball Chest Pass", "target": "pectorals", "muscle_groups": {"primary": ["chest"], "secondary": ["triceps", "front delts"]}, "movement_pattern": "horizontal push", "equipment": "medicine ball", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_382", "name": "Medicine Ball Overhead Slam", "target": "abs", "muscle_groups": {"primary": ["abs", "lats"], "secondary": ["shoulders"]}, "movement_pattern": "flexion", "equipment": "medicine ball", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_383", "name": "Medicine Ball Rotational Wall Throw", "target": "obliques", "muscle_groups": {"primary": ["obliques"], "secondary": ["chest", "shoulders"]}, "movement_pattern": "rotation", "equipment": "medicine ball", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_384", "name": "Battle Rope Alternating Waves", "target": "shoulders", "muscle_groups": {"primary": ["shoulders", "forearms"], "secondary": ["core", "cardio"]}, "movement_pattern": "vertical push", "equipment": "other", "symmetry": "unilateral", "difficulty": "beginner"},
+  {"id": "ex_385", "name": "Battle Rope Double Arm Slams", "target": "abs", "muscle_groups": {"primary": ["abs", "lats", "shoulders"], "secondary": ["forearms"]}, "movement_pattern": "flexion", "equipment": "other", "symmetry": "bilateral", "difficulty": "intermediate"},
+  {"id": "ex_386", "name": "Barbell Muscle Snatch", "target": "shoulders", "muscle_groups": {"primary": ["shoulders", "traps", "glutes"], "secondary": ["hamstrings", "triceps"]}, "movement_pattern": "hinge / vertical push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_387", "name": "Barbell Power Clean", "target": "traps", "muscle_groups": {"primary": ["traps", "glutes", "hamstrings", "quads"], "secondary": ["forearms", "core"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_388", "name": "Barbell Hang Clean", "target": "traps", "muscle_groups": {"primary": ["traps", "glutes", "hamstrings"], "secondary": ["forearms"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_389", "name": "Barbell Push Jerk", "target": "shoulders", "muscle_groups": {"primary": ["front delts", "quads"], "secondary": ["triceps", "core"]}, "movement_pattern": "vertical push", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"},
+  {"id": "ex_390", "name": "Single-Leg Box Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "glutes"], "secondary": ["core"]}, "movement_pattern": "squat", "equipment": "body weight", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_391", "name": "Band-Resisted Hip Thrust", "target": "glutes", "muscle_groups": {"primary": ["glutes"], "secondary": ["hamstrings"]}, "movement_pattern": "hinge", "equipment": "band", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_392", "name": "Frog Reverse Hyperextension", "target": "glutes", "muscle_groups": {"primary": ["glutes"], "secondary": ["lower back"]}, "movement_pattern": "hip extension", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_393", "name": "Dumbbell High Pull", "target": "traps", "muscle_groups": {"primary": ["traps", "side delts"], "secondary": ["biceps"]}, "movement_pattern": "vertical pull", "equipment": "dumbbell", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_394", "name": "Kettlebell Halo to Reverse Lunge", "target": "core", "muscle_groups": {"primary": ["core", "quads", "shoulders"], "secondary": ["glutes"]}, "movement_pattern": "squat / rotation", "equipment": "kettlebell", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_395", "name": "Incline Dumbbell Shrug", "target": "traps", "muscle_groups": {"primary": ["upper traps", "rhomboids"], "secondary": []}, "movement_pattern": "vertical pull", "equipment": "dumbbell", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_396", "name": "Cable Internal Rotation (Elevated Arm)", "target": "rotator cuff", "muscle_groups": {"primary": ["subscapularis"], "secondary": []}, "movement_pattern": "rotation", "equipment": "cable", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_397", "name": "Cable External Rotation (Elevated Arm)", "target": "rotator cuff", "muscle_groups": {"primary": ["infraspinatus"], "secondary": []}, "movement_pattern": "rotation", "equipment": "cable", "symmetry": "unilateral", "difficulty": "intermediate"},
+  {"id": "ex_398", "name": "Prone Cobra", "target": "lower back", "muscle_groups": {"primary": ["lower back", "rhomboids"], "secondary": ["glutes"]}, "movement_pattern": "hinge", "equipment": "body weight", "symmetry": "bilateral", "difficulty": "beginner"},
+  {"id": "ex_399", "name": "Jefferson Squat", "target": "quads", "muscle_groups": {"primary": ["quads", "adductors", "glutes"], "secondary": ["core"]}, "movement_pattern": "squat", "equipment": "barbell", "symmetry": "unilateral", "difficulty": "advanced"},
+  {"id": "ex_400", "name": "Zercher Deadlift", "target": "lower back", "muscle_groups": {"primary": ["lower back", "glutes", "upper back"], "secondary": ["biceps", "hamstrings"]}, "movement_pattern": "hinge", "equipment": "barbell", "symmetry": "bilateral", "difficulty": "advanced"}
 ]
