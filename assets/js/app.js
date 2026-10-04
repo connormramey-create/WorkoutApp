@@ -18,6 +18,27 @@ let workoutHistory = JSON.parse(localStorage.getItem("gymbro_history")) || [];
 const UPPER_BODY_TARGETS = ["chest", "upper chest", "lower chest", "pectorals", "lats", "upper back", "shoulders", "front delts", "side delts", "rear delts", "traps", "biceps", "brachialis", "triceps", "forearms"];
 const LOWER_BODY_TARGETS = ["quads", "hamstrings", "glutes", "glute medius", "calves", "soleus", "gastrocnemius", "adductors", "shin", "tibialis anterior", "abs", "obliques", "core", "lower back"];
 
+// Antagonistic Muscle Pair Map
+const ANTAGONIST_MAP = {
+  "chest": ["lats", "upper back", "rhomboids"],
+  "upper chest": ["lats", "upper back"],
+  "lower chest": ["lats", "upper back"],
+  "pectorals": ["lats", "upper back"],
+  "lats": ["chest", "pectorals", "shoulders"],
+  "upper back": ["chest", "pectorals"],
+  "biceps": ["triceps"],
+  "brachialis": ["triceps"],
+  "triceps": ["biceps", "brachialis"],
+  "quads": ["hamstrings", "glutes"],
+  "hamstrings": ["quads"],
+  "shoulders": ["lats", "rear delts"],
+  "front delts": ["rear delts", "lats"],
+  "side delts": ["traps", "lats"],
+  "abs": ["lower back"],
+  "obliques": ["lower back"],
+  "lower back": ["abs", "obliques"]
+};
+
 // Initialize App
 document.addEventListener("DOMContentLoaded", async () => {
   await loadExercises();
@@ -38,12 +59,12 @@ async function loadExercises() {
   }
 }
 
-// Generate Exercise Routines based on Settings
+// Generate Exercise Routines based on Settings & Antagonistic Supersets
 function generateWorkoutSession(splitTypeOverride) {
   const split = splitTypeOverride || userSettings.split;
   const duration = parseInt(userSettings.duration, 10);
   
-  // Determine exercise count based on duration
+  // Exercise count based on duration
   const exerciseCount = Math.max(3, Math.floor(duration / 7.5)); // 30m=4, 45m=6, 60m=8, 90m=12
 
   // Filter exercises by equipment settings
@@ -71,7 +92,7 @@ function generateWorkoutSession(splitTypeOverride) {
     title = "LEGS SESSION";
   }
 
-  // Filter by targets
+  // Filter pool by target muscles
   let pool = availableExercises;
   if (targetMuscles.length > 0) {
     pool = availableExercises.filter(ex => 
@@ -80,13 +101,51 @@ function generateWorkoutSession(splitTypeOverride) {
     );
   }
 
-  // Pick random exercises without repeating targets too quickly
-  const selected = [];
-  const poolCopy = [...pool];
-  
-  while (selected.length < exerciseCount && poolCopy.length > 0) {
-    const idx = Math.floor(Math.random() * poolCopy.length);
-    selected.push(poolCopy.splice(idx, 1)[0]);
+  let selected = [];
+
+  // Antagonistic Superset Logic
+  if (userSettings.supersets) {
+    const poolCopy = [...pool];
+    let pairCount = 1;
+
+    while (selected.length < exerciseCount && poolCopy.length > 0) {
+      // Select primary exercise
+      const ex1Idx = Math.floor(Math.random() * poolCopy.length);
+      const ex1 = poolCopy.splice(ex1Idx, 1)[0];
+      const target1 = ex1.target.toLowerCase();
+      
+      ex1.supersetGroup = `SUPERSET ${pairCount} - A`;
+      selected.push(ex1);
+
+      if (selected.length >= exerciseCount) break;
+
+      // Find antagonistic exercise
+      const antagonists = ANTAGONIST_MAP[target1] || [];
+      const ex2Idx = poolCopy.findIndex(ex => 
+        antagonists.includes(ex.target.toLowerCase()) ||
+        (ex.muscle_groups && ex.muscle_groups.primary.some(p => antagonists.includes(p.toLowerCase())))
+      );
+
+      if (ex2Idx !== -1) {
+        const ex2 = poolCopy.splice(ex2Idx, 1)[0];
+        ex2.supersetGroup = `SUPERSET ${pairCount} - B`;
+        selected.push(ex2);
+      } else if (poolCopy.length > 0) {
+        // Fallback: pick next available exercise if no exact antagonist match
+        const ex2Fallback = poolCopy.splice(0, 1)[0];
+        ex2Fallback.supersetGroup = `SUPERSET ${pairCount} - B`;
+        selected.push(ex2Fallback);
+      }
+
+      pairCount++;
+    }
+  } else {
+    // Normal exercise selection
+    const poolCopy = [...pool];
+    while (selected.length < exerciseCount && poolCopy.length > 0) {
+      const idx = Math.floor(Math.random() * poolCopy.length);
+      selected.push(poolCopy.splice(idx, 1)[0]);
+    }
   }
 
   const warmups = [
@@ -108,7 +167,7 @@ function generateWorkoutSession(splitTypeOverride) {
 function initEventListeners() {
   // Tab Navigation
   document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", (e) => {
+    btn.addEventListener("click", () => {
       document.querySelectorAll(".tab-btn").forEach(t => t.classList.remove("active"));
       document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
       btn.classList.add("active");
@@ -124,6 +183,9 @@ function initEventListeners() {
     document.getElementById("settings-modal").classList.add("hidden");
   });
   document.getElementById("save-settings-btn").addEventListener("click", saveSettingsUI);
+
+  // CSV Export
+  document.getElementById("export-csv-btn").addEventListener("click", exportHistoryToCSV);
 
   // Quick Generator
   document.getElementById("generate-workout-btn").addEventListener("click", () => {
@@ -192,14 +254,37 @@ function saveSettingsUI() {
 
   localStorage.setItem("gymbro_settings", JSON.stringify(userSettings));
   document.getElementById("settings-modal").classList.add("hidden");
-  alert("Settings saved!");
+  alert("Iron Bro Settings saved!");
+}
+
+// CSV Export Logic
+function exportHistoryToCSV() {
+  if (!workoutHistory || workoutHistory.length === 0) {
+    alert("No logged workout history available to export.");
+    return;
+  }
+
+  let csvContent = "Date,Workout Title,Exercises Completed\n";
+
+  workoutHistory.forEach(row => {
+    const safeTitle = `"${(row.title || "").replace(/"/g, '""')}"`;
+    csvContent += `"${row.date || ''}",${safeTitle},${row.exerciseCount || 0}\n`;
+  });
+
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const downloadAnchor = document.createElement("a");
+  downloadAnchor.href = url;
+  downloadAnchor.download = `iron_bro_progress_log_${new Date().toISOString().slice(0, 10)}.csv`;
+  downloadAnchor.click();
+  URL.revokeObjectURL(url);
 }
 
 // Render Generator View
 function renderGeneratedWorkout(session) {
   window.currentGeneratedSession = session;
   document.getElementById("workout-title").innerText = session.title;
-  document.getElementById("workout-meta").innerText = `${userSettings.duration} Mins | ${session.exercises.length} Exercises`;
+  document.getElementById("workout-meta").innerText = `${userSettings.duration} Mins | ${session.exercises.length} Exercises${userSettings.supersets ? " (Antagonistic Supersets)" : ""}`;
 
   const warmupUl = document.getElementById("warmup-list");
   warmupUl.innerHTML = session.warmups.map(w => `<li>${w}</li>`).join("");
@@ -210,6 +295,7 @@ function renderGeneratedWorkout(session) {
   const exDiv = document.getElementById("exercise-list");
   exDiv.innerHTML = session.exercises.map(ex => `
     <div class="exercise-card">
+      ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
       <h5>${ex.name}</h5>
       <div class="exercise-tags">
         <span class="tag">Target: ${ex.target}</span>
@@ -358,6 +444,7 @@ function startActiveWorkout(session) {
     logs: session.exercises.map(ex => ({
       id: ex.id,
       name: ex.name,
+      supersetGroup: ex.supersetGroup || null,
       sets: [
         { reps: 10, weight: 100 },
         { reps: 10, weight: 100 },
@@ -391,6 +478,7 @@ function renderActiveWorkoutModal() {
   const container = document.getElementById("active-exercise-container");
   container.innerHTML = activeWorkout.logs.map((ex, exIdx) => `
     <div class="exercise-card margin-top">
+      ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
       <h5>${ex.name}</h5>
       <div class="sets-table">
         ${ex.sets.map((set, setIdx) => `
@@ -448,10 +536,10 @@ function renderHistoryUI() {
   }
 
   container.innerHTML = workoutHistory.map(item => `
-    <div class="day-row" style="background: #181b20; margin-bottom: 8px; border-radius: 4px;">
+    <div class="day-row" style="background: #0f172a; margin-bottom: 8px; border-radius: 4px; border-left: 3px solid var(--accent-gold);">
       <div>
         <strong>${item.title}</strong><br>
-        <small style="color: #888;">${item.date} • ${item.exerciseCount} Exercises Completed</small>
+        <small style="color: #cbd5e1;">${item.date} • ${item.exerciseCount} Exercises Completed</small>
       </div>
     </div>
   `).join("");
