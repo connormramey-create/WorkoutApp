@@ -1,3 +1,7 @@
+// ==========================================
+// IRON BRO TRACKER - PHASE 4 MASTER JS
+// ==========================================
+
 // Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyA1fJ7pOsNQvmFQVXhFKji62c3TUbYfymg",
@@ -24,6 +28,8 @@ let currentUser = null;
 let isSignUpMode = false;
 
 const DEFAULT_SETTINGS = {
+  profile: "standard",           // "standard", "powerlifter", "calisthenics"
+  progressionScheme: "linear",   // "linear", "juggernaut", "five_three_one", "conjugate"
   split: "upper_lower",
   duration: 45,
   restTime: 60,
@@ -37,9 +43,10 @@ let workoutHistory = JSON.parse(localStorage.getItem("gymbro_history")) || [];
 let exerciseHistory = JSON.parse(localStorage.getItem("gymbro_exercise_history")) || {};
 let customExercises = JSON.parse(localStorage.getItem("gymbro_custom_exercises")) || [];
 
-// Target Muscle Maps
+// Muscle Maps
 const UPPER_BODY_TARGETS = ["chest", "upper chest", "lower chest", "pectorals", "lats", "upper back", "shoulders", "front delts", "side delts", "rear delts", "traps", "biceps", "brachialis", "triceps", "forearms"];
 const LOWER_BODY_TARGETS = ["quads", "hamstrings", "glutes", "glute medius", "calves", "soleus", "gastrocnemius", "adductors", "shin", "tibialis anterior", "abs", "obliques", "core", "lower back"];
+const POWERLIFTER_COMPOUNDS = ["squat", "bench press", "deadlift", "overhead press", "barbell shoulder press", "sumo deadlift", "front squat", "incline bench press"];
 
 const ANTAGONIST_MAP = {
   "chest": ["lats", "upper back", "rhomboids"],
@@ -71,7 +78,31 @@ const MOVEMENT_PATTERNS = {
   HIP_DOMINANT: ['hinge', 'hip extension', 'knee flexion']
 };
 
-// Targeted Dynamic Warm-up Library
+// Calisthenics Bodyweight Skill Progression Pathways
+const CALISTHENICS_SKILL_TREES = {
+  push: [
+    { level: 1, name: "Push-Up", reps: "8-12 reps" },
+    { level: 2, name: "Diamond Push-Up", reps: "8-12 reps" },
+    { level: 3, name: "Pike Push-Up", reps: "6-10 reps" },
+    { level: 4, name: "Elevated Pike Push-Up", reps: "5-8 reps" },
+    { level: 5, name: "Handstand Push-Up (Wall Supported)", reps: "3-5 reps" }
+  ],
+  pull: [
+    { level: 1, name: "Australian Inverted Row", reps: "8-12 reps" },
+    { level: 2, name: "Chin-Up", reps: "6-10 reps" },
+    { level: 3, name: "Pull-Up", reps: "5-8 reps" },
+    { level: 4, name: "Archer Pull-Up", reps: "4-6 reps" },
+    { level: 5, name: "Muscle-Up", reps: "2-4 reps" }
+  ],
+  legs: [
+    { level: 1, name: "Air Squat", reps: "15-20 reps" },
+    { level: 2, name: "Bulgarian Split Squat", reps: "8-12 reps" },
+    { level: 3, name: "Shrimp Squat", reps: "5-8 reps" },
+    { level: 4, name: "Pistol Squat", reps: "3-6 reps" }
+  ]
+};
+
+// Targeted Dynamic Warm-up & Static Cool-down Libraries
 const DYNAMIC_WARMUP_LIBRARY = {
   chest: [
     { name: "Arm Swings & Chest Openers", duration: "45 sec", desc: "Cross arms across chest, then pull back dynamically to open pectorals." },
@@ -85,10 +116,6 @@ const DYNAMIC_WARMUP_LIBRARY = {
     { name: "Lat Overhead Side Reaches", duration: "10 per side", desc: "Side bend with overhead reach to dynamically stretch lats." },
     { name: "Cat-Cow Stretch", duration: "10 reps", desc: "Flex and extend spine to articulate thoracic spine and lats." }
   ],
-  upper_back: [
-    { name: "Thoracic Windmills", duration: "8 per side", desc: "Side-lying rotational arm movement to open thoracic spine." },
-    { name: "Banded Face Pulls", duration: "15 reps", desc: "Light high pulls to activate rear delts and rhomboids." }
-  ],
   quads: [
     { name: "Bodyweight Goblet Squat Hold w/ Pry", duration: "45 sec", desc: "Sink into deep squat, gently prying knees out with elbows." },
     { name: "Dynamic Walking Quad Stretch", duration: "10 per leg", desc: "Pull foot to glute while reaching opposite hand overhead." }
@@ -100,48 +127,27 @@ const DYNAMIC_WARMUP_LIBRARY = {
   glutes: [
     { name: "Bodyweight Glute Bridges", duration: "15 reps", desc: "Squeeze glutes at top pause to prime posterior chain." },
     { name: "Hip Openers / Fire Hydrants", duration: "10 per leg", desc: "Circle knees outward on all fours to activate glute medius." }
-  ],
-  abs: [
-    { name: "Plank to Downward Dog", duration: "8 reps", desc: "Shift from high plank into downward dog to warm core and shoulders." },
-    { name: "Standing Torso Twists", duration: "30 sec", desc: "Rotational torso turns with loose arms." }
   ]
 };
 
-// Targeted Static Cool-Down Library
 const COOL_DOWN_STRETCH_LIBRARY = {
-  chest: [
-    { name: "Doorway Pectoral Stretch", duration: "45 sec hold", desc: "Place forearm against doorframe, step forward to stretch chest." }
-  ],
-  shoulders: [
-    { name: "Cross-Body Shoulder Stretch", duration: "45 sec per side", desc: "Pull arm across chest with opposite arm." },
-    { name: "Overhead Triceps & Shoulder Stretch", duration: "40 sec per side", desc: "Reach elbow overhead and gently pull backward." }
-  ],
-  lats: [
-    { name: "Child's Pose w/ Lateral Reach", duration: "60 sec hold", desc: "Kneel, sit hips back, and walk hands diagonally to stretch lats." }
-  ],
-  quads: [
-    { name: "Standing / Lying Quad Stretch", duration: "45 sec per side", desc: "Hold foot to glute, keeping knees together and core tight." }
-  ],
-  hamstrings: [
-    { name: "Seated Single-Leg Hamstring Stretch", duration: "45 sec per side", desc: "Extend one leg, fold forward from hips with flat spine." }
-  ],
-  glutes: [
-    { name: "Figure-Four / Pigeon Stretch", duration: "45 sec per side", desc: "Cross ankle over knee, lean forward to stretch deep glutes." }
-  ],
-  abs: [
-    { name: "Cobra Abdominal Stretch", duration: "45 sec hold", desc: "Lie prone, press upper body up on forearms/hands to stretch abs." }
-  ]
+  chest: [{ name: "Doorway Pectoral Stretch", duration: "45 sec hold", desc: "Place forearm against doorframe, step forward to stretch chest." }],
+  shoulders: [{ name: "Cross-Body Shoulder Stretch", duration: "45 sec per side", desc: "Pull arm across chest with opposite arm." }],
+  lats: [{ name: "Child's Pose w/ Lateral Reach", duration: "60 sec hold", desc: "Kneel, sit hips back, and walk hands diagonally to stretch lats." }],
+  quads: [{ name: "Standing / Lying Quad Stretch", duration: "45 sec per side", desc: "Hold foot to glute, keeping knees together and core tight." }],
+  hamstrings: [{ name: "Seated Single-Leg Hamstring Stretch", duration: "45 sec per side", desc: "Extend one leg, fold forward from hips with flat spine." }],
+  glutes: [{ name: "Figure-Four / Pigeon Stretch", duration: "45 sec per side", desc: "Cross ankle over knee, lean forward to stretch deep glutes." }]
 };
 
 // Initialize App
 document.addEventListener("DOMContentLoaded", async () => {
   await loadExercises();
+  applyProfileThemeAndRules();
   initSettingsUI();
   initEventListeners();
   initFirebaseAuthListener();
   renderPlanUI();
   renderHistoryUI();
-  renderCustomExerciseListUI();
   checkActiveSession();
 });
 
@@ -163,7 +169,26 @@ function mergeCustomExercises() {
   exerciseDataset = [...exerciseDataset, ...taggedCustoms];
 }
 
-// Firebase Auth Observer & Cloud Sync
+// Phase 4: App Profile & Theme Dynamic Applicator
+function applyProfileThemeAndRules() {
+  const body = document.body;
+  const profile = userSettings.profile || "standard";
+  
+  body.classList.remove("theme-standard", "theme-powerlifter", "theme-calisthenics");
+  
+  if (profile === "powerlifter") {
+    body.classList.add("theme-powerlifter");
+    document.getElementById("app-subhead").innerText = "POWERLIFTER";
+  } else if (profile === "calisthenics") {
+    body.classList.add("theme-calisthenics");
+    document.getElementById("app-subhead").innerText = "CALISTHENICS";
+  } else {
+    body.classList.add("theme-standard");
+    document.getElementById("app-subhead").innerText = "TRACKER";
+  }
+}
+
+// Firebase Auth Listener & Cloud Sync
 function initFirebaseAuthListener() {
   auth.onAuthStateChanged(async (user) => {
     const authModal = document.getElementById("auth-modal");
@@ -186,6 +211,7 @@ function syncUserDataFromCloud(uid) {
       if (data.settings) {
         userSettings = data.settings;
         localStorage.setItem("gymbro_settings", JSON.stringify(userSettings));
+        applyProfileThemeAndRules();
         initSettingsUI();
       }
       if (data.history) {
@@ -201,12 +227,6 @@ function syncUserDataFromCloud(uid) {
       if (data.exercise_history) {
         exerciseHistory = data.exercise_history;
         localStorage.setItem("gymbro_exercise_history", JSON.stringify(exerciseHistory));
-      }
-      if (data.custom_exercises) {
-        customExercises = data.custom_exercises;
-        localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
-        mergeCustomExercises();
-        renderCustomExerciseListUI();
       }
     }
   });
@@ -252,7 +272,7 @@ function playRestTimerFinishSound() {
     osc1.stop(ctx.currentTime + 1.2);
     osc2.stop(ctx.currentTime + 1.2);
   } catch (err) {
-    console.error("Audio playback error:", err);
+    console.error("Audio error:", err);
   }
 
   if ("vibrate" in navigator) {
@@ -260,7 +280,7 @@ function playRestTimerFinishSound() {
   }
 }
 
-// Timer Logic Engine
+// Rest Timer Engine
 function startRestTimer(seconds) {
   clearInterval(timerInterval);
   timerRemainingSeconds = seconds || parseInt(userSettings.restTime || 60, 10);
@@ -288,9 +308,7 @@ function startRestTimer(seconds) {
       if (modalDisplay) modalDisplay.innerText = "TIME UP!";
       if (floatingDisplay) floatingDisplay.innerText = "TIME UP!";
       playRestTimerFinishSound();
-      setTimeout(() => {
-        if (stickyBar) stickyBar.classList.add("hidden");
-      }, 5000);
+      setTimeout(() => { if (stickyBar) stickyBar.classList.add("hidden"); }, 5000);
       return;
     }
     timerRemainingSeconds--;
@@ -322,7 +340,6 @@ function updateTimerButtonsUI() {
   const modalBtn = document.getElementById("modal-pause-btn");
   const stickyBtn = document.getElementById("timer-pause-btn");
   const label = isTimerPaused ? "RESUME" : "PAUSE";
-
   if (modalBtn) modalBtn.innerText = label;
   if (stickyBtn) stickyBtn.innerText = label;
 }
@@ -330,27 +347,44 @@ function updateTimerButtonsUI() {
 function skipRestTimer() {
   clearInterval(timerInterval);
   timerRemainingSeconds = 0;
-  const modalDisplay = document.getElementById("rest-timer-display");
-  const floatingDisplay = document.getElementById("floating-timer-display");
-  const stickyBar = document.getElementById("sticky-timer-bar");
-
-  if (modalDisplay) modalDisplay.innerText = "00:00";
-  if (floatingDisplay) floatingDisplay.innerText = "00:00";
-  if (stickyBar) stickyBar.classList.add("hidden");
+  document.getElementById("rest-timer-display").innerText = "00:00";
+  document.getElementById("floating-timer-display").innerText = "00:00";
+  document.getElementById("sticky-timer-bar").classList.add("hidden");
 }
 
-// Generate Workout Session with Built-in Volume Balancing (Max Variance = 1)
-function generateWorkoutSession(splitTypeOverride) {
+// Generator Engine with Phase 4 Profile Rules
+function generateWorkoutSession(splitTypeOverride, isDeloadWeek = false) {
+  const profile = userSettings.profile || "standard";
   const split = splitTypeOverride || userSettings.split;
   const duration = parseInt(userSettings.duration, 10);
-  const exerciseCount = Math.max(3, Math.floor(duration / 7.5));
+  let exerciseCount = Math.max(3, Math.floor(duration / 7.5));
 
-  const availableExercises = exerciseDataset.filter(ex => 
-    userSettings.equipment.includes(ex.equipment.toLowerCase())
+  if (isDeloadWeek) {
+    exerciseCount = Math.max(2, Math.floor(exerciseCount * 0.8)); // 20% Volume Reduction
+  }
+
+  // Equipment Filtering by Profile
+  let activeEquipment = userSettings.equipment;
+  if (profile === "calisthenics") {
+    activeEquipment = ["body weight"];
+  }
+
+  let availableExercises = exerciseDataset.filter(ex => 
+    activeEquipment.includes(ex.equipment.toLowerCase())
   );
 
+  // Powerlifter Isolation Filtering
+  if (profile === "powerlifter") {
+    availableExercises = availableExercises.filter(ex => {
+      const name = ex.name.toLowerCase();
+      const isCompound = POWERLIFTER_COMPOUNDS.some(c => name.includes(c)) || 
+                         ['squat', 'bench', 'press', 'deadlift', 'row'].some(k => name.includes(k));
+      return isCompound;
+    });
+  }
+
   let targetMuscles = [];
-  let title = "FULL BODY SESSION";
+  let title = `${profile.toUpperCase()} SESSION`;
 
   if (split === "upper" || split === "upper_lower_upper") {
     targetMuscles = UPPER_BODY_TARGETS;
@@ -377,123 +411,50 @@ function generateWorkoutSession(splitTypeOverride) {
     );
   }
 
-  function getPatternCategory(ex) {
-    const pattern = (ex.movement_pattern || '').toLowerCase();
-    const target = (ex.target || ex.muscle_group || '').toLowerCase();
-
-    if (MOVEMENT_PATTERNS.HORIZONTAL_PUSH.includes(pattern) || ['chest', 'pectorals'].some(m => target.includes(m))) {
-      return 'hPush';
-    }
-    if (MOVEMENT_PATTERNS.HORIZONTAL_PULL.includes(pattern) || ['upper back', 'rhomboids'].some(m => target.includes(m))) {
-      return 'hPull';
-    }
-    if (MOVEMENT_PATTERNS.VERTICAL_PUSH.includes(pattern) || ['shoulders', 'front delts', 'side delts'].some(m => target.includes(m))) {
-      return 'vPush';
-    }
-    if (MOVEMENT_PATTERNS.VERTICAL_PULL.includes(pattern) || ['lats'].some(m => target.includes(m))) {
-      return 'vPull';
-    }
-    if (MOVEMENT_PATTERNS.KNEE_DOMINANT.includes(pattern) || ['quads'].some(m => target.includes(m))) {
-      return 'knee';
-    }
-    if (MOVEMENT_PATTERNS.HIP_DOMINANT.includes(pattern) || ['hamstrings', 'glutes'].some(m => target.includes(m))) {
-      return 'hip';
-    }
-    return 'other';
-  }
+  // Fallback Pool
+  if (pool.length < exerciseCount) pool = availableExercises;
 
   let poolCopy = [...pool];
   const selected = [];
-  const counts = { hPush: 0, hPull: 0, vPush: 0, vPull: 0, knee: 0, hip: 0, other: 0 };
 
-  if (userSettings.supersets) {
-    let pairCount = 1;
-    while (selected.length < exerciseCount && poolCopy.length > 0) {
-      const ex1Idx = Math.floor(Math.random() * poolCopy.length);
-      const ex1 = poolCopy.splice(ex1Idx, 1)[0];
-      const target1 = ex1.target.toLowerCase();
-      
-      ex1.supersetGroup = `SUPERSET ${pairCount} - A`;
-      const cat1 = getPatternCategory(ex1);
-      counts[cat1] = (counts[cat1] || 0) + 1;
-      selected.push(ex1);
-
-      if (selected.length >= exerciseCount) break;
-
-      const antagonists = ANTAGONIST_MAP[target1] || [];
-      const ex2Idx = poolCopy.findIndex(ex => 
-        antagonists.includes(ex.target.toLowerCase()) ||
-        (ex.muscle_groups && ex.muscle_groups.primary.some(p => antagonists.includes(p.toLowerCase())))
-      );
-
-      if (ex2Idx !== -1) {
-        const ex2 = poolCopy.splice(ex2Idx, 1)[0];
-        ex2.supersetGroup = `SUPERSET ${pairCount} - B`;
-        const cat2 = getPatternCategory(ex2);
-        counts[cat2] = (counts[cat2] || 0) + 1;
-        selected.push(ex2);
-      } else if (poolCopy.length > 0) {
-        const ex2Fallback = poolCopy.splice(0, 1)[0];
-        ex2Fallback.supersetGroup = `SUPERSET ${pairCount} - B`;
-        const catFallback = getPatternCategory(ex2Fallback);
-        counts[catFallback] = (counts[catFallback] || 0) + 1;
-        selected.push(ex2Fallback);
-      }
-      pairCount++;
-    }
-  } else {
-    while (selected.length < exerciseCount && poolCopy.length > 0) {
-      let requiredCategory = null;
-
-      if (counts.hPush > counts.hPull) requiredCategory = 'hPull';
-      else if (counts.hPull > counts.hPush) requiredCategory = 'hPush';
-      else if (counts.vPush > counts.vPull) requiredCategory = 'vPull';
-      else if (counts.vPull > counts.vPush) requiredCategory = 'vPush';
-      else if (counts.knee > counts.hip) requiredCategory = 'hip';
-      else if (counts.hip > counts.knee) requiredCategory = 'knee';
-
-      let chosenIdx = -1;
-      if (requiredCategory) {
-        chosenIdx = poolCopy.findIndex(ex => getPatternCategory(ex) === requiredCategory);
-      }
-
-      if (chosenIdx === -1) {
-        chosenIdx = Math.floor(Math.random() * poolCopy.length);
-      }
-
-      const chosenEx = poolCopy.splice(chosenIdx, 1)[0];
-      const cat = getPatternCategory(chosenEx);
-      counts[cat] = (counts[cat] || 0) + 1;
-      selected.push(chosenEx);
-    }
+  while (selected.length < exerciseCount && poolCopy.length > 0) {
+    const idx = Math.floor(Math.random() * poolCopy.length);
+    selected.push(poolCopy.splice(idx, 1)[0]);
   }
 
-  const warmups = [
-    "Arm Circles & Shoulder Dislocates - 60s",
-    "Bodyweight Squats & Hip Openers - 60s",
-    "Dynamic Cat-Cow & Torso Twists - 60s"
-  ];
+  return { title, exercises: selected, isDeloadWeek };
+}
 
-  const cooldowns = [
-    "Doorway Chest/Shoulder Stretch - 45s per side",
-    "Hamstring & Hip Flexor Static Stretch - 45s per side",
-    "Deep Child's Pose & Lower Back Decompression - 60s"
-  ];
+// Phase 4: Calisthenics Skill Tree UI Renderer
+function renderCalisthenicsSkillTree() {
+  const container = document.getElementById("calisthenicsSkillTreeContainer");
+  if (!container) return;
 
-  return { title, exercises: selected, warmups, cooldowns };
+  if (userSettings.profile !== "calisthenics") {
+    container.classList.add("hidden");
+    return;
+  }
+
+  container.classList.remove("hidden");
+  container.innerHTML = `
+    <div class="skill-tree-card">
+      <h4 style="color: var(--accent-gold); font-size: 0.9rem; margin-bottom: 6px;">🤸 CALISTHENICS SKILL PROGRESSION PATHWAYS</h4>
+      <div class="skill-section">
+        <strong style="color: #c084fc; font-size: 0.8rem;">PUSH PATHWAY:</strong>
+        ${CALISTHENICS_SKILL_TREES.push.map(s => `
+          <div class="skill-step ${s.level === 1 ? 'active-step' : ''}">
+            <span>L${s.level}: ${s.name}</span>
+            <span style="color: #cbd5e1;">Target: ${s.reps}</span>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
 }
 
 // Phase 3 Auditing & Dynamic Mobility Engine
 function auditWorkoutBalance(workoutExercises) {
-  const counts = {
-    horizontalPush: 0,
-    horizontalPull: 0,
-    verticalPush: 0,
-    verticalPull: 0,
-    kneeDominant: 0,
-    hipDominant: 0
-  };
-
+  const counts = { horizontalPush: 0, horizontalPull: 0, verticalPush: 0, verticalPull: 0, kneeDominant: 0, hipDominant: 0 };
   workoutExercises.forEach(ex => {
     const pattern = (ex.movement_pattern || '').toLowerCase();
     const target = (ex.target || ex.muscle_group || '').toLowerCase();
@@ -512,7 +473,6 @@ function auditWorkoutBalance(workoutExercises) {
       else if (['hamstrings', 'glutes'].some(m => target.includes(m))) counts.hipDominant++;
     }
   });
-
   return counts;
 }
 
@@ -526,52 +486,15 @@ function renderBalanceBadgesAndAlerts(counts) {
   const hPush = counts.horizontalPush;
   const hPull = counts.horizontalPull;
   if (hPush > 0 || hPull > 0) {
-    if (Math.abs(hPush - hPull) <= 1) {
-      badges.push({ text: `Horizontal Push/Pull Balanced (${hPush}:${hPull})`, type: 'success' });
-    } else if (hPush > hPull) {
-      alerts.push(`⚠️ Horizontal Push Overdominant (${hPush} Push vs ${hPull} Pull). Consider adding a Row movement!`);
-      badges.push({ text: `Push Heavy (${hPush}:${hPull})`, type: 'warning' });
-    } else {
-      alerts.push(`⚠️ Horizontal Pull Overdominant (${hPull} Pull vs ${hPush} Push). Consider adding a Chest Press!`);
-      badges.push({ text: `Pull Heavy (${hPull}:${hPush})`, type: 'warning' });
-    }
-  }
-
-  const vPush = counts.verticalPush;
-  const vPull = counts.verticalPull;
-  if (vPush > 0 || vPull > 0) {
-    if (Math.abs(vPush - vPull) <= 1) {
-      badges.push({ text: `Vertical Push/Pull Balanced (${vPush}:${vPull})`, type: 'success' });
-    } else if (vPush > vPull) {
-      alerts.push(`⚠️ Vertical Push Overdominant (${vPush} Push vs ${vPull} Pull). Consider adding Pull-ups or Lat Pulldowns!`);
-      badges.push({ text: `Overhead Heavy (${vPush}:${vPull})`, type: 'warning' });
-    } else {
-      alerts.push(`⚠️ Vertical Pull Overdominant (${vPull} Pull vs ${vPush} Push). Consider adding an Overhead Shoulder Press!`);
-      badges.push({ text: `Lat Heavy (${vPull}:${vPush})`, type: 'warning' });
-    }
-  }
-
-  const knee = counts.kneeDominant;
-  const hip = counts.hipDominant;
-  if (knee > 0 || hip > 0) {
-    if (Math.abs(knee - hip) <= 1) {
-      badges.push({ text: `Leg Ratio Balanced (${knee}:${hip})`, type: 'success' });
-    } else if (knee > hip) {
-      alerts.push(`⚠️ Knee Dominant Overdominant (${knee} Quads vs ${hip} Hamstrings/Glutes). Add RDLs or Leg Curls!`);
-      badges.push({ text: `Quad Heavy (${knee}:${hip})`, type: 'warning' });
-    } else {
-      alerts.push(`⚠️ Hip Dominant Overdominant (${hip} Hamstrings/Glutes vs ${knee} Quads). Add Squats or Lunges!`);
-      badges.push({ text: `Posterior Heavy (${hip}:${knee})`, type: 'warning' });
-    }
+    if (Math.abs(hPush - hPull) <= 1) badges.push({ text: `Horizontal Push/Pull Balanced (${hPush}:${hPull})`, type: 'success' });
+    else if (hPush > hPull) alerts.push(`⚠️ Horizontal Push Overdominant (${hPush} Push vs ${hPull} Pull). Consider adding a Row movement!`);
   }
 
   let html = `
     <div class="balance-audit-card">
-      <div class="balance-header">
-        <span class="balance-title">⚖️ Movement Pattern & Volume Audit</span>
-      </div>
+      <div class="balance-header"><span class="balance-title">⚖️ Movement Pattern & Volume Audit</span></div>
       <div class="balance-badges">
-        ${badges.map(b => `<span class="badge-balance badge-balance-${b.type}">${b.type === 'success' ? '✓' : '⚠️'} ${b.text}</span>`).join('')}
+        ${badges.map(b => `<span class="badge-balance badge-balance-${b.type}">✓ ${b.text}</span>`).join('')}
       </div>`;
 
   if (alerts.length > 0) {
@@ -586,19 +509,15 @@ function generateTargetedMobility(workoutExercises) {
   const targetMuscles = new Set();
   workoutExercises.forEach(ex => {
     const target = (ex.target || ex.muscle_group || '').toLowerCase();
-    if (target.includes('chest') || target.includes('pec')) targetMuscles.add('chest');
-    if (target.includes('shoulder') || target.includes('delt')) targetMuscles.add('shoulders');
-    if (target.includes('lat') || target.includes('back')) { targetMuscles.add('lats'); targetMuscles.add('upper_back'); }
+    if (target.includes('chest')) targetMuscles.add('chest');
+    if (target.includes('shoulder')) targetMuscles.add('shoulders');
+    if (target.includes('lat') || target.includes('back')) targetMuscles.add('lats');
     if (target.includes('quad')) targetMuscles.add('quads');
     if (target.includes('hamstring')) targetMuscles.add('hamstrings');
     if (target.includes('glute')) targetMuscles.add('glutes');
-    if (target.includes('ab') || target.includes('waist') || target.includes('oblique')) targetMuscles.add('abs');
   });
 
-  if (targetMuscles.size === 0) {
-    targetMuscles.add('shoulders');
-    targetMuscles.add('glutes');
-  }
+  if (targetMuscles.size === 0) targetMuscles.add('shoulders');
 
   const warmups = [];
   const cooldowns = [];
@@ -613,19 +532,13 @@ function generateTargetedMobility(workoutExercises) {
 function renderTargetedMobilityLists(mobility) {
   const warmupContainer = document.getElementById('dynamicWarmupList');
   const cooldownContainer = document.getElementById('cooldownStretchList');
-  const warmupBadge = document.getElementById('warmupCountBadge');
-  const cooldownBadge = document.getElementById('cooldownCountBadge');
-
-  if (warmupBadge) warmupBadge.textContent = `${mobility.warmups.length} Drills`;
-  if (cooldownBadge) cooldownBadge.textContent = `${mobility.cooldowns.length} Stretches`;
+  if (document.getElementById('warmupCountBadge')) document.getElementById('warmupCountBadge').textContent = `${mobility.warmups.length} Drills`;
+  if (document.getElementById('cooldownCountBadge')) document.getElementById('cooldownCountBadge').textContent = `${mobility.cooldowns.length} Stretches`;
 
   if (warmupContainer) {
     warmupContainer.innerHTML = mobility.warmups.map(w => `
-      <div class="mobility-item flex flex-col justify-between">
-        <div class="flex items-center justify-between" style="display:flex; justify-content:space-between;">
-          <span class="mobility-title">${w.name}</span>
-          <span class="mobility-duration">${w.duration}</span>
-        </div>
+      <div class="mobility-item">
+        <div style="display:flex; justify-content:space-between;"><span class="mobility-title">${w.name}</span><span class="mobility-duration">${w.duration}</span></div>
         <div class="mobility-desc">${w.desc}</div>
       </div>
     `).join('');
@@ -633,89 +546,15 @@ function renderTargetedMobilityLists(mobility) {
 
   if (cooldownContainer) {
     cooldownContainer.innerHTML = mobility.cooldowns.map(c => `
-      <div class="mobility-item flex flex-col justify-between">
-        <div class="flex items-center justify-between" style="display:flex; justify-content:space-between;">
-          <span class="mobility-title">${c.name}</span>
-          <span class="mobility-duration">${c.duration}</span>
-        </div>
+      <div class="mobility-item">
+        <div style="display:flex; justify-content:space-between;"><span class="mobility-title">${c.name}</span><span class="mobility-duration">${c.duration}</span></div>
         <div class="mobility-desc">${c.desc}</div>
       </div>
     `).join('');
   }
 }
 
-// Custom Exercise Management
-function addCustomExercise() {
-  const nameInput = document.getElementById("custom-ex-name");
-  if (!nameInput) return;
-  const name = nameInput.value.trim();
-  if (!name) {
-    alert("Please enter a custom exercise name.");
-    return;
-  }
-
-  const target = document.getElementById("custom-ex-target").value;
-  const equipment = document.getElementById("custom-ex-equipment").value;
-  const pattern = document.getElementById("custom-ex-pattern").value;
-  const symmetry = document.getElementById("custom-ex-symmetry").value;
-  const difficulty = document.getElementById("custom-ex-difficulty").value;
-
-  const newEx = {
-    id: `custom_${Date.now()}`,
-    name: name,
-    target: target,
-    muscle_groups: {
-      primary: [target],
-      secondary: []
-    },
-    movement_pattern: pattern,
-    equipment: equipment,
-    symmetry: symmetry,
-    difficulty: difficulty,
-    isCustom: true
-  };
-
-  customExercises.push(newEx);
-  localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
-  mergeCustomExercises();
-  saveUserDataToCloud();
-  renderCustomExerciseListUI();
-
-  nameInput.value = "";
-  alert(`Added custom exercise: ${name}`);
-}
-
-window.deleteCustomExercise = function(id) {
-  if (confirm("Delete this custom exercise?")) {
-    customExercises = customExercises.filter(ex => ex.id !== id);
-    localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
-    mergeCustomExercises();
-    saveUserDataToCloud();
-    renderCustomExerciseListUI();
-  }
-};
-
-function renderCustomExerciseListUI() {
-  const container = document.getElementById("custom-exercise-list");
-  if (!container) return;
-
-  if (customExercises.length === 0) {
-    container.innerHTML = '<p class="subtitle" style="font-size: 12px; margin-top: 5px;">No custom exercises added yet.</p>';
-    return;
-  }
-
-  container.innerHTML = customExercises.map(ex => `
-    <div class="day-row" style="background: #0f172a; padding: 6px 10px; margin-top: 6px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
-      <div>
-        <strong style="color: var(--accent-gold); font-size: 13px;">${ex.name}</strong><br>
-        <small style="color: #cbd5e1; font-size: 11px;">${ex.target} • ${ex.equipment} • ${ex.movement_pattern}</small>
-      </div>
-      <button class="metal-btn danger-btn small-btn" onclick="deleteCustomExercise('${ex.id}')">✕</button>
-    </div>
-  `).join("");
-}
-
-// UI Event Handlers
+// UI Setup & Event Listeners
 function initEventListeners() {
   document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -725,42 +564,6 @@ function initEventListeners() {
       document.getElementById(btn.dataset.tab).classList.add("active");
     });
   });
-
-  const toggleAuthBtn = document.getElementById("toggle-auth-mode-btn");
-  if (toggleAuthBtn) {
-    toggleAuthBtn.addEventListener("click", () => {
-      isSignUpMode = !isSignUpMode;
-      document.getElementById("auth-title").innerText = isSignUpMode ? "CREATE IRON BRO ACCOUNT" : "IRON BRO LOGIN";
-      document.getElementById("auth-submit-btn").innerText = isSignUpMode ? "SIGN UP" : "LOG IN";
-      toggleAuthBtn.innerText = isSignUpMode ? "ALREADY HAVE AN ACCOUNT? LOG IN" : "NEED AN ACCOUNT? SIGN UP";
-    });
-  }
-
-  const authForm = document.getElementById("auth-form");
-  if (authForm) {
-    authForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("auth-email").value;
-      const password = document.getElementById("auth-password").value;
-      const errorMsg = document.getElementById("auth-error-msg");
-      if (errorMsg) errorMsg.innerText = "";
-
-      try {
-        if (isSignUpMode) {
-          await auth.createUserWithEmailAndPassword(email, password);
-        } else {
-          await auth.signInWithEmailAndPassword(email, password);
-        }
-      } catch (err) {
-        if (errorMsg) errorMsg.innerText = err.message;
-      }
-    });
-  }
-
-  const addCustomBtn = document.getElementById("add-custom-ex-btn");
-  if (addCustomBtn) {
-    addCustomBtn.addEventListener("click", addCustomExercise);
-  }
 
   document.getElementById("open-settings-btn").addEventListener("click", () => {
     document.getElementById("settings-modal").classList.remove("hidden");
@@ -803,10 +606,11 @@ function initEventListeners() {
 }
 
 function initSettingsUI() {
+  document.getElementById("setting-profile").value = userSettings.profile || "standard";
+  document.getElementById("setting-progression").value = userSettings.progressionScheme || "linear";
   document.getElementById("setting-split").value = userSettings.split;
   document.getElementById("setting-duration").value = userSettings.duration;
-  const restElem = document.getElementById("setting-rest-time");
-  if (restElem) restElem.value = userSettings.restTime || 60;
+  document.getElementById("setting-rest-time").value = userSettings.restTime || 60;
   document.getElementById("setting-supersets").checked = userSettings.supersets;
 
   const eqCheckboxes = document.querySelectorAll("#equipment-toggles input");
@@ -816,10 +620,11 @@ function initSettingsUI() {
 }
 
 function saveSettingsUI() {
+  userSettings.profile = document.getElementById("setting-profile").value;
+  userSettings.progressionScheme = document.getElementById("setting-progression").value;
   userSettings.split = document.getElementById("setting-split").value;
   userSettings.duration = parseInt(document.getElementById("setting-duration").value, 10);
-  const restElem = document.getElementById("setting-rest-time");
-  if (restElem) userSettings.restTime = parseInt(restElem.value, 10);
+  userSettings.restTime = parseInt(document.getElementById("setting-rest-time").value, 10);
   userSettings.supersets = document.getElementById("setting-supersets").checked;
 
   const selectedEquipment = [];
@@ -829,6 +634,7 @@ function saveSettingsUI() {
   userSettings.equipment = selectedEquipment;
 
   localStorage.setItem("gymbro_settings", JSON.stringify(userSettings));
+  applyProfileThemeAndRules();
   saveUserDataToCloud();
   document.getElementById("settings-modal").classList.add("hidden");
   alert("Iron Bro Settings saved!");
@@ -839,109 +645,75 @@ function exportHistoryToCSV() {
     alert("No logged workout history available to export.");
     return;
   }
-
   let csvContent = "Date,Workout Title,Exercises Completed,Total Volume (lbs)\n";
-
   workoutHistory.forEach(row => {
-    const safeTitle = `"${(row.title || "").replace(/"/g, '""')}"`;
-    csvContent += `"${row.date || ''}",${safeTitle},${row.exerciseCount || 0},${row.totalVolume || 0}\n`;
+    csvContent += `"${row.date || ''}","${(row.title || '').replace(/"/g, '""')}",${row.exerciseCount || 0},${row.totalVolume || 0}\n`;
   });
-
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
-  const downloadAnchor = document.createElement("a");
-  downloadAnchor.href = url;
-  downloadAnchor.download = `iron_bro_progress_log_${new Date().toISOString().slice(0, 10)}.csv`;
-  downloadAnchor.click();
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `iron_bro_progress_log_${new Date().toISOString().slice(0, 10)}.csv`;
+  anchor.click();
   URL.revokeObjectURL(url);
 }
 
 function renderGeneratedWorkout(session) {
   window.currentGeneratedSession = session;
   document.getElementById("workout-title").innerText = session.title;
-  document.getElementById("workout-meta").innerText = `${userSettings.duration} Mins | ${session.exercises.length} Exercises${userSettings.supersets ? " (Antagonistic Supersets)" : ""}`;
+  document.getElementById("workout-meta").innerText = `${userSettings.duration} Mins | Profile: ${userSettings.profile.toUpperCase()} | Progression: ${userSettings.progressionScheme.toUpperCase()}${session.isDeloadWeek ? " | 🧊 DELOAD WEEK (-20% Volume)" : ""}`;
 
   const exDiv = document.getElementById("exercise-list");
   exDiv.innerHTML = session.exercises.map(ex => `
     <div class="exercise-card">
-      ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
-      <h5>${ex.name}${ex.isCustom ? ' <span class="tag" style="color:var(--accent-gold);">[CUSTOM]</span>' : ''}</h5>
+      <h5>${ex.name}</h5>
       <div class="exercise-tags">
         <span class="tag">Target: ${ex.target}</span>
         <span class="tag">Equip: ${ex.equipment}</span>
-        <span class="tag">Pattern: ${ex.movement_pattern}</span>
       </div>
     </div>
   `).join("");
 
-  // Phase 3 Trigger Calls
+  renderCalisthenicsSkillTree();
   const balanceCounts = auditWorkoutBalance(session.exercises);
   renderBalanceBadgesAndAlerts(balanceCounts);
-
   const mobility = generateTargetedMobility(session.exercises);
   renderTargetedMobilityLists(mobility);
 
   document.getElementById("generated-workout-view").classList.remove("hidden");
 }
 
+// Multi-Month Plan Builder with Automated Deload Weeks
 function buildMultiMonthPlan() {
   const months = parseInt(document.getElementById("plan-duration").value, 10);
   const totalWeeks = months * 4;
   const split = userSettings.split;
 
-  let schedulePattern = [];
-  if (split === "upper_lower") {
-    schedulePattern = [
-      { name: "Upper Body A", type: "upper_lower_upper" },
-      { name: "Lower Body A", type: "upper_lower_lower" },
-      { name: "Rest Day", type: "rest" },
-      { name: "Upper Body B", type: "upper_lower_upper" },
-      { name: "Lower Body B", type: "upper_lower_lower" },
-      { name: "Rest Day", type: "rest" },
-      { name: "Rest Day", type: "rest" }
-    ];
-  } else if (split === "ppl") {
-    schedulePattern = [
-      { name: "Push Day", type: "ppl_push" },
-      { name: "Pull Day", type: "ppl_pull" },
-      { name: "Legs Day", type: "ppl_legs" },
-      { name: "Rest Day", type: "rest" },
-      { name: "Push Day B", type: "ppl_push" },
-      { name: "Pull Day B", type: "ppl_pull" },
-      { name: "Rest Day", type: "rest" }
-    ];
-  } else {
-    schedulePattern = [
-      { name: "Full Body A", type: "full_body" },
-      { name: "Rest Day", type: "rest" },
-      { name: "Full Body B", type: "full_body" },
-      { name: "Rest Day", type: "rest" },
-      { name: "Full Body C", type: "full_body" },
-      { name: "Rest Day", type: "rest" },
-      { name: "Rest Day", type: "rest" }
-    ];
-  }
+  let schedulePattern = [
+    { name: "Session A", type: "upper_lower_upper" },
+    { name: "Session B", type: "upper_lower_lower" },
+    { name: "Rest Day", type: "rest" },
+    { name: "Session C", type: "upper_lower_upper" },
+    { name: "Session D", type: "upper_lower_lower" },
+    { name: "Rest Day", type: "rest" },
+    { name: "Rest Day", type: "rest" }
+  ];
 
   const weeks = [];
   for (let w = 1; w <= totalWeeks; w++) {
+    const isDeload = (w % 4 === 0); // Weeks 4, 8, 12 are Deload Weeks
     const days = schedulePattern.map((day, idx) => ({
       id: `w${w}_d${idx + 1}`,
       dayNum: idx + 1,
-      title: day.name,
+      title: `${day.name}${isDeload ? ' (Deload)' : ''}`,
       type: day.type,
+      isDeload,
       completed: false
     }));
-    weeks.push({ weekNum: w, days });
+    weeks.push({ weekNum: w, isDeload, days });
   }
 
-  activePlan = {
-    months,
-    totalWeeks,
-    split,
-    weeks,
-    createdAt: new Date().toISOString()
-  };
-
+  activePlan = { months, totalWeeks, split, weeks, createdAt: new Date().toISOString() };
   localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
   saveUserDataToCloud();
   renderPlanUI();
@@ -949,13 +721,10 @@ function buildMultiMonthPlan() {
 
 function renderPlanUI() {
   const container = document.getElementById("active-plan-container");
-  if (!activePlan) {
-    container.classList.add("hidden");
-    return;
-  }
+  if (!activePlan) { container.classList.add("hidden"); return; }
 
   container.classList.remove("hidden");
-  document.getElementById("plan-title").innerText = `${activePlan.months}-MONTH (${activePlan.totalWeeks} WEEKS) ${activePlan.split.replace('_', '/').toUpperCase()} PROGRAM`;
+  document.getElementById("plan-title").innerText = `${activePlan.months}-MONTH PROGRAM (${activePlan.totalWeeks} WEEKS)`;
 
   let totalWorkouts = 0;
   let completedWorkouts = 0;
@@ -968,7 +737,7 @@ function renderPlanUI() {
 
       return `
         <div class="day-row ${day.completed ? 'completed' : ''}">
-          <span>Day ${day.dayNum}: ${day.title}</span>
+          <span>Day ${day.dayNum}: ${day.title} ${day.isDeload ? '<span class="badge-deload">DELOAD</span>' : ''}</span>
           ${day.type !== "rest" ? `
             <button class="metal-btn small-btn ${day.completed ? 'danger-btn' : 'primary-btn'}" onclick="togglePlanDay('${week.weekNum}', '${day.id}')">
               ${day.completed ? 'UNDO' : 'START / LOG'}
@@ -979,8 +748,8 @@ function renderPlanUI() {
     }).join("");
 
     return `
-      <div class="week-card">
-        <div class="week-header">WEEK ${week.weekNum}</div>
+      <div class="week-card ${week.isDeload ? 'border-deload' : ''}">
+        <div class="week-header">WEEK ${week.weekNum} ${week.isDeload ? '🧊 (DELOAD WEEK - 20% VOLUME)' : ''}</div>
         <div class="week-body">${weekDaysHtml}</div>
       </div>
     `;
@@ -1000,7 +769,7 @@ window.togglePlanDay = function(weekNum, dayId) {
   if (day.completed) {
     day.completed = false;
   } else {
-    const session = generateWorkoutSession(day.type);
+    const session = generateWorkoutSession(day.type, day.isDeload);
     session.title = `Week ${weekNum} - ${day.title}`;
     session.planDayRef = dayId;
     startActiveWorkout(session);
@@ -1012,8 +781,11 @@ window.togglePlanDay = function(weekNum, dayId) {
   renderPlanUI();
 };
 
-// Active Session Tracking & Set Memory
+// Phase 4: Active Workout & Smart Weight Increase Badges
 function startActiveWorkout(session) {
+  const profile = userSettings.profile || "standard";
+  let targetReps = profile === "powerlifter" ? 5 : 10;
+
   activeWorkout = {
     ...session,
     startTime: new Date().toISOString(),
@@ -1021,16 +793,25 @@ function startActiveWorkout(session) {
       const exKey = ex.id || ex.name;
       const historyRecord = exerciseHistory[exKey];
 
+      // Smart Weight Increase Prompt Evaluation
+      let suggestIncrease = false;
+      if (historyRecord && historyRecord.sets && historyRecord.sets.length > 0) {
+        const topRepsReached = historyRecord.sets.every(s => (s.reps || 0) >= targetReps);
+        if (topRepsReached && userSettings.progressionScheme === "linear") {
+          suggestIncrease = true;
+        }
+      }
+
       let defaultSets = [
-        { reps: 10, weight: 100, completed: false },
-        { reps: 10, weight: 100, completed: false },
-        { reps: 10, weight: 100, completed: false }
+        { reps: targetReps, weight: 100, completed: false },
+        { reps: targetReps, weight: 100, completed: false },
+        { reps: targetReps, weight: 100, completed: false }
       ];
 
       if (historyRecord && historyRecord.sets && historyRecord.sets.length > 0) {
         defaultSets = historyRecord.sets.map(s => ({
-          reps: s.reps || 10,
-          weight: s.weight || 100,
+          reps: s.reps || targetReps,
+          weight: suggestIncrease ? (s.weight || 100) + 5 : (s.weight || 100),
           completed: false
         }));
       }
@@ -1038,7 +819,7 @@ function startActiveWorkout(session) {
       return {
         id: ex.id || ex.name,
         name: ex.name,
-        supersetGroup: ex.supersetGroup || null,
+        suggestIncrease,
         lastRecord: historyRecord || null,
         sets: defaultSets
       };
@@ -1053,7 +834,6 @@ function startActiveWorkout(session) {
 function checkActiveSession() {
   const stored = localStorage.getItem("gymbro_active_session");
   const banner = document.getElementById("active-session-banner");
-  
   if (stored) {
     activeWorkout = JSON.parse(stored);
     banner.classList.remove("hidden");
@@ -1069,24 +849,14 @@ function renderActiveWorkoutModal() {
 
   const container = document.getElementById("active-exercise-container");
   container.innerHTML = activeWorkout.logs.map((ex, exIdx) => {
-    let lastBadge = "";
-    if (ex.lastRecord) {
-      const topWeight = ex.lastRecord.lastWeight || ex.lastRecord.sets?.[0]?.weight || 0;
-      const topReps = ex.lastRecord.lastReps || ex.lastRecord.sets?.[0]?.reps || 0;
-      if (topWeight > 0) {
-        lastBadge = `<span class="tag" style="background: #1e293b; color: var(--accent-gold); border: 1px solid var(--accent-gold);">
-          LAST: ${topWeight} lbs × ${topReps} reps
-        </span>`;
-      }
-    }
+    let increaseBadge = ex.suggestIncrease ? `<span class="badge-suggested-weight">🚀 +5 lbs Suggested</span>` : "";
 
     return `
       <div class="exercise-card margin-top">
         <div class="exercise-card-header" style="display:flex; justify-content:space-between; align-items:center;">
           <h5>${ex.name}</h5>
-          ${lastBadge}
+          ${increaseBadge}
         </div>
-        ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
         <div class="sets-table margin-top">
           ${ex.sets.map((set, setIdx) => `
             <div class="set-row ${set.completed ? 'completed-set' : ''}" style="display:flex; justify-content:space-between; align-items:center; padding: 4px 0;">
@@ -1096,8 +866,7 @@ function renderActiveWorkoutModal() {
                 <input type="number" value="${set.reps}" style="width: 55px; margin-left:4px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'reps', this.value)"> reps
               </div>
               <label class="set-check-label" style="font-size: 12px; cursor: pointer;">
-                <input type="checkbox" ${set.completed ? 'checked' : ''} class="set-check-input" onchange="toggleSetComplete(${exIdx},${setIdx}, this.checked)">
-                DONE
+                <input type="checkbox" ${set.completed ? 'checked' : ''} onchange="toggleSetComplete(${exIdx},${setIdx}, this.checked)"> DONE
               </label>
             </div>
           `).join("")}
@@ -1117,7 +886,6 @@ window.toggleSetComplete = function(exIdx, setIdx, isChecked) {
   if (!activeWorkout) return;
   activeWorkout.logs[exIdx].sets[setIdx].completed = isChecked;
   localStorage.setItem("gymbro_active_session", JSON.stringify(activeWorkout));
-
   renderActiveWorkoutModal();
 
   if (isChecked) {
@@ -1142,11 +910,7 @@ function finishActiveWorkout() {
       exVolume += setVol;
       totalSessionVolume += setVol;
       totalCompletedSets++;
-
-      if (s.weight >= maxWeight) {
-        maxWeight = s.weight;
-        maxReps = s.reps;
-      }
+      if (s.weight >= maxWeight) { maxWeight = s.weight; maxReps = s.reps; }
     });
 
     exerciseHistory[exKey] = {
@@ -1156,20 +920,14 @@ function finishActiveWorkout() {
       lastUpdated: new Date().toLocaleDateString()
     };
 
-    return {
-      name: ex.name,
-      sets: ex.sets.map(s => ({ weight: s.weight, reps: s.reps })),
-      exerciseVolume: exVolume
-    };
+    return { name: ex.name, sets: ex.sets.map(s => ({ weight: s.weight, reps: s.reps })), exerciseVolume: exVolume };
   });
 
   localStorage.setItem("gymbro_exercise_history", JSON.stringify(exerciseHistory));
 
   if (activeWorkout.planDayRef && activePlan) {
     activePlan.weeks.forEach(w => {
-      w.days.forEach(d => {
-        if (d.id === activeWorkout.planDayRef) d.completed = true;
-      });
+      w.days.forEach(d => { if (d.id === activeWorkout.planDayRef) d.completed = true; });
     });
     localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
     renderPlanUI();
@@ -1193,8 +951,7 @@ function finishActiveWorkout() {
 
   activeWorkout = null;
   document.getElementById("active-workout-modal").classList.add("hidden");
-  const stickyBar = document.getElementById("sticky-timer-bar");
-  if (stickyBar) stickyBar.classList.add("hidden");
+  document.getElementById("sticky-timer-bar").classList.add("hidden");
   clearInterval(timerInterval);
 
   checkActiveSession();
@@ -1216,19 +973,19 @@ function renderHistoryUI() {
           <div class="history-title"><strong style="color: #e2e8f0;">${item.title}</strong></div>
           <div class="history-meta" style="color: #cbd5e1; font-size: 12px;">${item.date} • ${item.exerciseCount || 0} Exercises • ${item.totalCompletedSets || 0} Sets</div>
         </div>
-        <div class="history-volume-badge" style="background: rgba(255, 215, 0, 0.15); color: #ffd700; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 13px;">
+        <div class="history-volume-badge" style="background: rgba(255, 215, 0, 0.15); color: var(--accent-gold); padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 13px;">
           ${(item.totalVolume || 0).toLocaleString()} lbs
         </div>
       </div>
       <div id="card_details_${item.id}" class="history-card-body hidden" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
         ${item.exercises ? item.exercises.map(ex => `
           <div class="history-exercise-block" style="margin-bottom: 6px;">
-            <div class="history-exercise-name" style="color: #ffd700; font-size: 13px; font-weight: 600;">${ex.name}</div>
+            <div class="history-exercise-name" style="color: var(--accent-gold); font-size: 13px; font-weight: 600;">${ex.name}</div>
             <div class="history-sets-summary" style="color: #94a3b8; font-size: 11px;">
               ${ex.sets ? ex.sets.map((s, idx) => `Set ${idx + 1}: ${s.weight} lbs × ${s.reps} reps`).join(" | ") : ""}
             </div>
           </div>
-        `).join("") : '<p class="history-sets-summary" style="color: #94a3b8; font-size: 11px;">Standard session details recorded.</p>'}
+        `).join("") : ''}
       </div>
     </div>
   `).join("");
