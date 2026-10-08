@@ -445,3 +445,102 @@ h1, h2, h3, h4 {
   font-size: 0.75rem;
   margin-top: 0.25rem;
 }
+
+/* ==========================================
+   APP PROFILES & PROGRESSION STYLES
+   ========================================== */
+/* Theme Overrides: Powerlifter Mode (Deep Red Accent) */
+body.theme-powerlifter {
+  --accent-gold: #ef4444;
+  --accent-silver: #f87171;
+  --bg-metal: linear-gradient(135deg, #180808 0%, #2a0c0c 50%, #110505 100%);
+  --border-metal: #7f1d1d;
+}
+
+body.theme-powerlifter .logo-text span,
+body.theme-powerlifter .section-header,
+body.theme-powerlifter .workout-title,
+body.theme-powerlifter .timer-display {
+  color: #ef4444 !important;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+}
+
+body.theme-powerlifter .metal-btn.primary-btn {
+  background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%);
+  border-color: #ef4444;
+}
+
+/* Theme Overrides: Calisthenics Mode (Deep Purple Accent) */
+body.theme-calisthenics {
+  --accent-gold: #a855f7;
+  --accent-silver: #c084fc;
+  --bg-metal: linear-gradient(135deg, #12071f 0%, #200b3b 50%, #0d0417 100%);
+  --border-metal: #581c87;
+}
+
+body.theme-calisthenics .logo-text span,
+body.theme-calisthenics .section-header,
+body.theme-calisthenics .workout-title,
+body.theme-calisthenics .timer-display {
+  color: #c084fc !important;
+  text-shadow: 0 0 10px rgba(192, 132, 252, 0.4);
+}
+
+body.theme-calisthenics .metal-btn.primary-btn {
+  background: linear-gradient(180deg, #9333ea 0%, #6b21a8 100%);
+  border-color: #a855f7;
+}
+
+/* Progression & Deload Badges */
+.badge-suggested-weight {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border: 1px solid #22c55e;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  animation: pulseBadge 2s infinite;
+}
+
+.badge-deload {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid #3b82f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+@keyframes pulseBadge {
+  0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+}
+
+/* Skill Tree Pathways */
+.skill-tree-card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid var(--border-metal);
+  border-radius: 6px;
+  padding: 10px;
+  margin-top: 8px;
+}
+
+.skill-step {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  margin-top: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.skill-step.active-step {
+  border-left: 3px solid var(--accent-gold);
+  background: rgba(255, 215, 0, 0.08);
+}
