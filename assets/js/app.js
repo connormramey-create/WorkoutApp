@@ -14,13 +14,14 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-// Application State
+// State Management
 let exerciseDataset = [];
 let activeWorkout = null;
 let timerInterval = null;
 let timerRemainingSeconds = 0;
 let isTimerPaused = false;
 let currentUser = null;
+let isSignUpMode = false;
 
 const DEFAULT_SETTINGS = {
   split: "upper_lower",
@@ -34,6 +35,7 @@ let userSettings = JSON.parse(localStorage.getItem("gymbro_settings")) || DEFAUL
 let activePlan = JSON.parse(localStorage.getItem("gymbro_active_plan")) || null;
 let workoutHistory = JSON.parse(localStorage.getItem("gymbro_history")) || [];
 let exerciseHistory = JSON.parse(localStorage.getItem("gymbro_exercise_history")) || {};
+let customExercises = JSON.parse(localStorage.getItem("gymbro_custom_exercises")) || [];
 
 // Target Muscle Maps
 const UPPER_BODY_TARGETS = ["chest", "upper chest", "lower chest", "pectorals", "lats", "upper back", "shoulders", "front delts", "side delts", "rear delts", "traps", "biceps", "brachialis", "triceps", "forearms"];
@@ -59,6 +61,78 @@ const ANTAGONIST_MAP = {
   "lower back": ["abs", "obliques"]
 };
 
+// Movement Patterns & Volume Balancing Maps
+const MOVEMENT_PATTERNS = {
+  HORIZONTAL_PUSH: ['horizontal push'],
+  HORIZONTAL_PULL: ['horizontal pull'],
+  VERTICAL_PUSH: ['vertical push'],
+  VERTICAL_PULL: ['vertical pull'],
+  KNEE_DOMINANT: ['squat', 'knee extension'],
+  HIP_DOMINANT: ['hinge', 'hip extension', 'knee flexion']
+};
+
+// Targeted Dynamic Warm-up Library
+const DYNAMIC_WARMUP_LIBRARY = {
+  chest: [
+    { name: "Arm Swings & Chest Openers", duration: "45 sec", desc: "Cross arms across chest, then pull back dynamically to open pectorals." },
+    { name: "Band Pull-Aparts", duration: "15 reps", desc: "Hold light band at chest height, pull outward focusing on upper back activation." }
+  ],
+  shoulders: [
+    { name: "Shoulder Dislocates (PVC/Band)", duration: "12 reps", desc: "Pass band overhead from front to back with straight arms." },
+    { name: "Arm Circles (Forward & Reverse)", duration: "30 sec each", desc: "Small to large arm rotations to warm rotator cuff muscles." }
+  ],
+  lats: [
+    { name: "Lat Overhead Side Reaches", duration: "10 per side", desc: "Side bend with overhead reach to dynamically stretch lats." },
+    { name: "Cat-Cow Stretch", duration: "10 reps", desc: "Flex and extend spine to articulate thoracic spine and lats." }
+  ],
+  upper_back: [
+    { name: "Thoracic Windmills", duration: "8 per side", desc: "Side-lying rotational arm movement to open thoracic spine." },
+    { name: "Banded Face Pulls", duration: "15 reps", desc: "Light high pulls to activate rear delts and rhomboids." }
+  ],
+  quads: [
+    { name: "Bodyweight Goblet Squat Hold w/ Pry", duration: "45 sec", desc: "Sink into deep squat, gently prying knees out with elbows." },
+    { name: "Dynamic Walking Quad Stretch", duration: "10 per leg", desc: "Pull foot to glute while reaching opposite hand overhead." }
+  ],
+  hamstrings: [
+    { name: "Frankenstein Dynamic Sweeps", duration: "10 per leg", desc: "Hinge forward and sweep hands toward toes on extended heel." },
+    { name: "Good Morning Hip Hinges", duration: "12 reps", desc: "Hands behind head, hinge at hips with flat back to prime posterior chain." }
+  ],
+  glutes: [
+    { name: "Bodyweight Glute Bridges", duration: "15 reps", desc: "Squeeze glutes at top pause to prime posterior chain." },
+    { name: "Hip Openers / Fire Hydrants", duration: "10 per leg", desc: "Circle knees outward on all fours to activate glute medius." }
+  ],
+  abs: [
+    { name: "Plank to Downward Dog", duration: "8 reps", desc: "Shift from high plank into downward dog to warm core and shoulders." },
+    { name: "Standing Torso Twists", duration: "30 sec", desc: "Rotational torso turns with loose arms." }
+  ]
+};
+
+// Targeted Static Cool-Down Library
+const COOL_DOWN_STRETCH_LIBRARY = {
+  chest: [
+    { name: "Doorway Pectoral Stretch", duration: "45 sec hold", desc: "Place forearm against doorframe, step forward to stretch chest." }
+  ],
+  shoulders: [
+    { name: "Cross-Body Shoulder Stretch", duration: "45 sec per side", desc: "Pull arm across chest with opposite arm." },
+    { name: "Overhead Triceps & Shoulder Stretch", duration: "40 sec per side", desc: "Reach elbow overhead and gently pull backward." }
+  ],
+  lats: [
+    { name: "Child's Pose w/ Lateral Reach", duration: "60 sec hold", desc: "Kneel, sit hips back, and walk hands diagonally to stretch lats." }
+  ],
+  quads: [
+    { name: "Standing / Lying Quad Stretch", duration: "45 sec per side", desc: "Hold foot to glute, keeping knees together and core tight." }
+  ],
+  hamstrings: [
+    { name: "Seated Single-Leg Hamstring Stretch", duration: "45 sec per side", desc: "Extend one leg, fold forward from hips with flat spine." }
+  ],
+  glutes: [
+    { name: "Figure-Four / Pigeon Stretch", duration: "45 sec per side", desc: "Cross ankle over knee, lean forward to stretch deep glutes." }
+  ],
+  abs: [
+    { name: "Cobra Abdominal Stretch", duration: "45 sec hold", desc: "Lie prone, press upper body up on forearms/hands to stretch abs." }
+  ]
+};
+
 // Initialize App
 document.addEventListener("DOMContentLoaded", async () => {
   await loadExercises();
@@ -67,27 +141,39 @@ document.addEventListener("DOMContentLoaded", async () => {
   initFirebaseAuthListener();
   renderPlanUI();
   renderHistoryUI();
+  renderCustomExerciseListUI();
   checkActiveSession();
 });
 
-// Load Dataset
+// Load Exercises & Merge Custom User Exercises
 async function loadExercises() {
   try {
     const response = await fetch("data/exercises.json");
-    exerciseDataset = await response.json();
+    const rawDataset = await response.json();
+    exerciseDataset = rawDataset;
+    mergeCustomExercises();
   } catch (err) {
     console.error("Failed to load exercises dataset:", err);
   }
 }
 
+function mergeCustomExercises() {
+  exerciseDataset = exerciseDataset.filter(ex => !ex.isCustom);
+  const taggedCustoms = customExercises.map(ex => ({ ...ex, isCustom: true }));
+  exerciseDataset = [...exerciseDataset, ...taggedCustoms];
+}
+
 // Firebase Auth Observer & Cloud Sync
 function initFirebaseAuthListener() {
   auth.onAuthStateChanged(async (user) => {
+    const authModal = document.getElementById("auth-modal");
     if (user) {
       currentUser = user;
+      if (authModal) authModal.classList.add("hidden");
       syncUserDataFromCloud(user.uid);
     } else {
       currentUser = null;
+      if (authModal) authModal.classList.remove("hidden");
     }
   });
 }
@@ -116,6 +202,12 @@ function syncUserDataFromCloud(uid) {
         exerciseHistory = data.exercise_history;
         localStorage.setItem("gymbro_exercise_history", JSON.stringify(exerciseHistory));
       }
+      if (data.custom_exercises) {
+        customExercises = data.custom_exercises;
+        localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
+        mergeCustomExercises();
+        renderCustomExerciseListUI();
+      }
     }
   });
 }
@@ -126,18 +218,18 @@ function saveUserDataToCloud() {
     settings: userSettings,
     history: workoutHistory,
     active_plan: activePlan,
-    exercise_history: exerciseHistory
+    exercise_history: exerciseHistory,
+    custom_exercises: customExercises
   });
 }
 
-// Sound & Haptic Feedback Engine (Web Audio API)
+// Sound & Haptic Feedback Engine
 function playRestTimerFinishSound() {
   try {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtx) return;
     const ctx = new AudioCtx();
 
-    // Play dual metallic chime
     const osc1 = ctx.createOscillator();
     const osc2 = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -145,8 +237,8 @@ function playRestTimerFinishSound() {
     osc1.type = "sine";
     osc2.type = "triangle";
 
-    osc1.frequency.setValueAtTime(880, ctx.currentTime); // A5
-    osc2.frequency.setValueAtTime(1760, ctx.currentTime); // A6
+    osc1.frequency.setValueAtTime(880, ctx.currentTime);
+    osc2.frequency.setValueAtTime(1760, ctx.currentTime);
 
     gain.gain.setValueAtTime(0.3, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
@@ -163,7 +255,6 @@ function playRestTimerFinishSound() {
     console.error("Audio playback error:", err);
   }
 
-  // Trigger Haptic Vibration if supported
   if ("vibrate" in navigator) {
     navigator.vibrate([200, 100, 200, 100, 400]);
   }
@@ -176,7 +267,8 @@ function startRestTimer(seconds) {
   isTimerPaused = false;
 
   updateTimerButtonsUI();
-  document.getElementById("sticky-timer-bar").classList.remove("hidden");
+  const stickyBar = document.getElementById("sticky-timer-bar");
+  if (stickyBar) stickyBar.classList.remove("hidden");
 
   const tick = () => {
     if (isTimerPaused) return;
@@ -185,16 +277,19 @@ function startRestTimer(seconds) {
     const secs = timerRemainingSeconds % 60;
     const formatted = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 
-    document.getElementById("rest-timer-display").innerText = formatted;
-    document.getElementById("floating-timer-display").innerText = formatted;
+    const modalDisplay = document.getElementById("rest-timer-display");
+    const floatingDisplay = document.getElementById("floating-timer-display");
+
+    if (modalDisplay) modalDisplay.innerText = formatted;
+    if (floatingDisplay) floatingDisplay.innerText = formatted;
 
     if (timerRemainingSeconds <= 0) {
       clearInterval(timerInterval);
-      document.getElementById("rest-timer-display").innerText = "TIME UP!";
-      document.getElementById("floating-timer-display").innerText = "TIME UP!";
+      if (modalDisplay) modalDisplay.innerText = "TIME UP!";
+      if (floatingDisplay) floatingDisplay.innerText = "TIME UP!";
       playRestTimerFinishSound();
       setTimeout(() => {
-        document.getElementById("sticky-timer-bar").classList.add("hidden");
+        if (stickyBar) stickyBar.classList.add("hidden");
       }, 5000);
       return;
     }
@@ -211,8 +306,11 @@ function adjustRestTimer(secondsToAdd) {
   const secs = timerRemainingSeconds % 60;
   const formatted = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 
-  document.getElementById("rest-timer-display").innerText = formatted;
-  document.getElementById("floating-timer-display").innerText = formatted;
+  const modalDisplay = document.getElementById("rest-timer-display");
+  const floatingDisplay = document.getElementById("floating-timer-display");
+
+  if (modalDisplay) modalDisplay.innerText = formatted;
+  if (floatingDisplay) floatingDisplay.innerText = formatted;
 }
 
 function togglePauseRestTimer() {
@@ -232,12 +330,16 @@ function updateTimerButtonsUI() {
 function skipRestTimer() {
   clearInterval(timerInterval);
   timerRemainingSeconds = 0;
-  document.getElementById("rest-timer-display").innerText = "00:00";
-  document.getElementById("floating-timer-display").innerText = "00:00";
-  document.getElementById("sticky-timer-bar").classList.add("hidden");
+  const modalDisplay = document.getElementById("rest-timer-display");
+  const floatingDisplay = document.getElementById("floating-timer-display");
+  const stickyBar = document.getElementById("sticky-timer-bar");
+
+  if (modalDisplay) modalDisplay.innerText = "00:00";
+  if (floatingDisplay) floatingDisplay.innerText = "00:00";
+  if (stickyBar) stickyBar.classList.add("hidden");
 }
 
-// Workout Generator Logic
+// Generate Workout Session with Built-in Volume Balancing (Max Variance = 1)
 function generateWorkoutSession(splitTypeOverride) {
   const split = splitTypeOverride || userSettings.split;
   const duration = parseInt(userSettings.duration, 10);
@@ -275,18 +377,45 @@ function generateWorkoutSession(splitTypeOverride) {
     );
   }
 
-  let selected = [];
+  function getPatternCategory(ex) {
+    const pattern = (ex.movement_pattern || '').toLowerCase();
+    const target = (ex.target || ex.muscle_group || '').toLowerCase();
+
+    if (MOVEMENT_PATTERNS.HORIZONTAL_PUSH.includes(pattern) || ['chest', 'pectorals'].some(m => target.includes(m))) {
+      return 'hPush';
+    }
+    if (MOVEMENT_PATTERNS.HORIZONTAL_PULL.includes(pattern) || ['upper back', 'rhomboids'].some(m => target.includes(m))) {
+      return 'hPull';
+    }
+    if (MOVEMENT_PATTERNS.VERTICAL_PUSH.includes(pattern) || ['shoulders', 'front delts', 'side delts'].some(m => target.includes(m))) {
+      return 'vPush';
+    }
+    if (MOVEMENT_PATTERNS.VERTICAL_PULL.includes(pattern) || ['lats'].some(m => target.includes(m))) {
+      return 'vPull';
+    }
+    if (MOVEMENT_PATTERNS.KNEE_DOMINANT.includes(pattern) || ['quads'].some(m => target.includes(m))) {
+      return 'knee';
+    }
+    if (MOVEMENT_PATTERNS.HIP_DOMINANT.includes(pattern) || ['hamstrings', 'glutes'].some(m => target.includes(m))) {
+      return 'hip';
+    }
+    return 'other';
+  }
+
+  let poolCopy = [...pool];
+  const selected = [];
+  const counts = { hPush: 0, hPull: 0, vPush: 0, vPull: 0, knee: 0, hip: 0, other: 0 };
 
   if (userSettings.supersets) {
-    const poolCopy = [...pool];
     let pairCount = 1;
-
     while (selected.length < exerciseCount && poolCopy.length > 0) {
       const ex1Idx = Math.floor(Math.random() * poolCopy.length);
       const ex1 = poolCopy.splice(ex1Idx, 1)[0];
       const target1 = ex1.target.toLowerCase();
       
       ex1.supersetGroup = `SUPERSET ${pairCount} - A`;
+      const cat1 = getPatternCategory(ex1);
+      counts[cat1] = (counts[cat1] || 0) + 1;
       selected.push(ex1);
 
       if (selected.length >= exerciseCount) break;
@@ -300,19 +429,42 @@ function generateWorkoutSession(splitTypeOverride) {
       if (ex2Idx !== -1) {
         const ex2 = poolCopy.splice(ex2Idx, 1)[0];
         ex2.supersetGroup = `SUPERSET ${pairCount} - B`;
+        const cat2 = getPatternCategory(ex2);
+        counts[cat2] = (counts[cat2] || 0) + 1;
         selected.push(ex2);
       } else if (poolCopy.length > 0) {
         const ex2Fallback = poolCopy.splice(0, 1)[0];
         ex2Fallback.supersetGroup = `SUPERSET ${pairCount} - B`;
+        const catFallback = getPatternCategory(ex2Fallback);
+        counts[catFallback] = (counts[catFallback] || 0) + 1;
         selected.push(ex2Fallback);
       }
       pairCount++;
     }
   } else {
-    const poolCopy = [...pool];
     while (selected.length < exerciseCount && poolCopy.length > 0) {
-      const idx = Math.floor(Math.random() * poolCopy.length);
-      selected.push(poolCopy.splice(idx, 1)[0]);
+      let requiredCategory = null;
+
+      if (counts.hPush > counts.hPull) requiredCategory = 'hPull';
+      else if (counts.hPull > counts.hPush) requiredCategory = 'hPush';
+      else if (counts.vPush > counts.vPull) requiredCategory = 'vPull';
+      else if (counts.vPull > counts.vPush) requiredCategory = 'vPush';
+      else if (counts.knee > counts.hip) requiredCategory = 'hip';
+      else if (counts.hip > counts.knee) requiredCategory = 'knee';
+
+      let chosenIdx = -1;
+      if (requiredCategory) {
+        chosenIdx = poolCopy.findIndex(ex => getPatternCategory(ex) === requiredCategory);
+      }
+
+      if (chosenIdx === -1) {
+        chosenIdx = Math.floor(Math.random() * poolCopy.length);
+      }
+
+      const chosenEx = poolCopy.splice(chosenIdx, 1)[0];
+      const cat = getPatternCategory(chosenEx);
+      counts[cat] = (counts[cat] || 0) + 1;
+      selected.push(chosenEx);
     }
   }
 
@@ -331,6 +483,238 @@ function generateWorkoutSession(splitTypeOverride) {
   return { title, exercises: selected, warmups, cooldowns };
 }
 
+// Phase 3 Auditing & Dynamic Mobility Engine
+function auditWorkoutBalance(workoutExercises) {
+  const counts = {
+    horizontalPush: 0,
+    horizontalPull: 0,
+    verticalPush: 0,
+    verticalPull: 0,
+    kneeDominant: 0,
+    hipDominant: 0
+  };
+
+  workoutExercises.forEach(ex => {
+    const pattern = (ex.movement_pattern || '').toLowerCase();
+    const target = (ex.target || ex.muscle_group || '').toLowerCase();
+
+    if (MOVEMENT_PATTERNS.HORIZONTAL_PUSH.includes(pattern)) counts.horizontalPush++;
+    else if (MOVEMENT_PATTERNS.HORIZONTAL_PULL.includes(pattern)) counts.horizontalPull++;
+    else if (MOVEMENT_PATTERNS.VERTICAL_PUSH.includes(pattern)) counts.verticalPush++;
+    else if (MOVEMENT_PATTERNS.VERTICAL_PULL.includes(pattern)) counts.verticalPull++;
+    else if (MOVEMENT_PATTERNS.KNEE_DOMINANT.includes(pattern)) counts.kneeDominant++;
+    else if (MOVEMENT_PATTERNS.HIP_DOMINANT.includes(pattern)) counts.hipDominant++;
+    else {
+      if (['chest', 'pectorals'].some(m => target.includes(m))) counts.horizontalPush++;
+      else if (['lats', 'upper back', 'rhomboids'].some(m => target.includes(m))) counts.horizontalPull++;
+      else if (['shoulders', 'front delts', 'side delts'].some(m => target.includes(m))) counts.verticalPush++;
+      else if (['quads'].some(m => target.includes(m))) counts.kneeDominant++;
+      else if (['hamstrings', 'glutes'].some(m => target.includes(m))) counts.hipDominant++;
+    }
+  });
+
+  return counts;
+}
+
+function renderBalanceBadgesAndAlerts(counts) {
+  const container = document.getElementById('balanceAuditContainer');
+  if (!container) return;
+
+  const badges = [];
+  const alerts = [];
+
+  const hPush = counts.horizontalPush;
+  const hPull = counts.horizontalPull;
+  if (hPush > 0 || hPull > 0) {
+    if (Math.abs(hPush - hPull) <= 1) {
+      badges.push({ text: `Horizontal Push/Pull Balanced (${hPush}:${hPull})`, type: 'success' });
+    } else if (hPush > hPull) {
+      alerts.push(`⚠️ Horizontal Push Overdominant (${hPush} Push vs ${hPull} Pull). Consider adding a Row movement!`);
+      badges.push({ text: `Push Heavy (${hPush}:${hPull})`, type: 'warning' });
+    } else {
+      alerts.push(`⚠️ Horizontal Pull Overdominant (${hPull} Pull vs ${hPush} Push). Consider adding a Chest Press!`);
+      badges.push({ text: `Pull Heavy (${hPull}:${hPush})`, type: 'warning' });
+    }
+  }
+
+  const vPush = counts.verticalPush;
+  const vPull = counts.verticalPull;
+  if (vPush > 0 || vPull > 0) {
+    if (Math.abs(vPush - vPull) <= 1) {
+      badges.push({ text: `Vertical Push/Pull Balanced (${vPush}:${vPull})`, type: 'success' });
+    } else if (vPush > vPull) {
+      alerts.push(`⚠️ Vertical Push Overdominant (${vPush} Push vs ${vPull} Pull). Consider adding Pull-ups or Lat Pulldowns!`);
+      badges.push({ text: `Overhead Heavy (${vPush}:${vPull})`, type: 'warning' });
+    } else {
+      alerts.push(`⚠️ Vertical Pull Overdominant (${vPull} Pull vs ${vPush} Push). Consider adding an Overhead Shoulder Press!`);
+      badges.push({ text: `Lat Heavy (${vPull}:${vPush})`, type: 'warning' });
+    }
+  }
+
+  const knee = counts.kneeDominant;
+  const hip = counts.hipDominant;
+  if (knee > 0 || hip > 0) {
+    if (Math.abs(knee - hip) <= 1) {
+      badges.push({ text: `Leg Ratio Balanced (${knee}:${hip})`, type: 'success' });
+    } else if (knee > hip) {
+      alerts.push(`⚠️ Knee Dominant Overdominant (${knee} Quads vs ${hip} Hamstrings/Glutes). Add RDLs or Leg Curls!`);
+      badges.push({ text: `Quad Heavy (${knee}:${hip})`, type: 'warning' });
+    } else {
+      alerts.push(`⚠️ Hip Dominant Overdominant (${hip} Hamstrings/Glutes vs ${knee} Quads). Add Squats or Lunges!`);
+      badges.push({ text: `Posterior Heavy (${hip}:${knee})`, type: 'warning' });
+    }
+  }
+
+  let html = `
+    <div class="balance-audit-card">
+      <div class="balance-header">
+        <span class="balance-title">⚖️ Movement Pattern & Volume Audit</span>
+      </div>
+      <div class="balance-badges">
+        ${badges.map(b => `<span class="badge-balance badge-balance-${b.type}">${b.type === 'success' ? '✓' : '⚠️'} ${b.text}</span>`).join('')}
+      </div>`;
+
+  if (alerts.length > 0) {
+    html += `<div class="balance-alerts">${alerts.map(a => `<div class="alert-item">${a}</div>`).join('')}</div>`;
+  }
+
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function generateTargetedMobility(workoutExercises) {
+  const targetMuscles = new Set();
+  workoutExercises.forEach(ex => {
+    const target = (ex.target || ex.muscle_group || '').toLowerCase();
+    if (target.includes('chest') || target.includes('pec')) targetMuscles.add('chest');
+    if (target.includes('shoulder') || target.includes('delt')) targetMuscles.add('shoulders');
+    if (target.includes('lat') || target.includes('back')) { targetMuscles.add('lats'); targetMuscles.add('upper_back'); }
+    if (target.includes('quad')) targetMuscles.add('quads');
+    if (target.includes('hamstring')) targetMuscles.add('hamstrings');
+    if (target.includes('glute')) targetMuscles.add('glutes');
+    if (target.includes('ab') || target.includes('waist') || target.includes('oblique')) targetMuscles.add('abs');
+  });
+
+  if (targetMuscles.size === 0) {
+    targetMuscles.add('shoulders');
+    targetMuscles.add('glutes');
+  }
+
+  const warmups = [];
+  const cooldowns = [];
+  targetMuscles.forEach(m => {
+    if (DYNAMIC_WARMUP_LIBRARY[m]) warmups.push(...DYNAMIC_WARMUP_LIBRARY[m]);
+    if (COOL_DOWN_STRETCH_LIBRARY[m]) cooldowns.push(...COOL_DOWN_STRETCH_LIBRARY[m]);
+  });
+
+  return { warmups, cooldowns };
+}
+
+function renderTargetedMobilityLists(mobility) {
+  const warmupContainer = document.getElementById('dynamicWarmupList');
+  const cooldownContainer = document.getElementById('cooldownStretchList');
+  const warmupBadge = document.getElementById('warmupCountBadge');
+  const cooldownBadge = document.getElementById('cooldownCountBadge');
+
+  if (warmupBadge) warmupBadge.textContent = `${mobility.warmups.length} Drills`;
+  if (cooldownBadge) cooldownBadge.textContent = `${mobility.cooldowns.length} Stretches`;
+
+  if (warmupContainer) {
+    warmupContainer.innerHTML = mobility.warmups.map(w => `
+      <div class="mobility-item flex flex-col justify-between">
+        <div class="flex items-center justify-between" style="display:flex; justify-content:space-between;">
+          <span class="mobility-title">${w.name}</span>
+          <span class="mobility-duration">${w.duration}</span>
+        </div>
+        <div class="mobility-desc">${w.desc}</div>
+      </div>
+    `).join('');
+  }
+
+  if (cooldownContainer) {
+    cooldownContainer.innerHTML = mobility.cooldowns.map(c => `
+      <div class="mobility-item flex flex-col justify-between">
+        <div class="flex items-center justify-between" style="display:flex; justify-content:space-between;">
+          <span class="mobility-title">${c.name}</span>
+          <span class="mobility-duration">${c.duration}</span>
+        </div>
+        <div class="mobility-desc">${c.desc}</div>
+      </div>
+    `).join('');
+  }
+}
+
+// Custom Exercise Management
+function addCustomExercise() {
+  const nameInput = document.getElementById("custom-ex-name");
+  if (!nameInput) return;
+  const name = nameInput.value.trim();
+  if (!name) {
+    alert("Please enter a custom exercise name.");
+    return;
+  }
+
+  const target = document.getElementById("custom-ex-target").value;
+  const equipment = document.getElementById("custom-ex-equipment").value;
+  const pattern = document.getElementById("custom-ex-pattern").value;
+  const symmetry = document.getElementById("custom-ex-symmetry").value;
+  const difficulty = document.getElementById("custom-ex-difficulty").value;
+
+  const newEx = {
+    id: `custom_${Date.now()}`,
+    name: name,
+    target: target,
+    muscle_groups: {
+      primary: [target],
+      secondary: []
+    },
+    movement_pattern: pattern,
+    equipment: equipment,
+    symmetry: symmetry,
+    difficulty: difficulty,
+    isCustom: true
+  };
+
+  customExercises.push(newEx);
+  localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
+  mergeCustomExercises();
+  saveUserDataToCloud();
+  renderCustomExerciseListUI();
+
+  nameInput.value = "";
+  alert(`Added custom exercise: ${name}`);
+}
+
+window.deleteCustomExercise = function(id) {
+  if (confirm("Delete this custom exercise?")) {
+    customExercises = customExercises.filter(ex => ex.id !== id);
+    localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
+    mergeCustomExercises();
+    saveUserDataToCloud();
+    renderCustomExerciseListUI();
+  }
+};
+
+function renderCustomExerciseListUI() {
+  const container = document.getElementById("custom-exercise-list");
+  if (!container) return;
+
+  if (customExercises.length === 0) {
+    container.innerHTML = '<p class="subtitle" style="font-size: 12px; margin-top: 5px;">No custom exercises added yet.</p>';
+    return;
+  }
+
+  container.innerHTML = customExercises.map(ex => `
+    <div class="day-row" style="background: #0f172a; padding: 6px 10px; margin-top: 6px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <strong style="color: var(--accent-gold); font-size: 13px;">${ex.name}</strong><br>
+        <small style="color: #cbd5e1; font-size: 11px;">${ex.target} • ${ex.equipment} • ${ex.movement_pattern}</small>
+      </div>
+      <button class="metal-btn danger-btn small-btn" onclick="deleteCustomExercise('${ex.id}')">✕</button>
+    </div>
+  `).join("");
+}
+
 // UI Event Handlers
 function initEventListeners() {
   document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -341,6 +725,42 @@ function initEventListeners() {
       document.getElementById(btn.dataset.tab).classList.add("active");
     });
   });
+
+  const toggleAuthBtn = document.getElementById("toggle-auth-mode-btn");
+  if (toggleAuthBtn) {
+    toggleAuthBtn.addEventListener("click", () => {
+      isSignUpMode = !isSignUpMode;
+      document.getElementById("auth-title").innerText = isSignUpMode ? "CREATE IRON BRO ACCOUNT" : "IRON BRO LOGIN";
+      document.getElementById("auth-submit-btn").innerText = isSignUpMode ? "SIGN UP" : "LOG IN";
+      toggleAuthBtn.innerText = isSignUpMode ? "ALREADY HAVE AN ACCOUNT? LOG IN" : "NEED AN ACCOUNT? SIGN UP";
+    });
+  }
+
+  const authForm = document.getElementById("auth-form");
+  if (authForm) {
+    authForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("auth-email").value;
+      const password = document.getElementById("auth-password").value;
+      const errorMsg = document.getElementById("auth-error-msg");
+      if (errorMsg) errorMsg.innerText = "";
+
+      try {
+        if (isSignUpMode) {
+          await auth.createUserWithEmailAndPassword(email, password);
+        } else {
+          await auth.signInWithEmailAndPassword(email, password);
+        }
+      } catch (err) {
+        if (errorMsg) errorMsg.innerText = err.message;
+      }
+    });
+  }
+
+  const addCustomBtn = document.getElementById("add-custom-ex-btn");
+  if (addCustomBtn) {
+    addCustomBtn.addEventListener("click", addCustomExercise);
+  }
 
   document.getElementById("open-settings-btn").addEventListener("click", () => {
     document.getElementById("settings-modal").classList.remove("hidden");
@@ -385,7 +805,8 @@ function initEventListeners() {
 function initSettingsUI() {
   document.getElementById("setting-split").value = userSettings.split;
   document.getElementById("setting-duration").value = userSettings.duration;
-  document.getElementById("setting-rest-time").value = userSettings.restTime || 60;
+  const restElem = document.getElementById("setting-rest-time");
+  if (restElem) restElem.value = userSettings.restTime || 60;
   document.getElementById("setting-supersets").checked = userSettings.supersets;
 
   const eqCheckboxes = document.querySelectorAll("#equipment-toggles input");
@@ -397,7 +818,8 @@ function initSettingsUI() {
 function saveSettingsUI() {
   userSettings.split = document.getElementById("setting-split").value;
   userSettings.duration = parseInt(document.getElementById("setting-duration").value, 10);
-  userSettings.restTime = parseInt(document.getElementById("setting-rest-time").value, 10);
+  const restElem = document.getElementById("setting-rest-time");
+  if (restElem) userSettings.restTime = parseInt(restElem.value, 10);
   userSettings.supersets = document.getElementById("setting-supersets").checked;
 
   const selectedEquipment = [];
@@ -439,17 +861,11 @@ function renderGeneratedWorkout(session) {
   document.getElementById("workout-title").innerText = session.title;
   document.getElementById("workout-meta").innerText = `${userSettings.duration} Mins | ${session.exercises.length} Exercises${userSettings.supersets ? " (Antagonistic Supersets)" : ""}`;
 
-  const warmupUl = document.getElementById("warmup-list");
-  warmupUl.innerHTML = session.warmups.map(w => `<li>${w}</li>`).join("");
-
-  const cooldownUl = document.getElementById("cooldown-list");
-  cooldownUl.innerHTML = session.cooldowns.map(c => `<li>${c}</li>`).join("");
-
   const exDiv = document.getElementById("exercise-list");
   exDiv.innerHTML = session.exercises.map(ex => `
     <div class="exercise-card">
       ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
-      <h5>${ex.name}</h5>
+      <h5>${ex.name}${ex.isCustom ? ' <span class="tag" style="color:var(--accent-gold);">[CUSTOM]</span>' : ''}</h5>
       <div class="exercise-tags">
         <span class="tag">Target: ${ex.target}</span>
         <span class="tag">Equip: ${ex.equipment}</span>
@@ -458,6 +874,7 @@ function renderGeneratedWorkout(session) {
     </div>
   `).join("");
 
+  // Phase 3 Trigger Calls
   const balanceCounts = auditWorkoutBalance(session.exercises);
   renderBalanceBadgesAndAlerts(balanceCounts);
 
@@ -595,7 +1012,7 @@ window.togglePlanDay = function(weekNum, dayId) {
   renderPlanUI();
 };
 
-// Active Session Tracking & Self-Running Rest Timer Toggles
+// Active Session Tracking & Set Memory
 function startActiveWorkout(session) {
   activeWorkout = {
     ...session,
@@ -665,20 +1082,20 @@ function renderActiveWorkoutModal() {
 
     return `
       <div class="exercise-card margin-top">
-        <div class="exercise-card-header">
+        <div class="exercise-card-header" style="display:flex; justify-content:space-between; align-items:center;">
           <h5>${ex.name}</h5>
           ${lastBadge}
         </div>
         ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
         <div class="sets-table margin-top">
           ${ex.sets.map((set, setIdx) => `
-            <div class="set-row ${set.completed ? 'completed-set' : ''}">
+            <div class="set-row ${set.completed ? 'completed-set' : ''}" style="display:flex; justify-content:space-between; align-items:center; padding: 4px 0;">
               <span>Set ${setIdx + 1}</span>
               <div>
                 <input type="number" value="${set.weight}" style="width: 65px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'weight', this.value)"> lbs
                 <input type="number" value="${set.reps}" style="width: 55px; margin-left:4px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'reps', this.value)"> reps
               </div>
-              <label class="set-check-label">
+              <label class="set-check-label" style="font-size: 12px; cursor: pointer;">
                 <input type="checkbox" ${set.completed ? 'checked' : ''} class="set-check-input" onchange="toggleSetComplete(${exIdx},${setIdx}, this.checked)">
                 DONE
               </label>
@@ -703,13 +1120,11 @@ window.toggleSetComplete = function(exIdx, setIdx, isChecked) {
 
   renderActiveWorkoutModal();
 
-  // Auto-start rest timer whenever a set is toggled completed
   if (isChecked) {
     startRestTimer(parseInt(userSettings.restTime || 60, 10));
   }
 };
 
-// Finish Workout & Calculate Volume Analytics ($\text{sets} \times \text{reps} \times \text{weight}$)
 function finishActiveWorkout() {
   if (!activeWorkout) return;
 
@@ -734,7 +1149,6 @@ function finishActiveWorkout() {
       }
     });
 
-    // Save Exercise Memory
     exerciseHistory[exKey] = {
       lastWeight: maxWeight || ex.sets[0]?.weight || 0,
       lastReps: maxReps || ex.sets[0]?.reps || 0,
@@ -751,7 +1165,6 @@ function finishActiveWorkout() {
 
   localStorage.setItem("gymbro_exercise_history", JSON.stringify(exerciseHistory));
 
-  // Advance Multi-Month Program Plan
   if (activeWorkout.planDayRef && activePlan) {
     activePlan.weeks.forEach(w => {
       w.days.forEach(d => {
@@ -762,7 +1175,6 @@ function finishActiveWorkout() {
     renderPlanUI();
   }
 
-  // Record Detailed History Entry
   const historyEntry = {
     id: `log_${Date.now()}`,
     title: activeWorkout.title,
@@ -781,7 +1193,8 @@ function finishActiveWorkout() {
 
   activeWorkout = null;
   document.getElementById("active-workout-modal").classList.add("hidden");
-  document.getElementById("sticky-timer-bar").classList.add("hidden");
+  const stickyBar = document.getElementById("sticky-timer-bar");
+  if (stickyBar) stickyBar.classList.add("hidden");
   clearInterval(timerInterval);
 
   checkActiveSession();
@@ -789,7 +1202,6 @@ function finishActiveWorkout() {
   alert(`Workout Logged! Total Volume Lifted: ${totalSessionVolume.toLocaleString()} lbs`);
 }
 
-// Render Expandable History Cards & Volume Summaries
 function renderHistoryUI() {
   const container = document.getElementById("history-list");
   if (!workoutHistory || workoutHistory.length === 0) {
@@ -798,25 +1210,25 @@ function renderHistoryUI() {
   }
 
   container.innerHTML = workoutHistory.map(item => `
-    <div class="history-card">
-      <div class="history-card-header" onclick="toggleHistoryCardDetails('${item.id}')">
+    <div class="history-card" style="background: #0f172a; border-radius: 8px; padding: 12px; margin-bottom: 10px; border-left: 4px solid var(--accent-gold);">
+      <div class="history-card-header" onclick="toggleHistoryCardDetails('${item.id}')" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
         <div>
-          <div class="history-title"><strong>${item.title}</strong></div>
-          <div class="history-meta">${item.date} • ${item.exerciseCount || 0} Exercises • ${item.totalCompletedSets || 0} Sets</div>
+          <div class="history-title"><strong style="color: #e2e8f0;">${item.title}</strong></div>
+          <div class="history-meta" style="color: #cbd5e1; font-size: 12px;">${item.date} • ${item.exerciseCount || 0} Exercises • ${item.totalCompletedSets || 0} Sets</div>
         </div>
-        <div class="history-volume-badge">
+        <div class="history-volume-badge" style="background: rgba(255, 215, 0, 0.15); color: #ffd700; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 13px;">
           ${(item.totalVolume || 0).toLocaleString()} lbs
         </div>
       </div>
-      <div id="card_details_${item.id}" class="history-card-body hidden">
+      <div id="card_details_${item.id}" class="history-card-body hidden" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
         ${item.exercises ? item.exercises.map(ex => `
-          <div class="history-exercise-block">
-            <div class="history-exercise-name">${ex.name}</div>
-            <div class="history-sets-summary">
+          <div class="history-exercise-block" style="margin-bottom: 6px;">
+            <div class="history-exercise-name" style="color: #ffd700; font-size: 13px; font-weight: 600;">${ex.name}</div>
+            <div class="history-sets-summary" style="color: #94a3b8; font-size: 11px;">
               ${ex.sets ? ex.sets.map((s, idx) => `Set ${idx + 1}: ${s.weight} lbs × ${s.reps} reps`).join(" | ") : ""}
             </div>
           </div>
-        `).join("") : '<p class="history-sets-summary">Standard session details recorded.</p>'}
+        `).join("") : '<p class="history-sets-summary" style="color: #94a3b8; font-size: 11px;">Standard session details recorded.</p>'}
       </div>
     </div>
   `).join("");
@@ -826,224 +1238,3 @@ window.toggleHistoryCardDetails = function(cardId) {
   const el = document.getElementById(`card_details_${cardId}`);
   if (el) el.classList.toggle("hidden");
 };
-
-// Workout Balancing
-const MOVEMENT_PATTERNS = {
-  HORIZONTAL_PUSH: ['horizontal push'],
-  HORIZONTAL_PULL: ['horizontal pull'],
-  VERTICAL_PUSH: ['vertical push'],
-  VERTICAL_PULL: ['vertical pull'],
-  KNEE_DOMINANT: ['squat', 'knee extension'],
-  HIP_DOMINANT: ['hinge', 'hip extension', 'knee flexion']
-};
-
-const DYNAMIC_WARMUP_LIBRARY = {
-  chest: [
-    { name: "Arm Swings & Chest Openers", duration: "45 sec", desc: "Cross arms across chest, then pull back dynamically to open pectorals." },
-    { name: "Band Pull-Aparts", duration: "15 reps", desc: "Hold light band at chest height, pull outward focusing on upper back activation." }
-  ],
-  shoulders: [
-    { name: "Shoulder Dislocates (PVC/Band)", duration: "12 reps", desc: "Pass band overhead from front to back with straight arms." },
-    { name: "Arm Circles (Forward & Reverse)", duration: "30 sec each", desc: "Small to large arm rotations to warm rotator cuff muscles." }
-  ],
-  lats: [
-    { name: "Lat Overhead Side Reaches", duration: "10 per side", desc: "Side bend with overhead reach to dynamically stretch lats." },
-    { name: "Cat-Cow Stretch", duration: "10 reps", desc: "Flex and extend spine to articulate thoracic spine and lats." }
-  ],
-  upper_back: [
-    { name: "Thoracic Windmills", duration: "8 per side", desc: "Side-lying rotational arm movement to open thoracic spine." },
-    { name: "Banded Face Pulls", duration: "15 reps", desc: "Light high pulls to activate rear delts and rhomboids." }
-  ],
-  quads: [
-    { name: "Bodyweight Goblet Squat Hold w/ Pry", duration: "45 sec", desc: "Sink into deep squat, gently prying knees out with elbows." },
-    { name: "Dynamic Walking Quad Stretch", duration: "10 per leg", desc: "Pull foot to glute while reaching opposite hand overhead." }
-  ],
-  hamstrings: [
-    { name: "Frankenstein Dynamic Sweeps", duration: "10 per leg", desc: "Hinge forward and sweep hands toward toes on extended heel." },
-    { name: "Good Morning Hip Hinges", duration: "12 reps", desc: "Hands behind head, hinge at hips with flat back to prime posterior chain." }
-  ],
-  glutes: [
-    { name: "Bodyweight Glute Bridges", duration: "15 reps", desc: "Squeeze glutes at top pause to prime posterior chain." },
-    { name: "Hip Openers / Fire Hydrants", duration: "10 per leg", desc: "Circle knees outward on all fours to activate glute medius." }
-  ],
-  abs: [
-    { name: "Plank to Downward Dog", duration: "8 reps", desc: "Shift from high plank into downward dog to warm core and shoulders." },
-    { name: "Standing Torso Twists", duration: "30 sec", desc: "Rotational torso turns with loose arms." }
-  ]
-};
-
-const COOL_DOWN_STRETCH_LIBRARY = {
-  chest: [
-    { name: "Doorway Pectoral Stretch", duration: "45 sec hold", desc: "Place forearm against doorframe, step forward to stretch chest." }
-  ],
-  shoulders: [
-    { name: "Cross-Body Shoulder Stretch", duration: "45 sec per side", desc: "Pull arm across chest with opposite arm." },
-    { name: "Overhead Triceps & Shoulder Stretch", duration: "40 sec per side", desc: "Reach elbow overhead and gently pull backward." }
-  ],
-  lats: [
-    { name: "Child's Pose w/ Lateral Reach", duration: "60 sec hold", desc: "Kneel, sit hips back, and walk hands diagonally to stretch lats." }
-  ],
-  quads: [
-    { name: "Standing / Lying Quad Stretch", duration: "45 sec per side", desc: "Hold foot to glute, keeping knees together and core tight." }
-  ],
-  hamstrings: [
-    { name: "Seated Single-Leg Hamstring Stretch", duration: "45 sec per side", desc: "Extend one leg, fold forward from hips with flat spine." }
-  ],
-  glutes: [
-    { name: "Figure-Four / Pigeon Stretch", duration: "45 sec per side", desc: "Cross ankle over knee, lean forward to stretch deep glutes." }
-  ],
-  abs: [
-    { name: "Cobra Abdominal Stretch", duration: "45 sec hold", desc: "Lie prone, press upper body up on forearms/hands to stretch abs." }
-  ]
-};
-
-function auditWorkoutBalance(workoutExercises) {
-  const counts = { horizontalPush: 0, horizontalPull: 0, verticalPush: 0, verticalPull: 0, kneeDominant: 0, hipDominant: 0 };
-  workoutExercises.forEach(ex => {
-    const pattern = (ex.movement_pattern || '').toLowerCase();
-    const target = (ex.target || ex.muscle_group || '').toLowerCase();
-
-    if (MOVEMENT_PATTERNS.HORIZONTAL_PUSH.includes(pattern)) counts.horizontalPush++;
-    else if (MOVEMENT_PATTERNS.HORIZONTAL_PULL.includes(pattern)) counts.horizontalPull++;
-    else if (MOVEMENT_PATTERNS.VERTICAL_PUSH.includes(pattern)) counts.verticalPush++;
-    else if (MOVEMENT_PATTERNS.VERTICAL_PULL.includes(pattern)) counts.verticalPull++;
-    else if (MOVEMENT_PATTERNS.KNEE_DOMINANT.includes(pattern)) counts.kneeDominant++;
-    else if (MOVEMENT_PATTERNS.HIP_DOMINANT.includes(pattern)) counts.hipDominant++;
-    else {
-      if (['chest', 'pectorals'].some(m => target.includes(m))) counts.horizontalPush++;
-      else if (['lats', 'upper back', 'rhomboids'].some(m => target.includes(m))) counts.horizontalPull++;
-      else if (['shoulders', 'front delts', 'side delts'].some(m => target.includes(m))) counts.verticalPush++;
-      else if (['quads'].some(m => target.includes(m))) counts.kneeDominant++;
-      else if (['hamstrings', 'glutes'].some(m => target.includes(m))) counts.hipDominant++;
-    }
-  });
-  return counts;
-}
-
-function renderBalanceBadgesAndAlerts(counts) {
-  const container = document.getElementById('balanceAuditContainer');
-  if (!container) return;
-
-  const badges = [];
-  const alerts = [];
-
-  const hPush = counts.horizontalPush;
-  const hPull = counts.horizontalPull;
-  if (hPush > 0 || hPull > 0) {
-    if (Math.abs(hPush - hPull) <= 1) {
-      badges.push({ text: `Horizontal Push/Pull Balanced (${hPush}:${hPull})`, type: 'success' });
-    } else if (hPush > hPull) {
-      alerts.push(`⚠️ Horizontal Push Overdominant (${hPush} Push vs ${hPull} Pull). Consider adding a Row movement!`);
-      badges.push({ text: `Push Heavy (${hPush}:${hPull})`, type: 'warning' });
-    } else {
-      alerts.push(`⚠️ Horizontal Pull Overdominant (${hPull} Pull vs ${hPush} Push). Consider adding a Chest Press!`);
-      badges.push({ text: `Pull Heavy (${hPull}:${hPush})`, type: 'warning' });
-    }
-  }
-
-  const vPush = counts.verticalPush;
-  const vPull = counts.verticalPull;
-  if (vPush > 0 || vPull > 0) {
-    if (Math.abs(vPush - vPull) <= 1) {
-      badges.push({ text: `Vertical Push/Pull Balanced (${vPush}:${vPull})`, type: 'success' });
-    } else if (vPush > vPull) {
-      alerts.push(`⚠️ Vertical Push Overdominant (${vPush} Push vs ${vPull} Pull). Consider adding Pull-ups or Lat Pulldowns!`);
-      badges.push({ text: `Overhead Heavy (${vPush}:${vPull})`, type: 'warning' });
-    } else {
-      alerts.push(`⚠️ Vertical Pull Overdominant (${vPull} Pull vs ${vPush} Push). Consider adding an Overhead Shoulder Press!`);
-      badges.push({ text: `Lat Heavy (${vPull}:${vPush})`, type: 'warning' });
-    }
-  }
-
-  const knee = counts.kneeDominant;
-  const hip = counts.hipDominant;
-  if (knee > 0 || hip > 0) {
-    if (Math.abs(knee - hip) <= 1) {
-      badges.push({ text: `Leg Ratio Balanced (${knee}:${hip})`, type: 'success' });
-    } else if (knee > hip) {
-      alerts.push(`⚠️ Knee Dominant Overdominant (${knee} Quads vs ${hip} Hamstrings/Glutes). Add RDLs or Leg Curls!`);
-      badges.push({ text: `Quad Heavy (${knee}:${hip})`, type: 'warning' });
-    } else {
-      alerts.push(`⚠️ Hip Dominant Overdominant (${hip} Hamstrings/Glutes vs ${knee} Quads). Add Squats or Lunges!`);
-      badges.push({ text: `Posterior Heavy (${hip}:${knee})`, type: 'warning' });
-    }
-  }
-
-  let html = `
-    <div class="balance-audit-card">
-      <div class="balance-header">
-        <span class="balance-title">⚖️ Movement Pattern & Volume Audit</span>
-      </div>
-      <div class="balance-badges">
-        ${badges.map(b => `<span class="badge-balance badge-balance-${b.type}">${b.type === 'success' ? '✓' : '⚠️'} ${b.text}</span>`).join('')}
-      </div>`;
-
-  if (alerts.length > 0) {
-    html += `<div class="balance-alerts">${alerts.map(a => `<div class="alert-item">${a}</div>`).join('')}</div>`;
-  }
-
-  html += `</div>`;
-  container.innerHTML = html;
-}
-
-function generateTargetedMobility(workoutExercises) {
-  const targetMuscles = new Set();
-  workoutExercises.forEach(ex => {
-    const target = (ex.target || ex.muscle_group || '').toLowerCase();
-    if (target.includes('chest') || target.includes('pec')) targetMuscles.add('chest');
-    if (target.includes('shoulder') || target.includes('delt')) targetMuscles.add('shoulders');
-    if (target.includes('lat') || target.includes('back')) { targetMuscles.add('lats'); targetMuscles.add('upper_back'); }
-    if (target.includes('quad')) targetMuscles.add('quads');
-    if (target.includes('hamstring')) targetMuscles.add('hamstrings');
-    if (target.includes('glute')) targetMuscles.add('glutes');
-    if (target.includes('ab') || target.includes('waist') || target.includes('oblique')) targetMuscles.add('abs');
-  });
-
-  if (targetMuscles.size === 0) {
-    targetMuscles.add('shoulders');
-    targetMuscles.add('glutes');
-  }
-
-  const warmups = [];
-  const cooldowns = [];
-  targetMuscles.forEach(m => {
-    if (DYNAMIC_WARMUP_LIBRARY[m]) warmups.push(...DYNAMIC_WARMUP_LIBRARY[m]);
-    if (COOL_DOWN_STRETCH_LIBRARY[m]) cooldowns.push(...COOL_DOWN_STRETCH_LIBRARY[m]);
-  });
-
-  return { warmups, cooldowns };
-}
-
-function renderTargetedMobilityLists(mobility) {
-  const warmupContainer = document.getElementById('dynamicWarmupList');
-  const cooldownContainer = document.getElementById('cooldownStretchList');
-  const warmupBadge = document.getElementById('warmupCountBadge');
-  const cooldownBadge = document.getElementById('cooldownCountBadge');
-
-  if (warmupBadge) warmupBadge.textContent = `${mobility.warmups.length} Drills`;
-  if (cooldownBadge) cooldownBadge.textContent = `${mobility.cooldowns.length} Stretches`;
-
-  if (warmupContainer) {
-    warmupContainer.innerHTML = mobility.warmups.map(w => `
-      <div class="mobility-item flex flex-col justify-between">
-        <div class="flex items-center justify-between" style="display:flex; justify-content:space-between;">
-          <span class="mobility-title">${w.name}</span>
-          <span class="mobility-duration">${w.duration}</span>
-        </div>
-        <div class="mobility-desc">${w.desc}</div>
-      </div>
-    `).join('');
-  }
-
-  if (cooldownContainer) {
-    cooldownContainer.innerHTML = mobility.cooldowns.map(c => `
-      <div class="mobility-item flex flex-col justify-between">
-        <div class="flex items-center justify-between" style="display:flex; justify-content:space-between;">
-          <span class="mobility-title">${c.name}</span>
-          <span class="mobility-duration">${c.duration}</span>
-        </div>
-        <div class="mobility-desc">${c.desc}</div>
-      </div>
-    `).join('');
-  }
-}
