@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IRON BRO TRACKER - Phase 2 Edition</title>
+  <title>IRON BRO TRACKER - Phase 3 Edition</title>
   <link rel="stylesheet" href="assets/css/styles.css">
   <link rel="manifest" href="manifest.json">
-  <!-- Firebase SDKs -->
+  <!-- Firebase Compatibility SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
@@ -45,19 +45,37 @@
         <h3 id="workout-title" class="workout-title">UPPER BODY SESSION</h3>
         <div id="workout-meta" class="workout-meta"></div>
         
+        <!-- Phase 3: Volume Balancing & Movement Pattern Audit Container -->
+        <div id="balanceAuditContainer" class="balance-audit-wrapper margin-top"></div>
+
+        <!-- Phase 3: Dynamic Mobility Engine Cards -->
         <div class="workout-section">
-          <h4>🔥 DYNAMIC WARM-UP</h4>
-          <ul id="warmup-list" class="steel-list"></ul>
+          <div class="mobility-wrapper">
+            <!-- Dynamic Warm-Up Card -->
+            <div class="mobility-card metal-subcard">
+              <div class="mobility-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h4 style="color: var(--accent-gold); font-size: 0.9rem;">🔥 TARGETED DYNAMIC WARM-UP</h4>
+                <span id="warmupCountBadge" class="tag">0 Drills</span>
+              </div>
+              <ul id="warmup-list" class="steel-list hidden"></ul>
+              <div id="dynamicWarmupList" class="mobility-list"></div>
+            </div>
+
+            <!-- Specific Cool-Down Stretch Card -->
+            <div class="mobility-card metal-subcard margin-top">
+              <div class="mobility-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h4 style="color: var(--accent-silver); font-size: 0.9rem;">🧘 SPECIFIC COOL-DOWN STRETCHES</h4>
+                <span id="cooldownCountBadge" class="tag">0 Stretches</span>
+              </div>
+              <ul id="cooldown-list" class="steel-list hidden"></ul>
+              <div id="cooldownStretchList" class="mobility-list"></div>
+            </div>
+          </div>
         </div>
 
         <div class="workout-section">
           <h4>🏋️ EXERCISES</h4>
           <div id="exercise-list" class="exercise-grid"></div>
-        </div>
-
-        <div class="workout-section">
-          <h4>🧊 STATIC STRETCHING</h4>
-          <ul id="cooldown-list" class="steel-list"></ul>
         </div>
 
         <button id="start-workout-btn" class="metal-btn action-btn full-width margin-top">🚀 START THIS WORKOUT</button>
@@ -146,6 +164,30 @@
 
       <div class="modal-footer">
         <button id="finish-workout-btn" class="metal-btn primary-btn full-width">✅ COMPLETE WORKOUT</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Auth Modal -->
+  <div id="auth-modal" class="modal-overlay hidden">
+    <div class="modal-content metal-modal">
+      <header class="modal-header">
+        <h2 id="auth-title">IRON BRO LOGIN</h2>
+      </header>
+      <form id="auth-form" class="settings-body">
+        <div class="setting-group">
+          <label class="setting-label">Email Address</label>
+          <input type="email" id="auth-email" class="metal-input" placeholder="bro@ironbro.com" required>
+        </div>
+        <div class="setting-group">
+          <label class="setting-label">Password</label>
+          <input type="password" id="auth-password" class="metal-input" placeholder="••••••••" required>
+        </div>
+        <div id="auth-error-msg" style="color: var(--danger-color); font-size: 0.85rem; margin-bottom: 10px;"></div>
+        <button type="submit" id="auth-submit-btn" class="metal-btn primary-btn full-width">LOG IN</button>
+      </form>
+      <div class="modal-footer">
+        <button id="toggle-auth-mode-btn" class="metal-btn small-btn full-width">NEED AN ACCOUNT? SIGN UP</button>
       </div>
     </div>
   </div>
