@@ -193,6 +193,81 @@
         </div>
       </div>
 
+      <!-- Custom Exercise Creator -->
+        <div class="setting-group margin-top" style="border-top: 1px solid var(--accent-gold); padding-top: 15px;">
+          <label class="setting-label">➕ CREATE CUSTOM EXERCISE</label>
+          <div class="custom-ex-form">
+            <input type="text" id="custom-ex-name" class="metal-input" placeholder="Exercise Name (e.g., Cable Belt Squat)" style="margin-bottom: 8px;">
+            
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+          <select id="custom-ex-target" class="metal-input">
+            <option value="chest">Target: Chest</option>
+            <option value="upper chest">Target: Upper Chest</option>
+            <option value="lower chest">Target: Lower Chest</option>
+            <option value="lats">Target: Lats</option>
+            <option value="upper back">Target: Upper Back</option>
+            <option value="shoulders">Target: Shoulders</option>
+            <option value="front delts">Target: Front Delts</option>
+            <option value="side delts">Target: Side Delts</option>
+            <option value="rear delts">Target: Rear Delts</option>
+            <option value="biceps">Target: Biceps</option>
+            <option value="triceps">Target: Triceps</option>
+            <option value="quads">Target: Quads</option>
+            <option value="hamstrings">Target: Hamstrings</option>
+            <option value="glutes">Target: Glutes</option>
+            <option value="calves">Target: Calves</option>
+            <option value="abs">Target: Abs</option>
+            <option value="obliques">Target: Obliques</option>
+          </select>
+
+          <select id="custom-ex-equipment" class="metal-input">
+            <option value="barbell">Equip: Barbell</option>
+            <option value="dumbbell">Equip: Dumbbell</option>
+            <option value="cable">Equip: Cable</option>
+            <option value="leverage machine">Equip: Leverage Machine</option>
+            <option value="smith machine">Equip: Smith Machine</option>
+            <option value="body weight">Equip: Bodyweight</option>
+            <option value="kettlebell">Equip: Kettlebell</option>
+            <option value="band">Equip: Resistance Band</option>
+            <option value="other">Equip: Other</option>
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+          <select id="custom-ex-pattern" class="metal-input">
+            <option value="horizontal push">Horizontal Push</option>
+            <option value="horizontal pull">Horizontal Pull</option>
+            <option value="vertical push">Vertical Push</option>
+            <option value="vertical pull">Vertical Pull</option>
+            <option value="squat">Squat</option>
+            <option value="hinge">Hinge</option>
+            <option value="elbow flexion">Elbow Flexion</option>
+            <option value="elbow extension">Elbow Extension</option>
+            <option value="knee flexion">Knee Flexion</option>
+            <option value="knee extension">Knee Extension</option>
+            <option value="flexion">Flexion</option>
+            <option value="isolation">Isolation</option>
+          </select>
+
+          <select id="custom-ex-symmetry" class="metal-input">
+            <option value="bilateral">Bilateral</option>
+            <option value="unilateral">Unilateral</option>
+          </select>
+
+          <select id="custom-ex-difficulty" class="metal-input">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+
+        <button type="button" id="add-custom-ex-btn" class="metal-btn primary-btn full-width">SAVE CUSTOM EXERCISE</button>
+      </div>
+
+      <label class="setting-label margin-top">YOUR CUSTOM EXERCISES</label>
+      <div id="custom-exercise-list" style="max-height: 150px; overflow-y: auto;"></div>
+    </div>
+      
       <div class="modal-footer margin-top">
         <button id="save-settings-btn" class="metal-btn primary-btn full-width">SAVE SETTINGS</button>
       </div>
