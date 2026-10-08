@@ -31,6 +31,7 @@ const DEFAULT_SETTINGS = {
 let userSettings = JSON.parse(localStorage.getItem("gymbro_settings")) || DEFAULT_SETTINGS;
 let activePlan = JSON.parse(localStorage.getItem("gymbro_active_plan")) || null;
 let workoutHistory = JSON.parse(localStorage.getItem("gymbro_history")) || [];
+let exerciseHistory = JSON.parse(localStorage.getItem("gymbro_exercise_history")) || {};
 
 // Target Muscle Maps
 const UPPER_BODY_TARGETS = ["chest", "upper chest", "lower chest", "pectorals", "lats", "upper back", "shoulders", "front delts", "side delts", "rear delts", "traps", "biceps", "brachialis", "triceps", "forearms"];
@@ -112,6 +113,10 @@ function syncUserDataFromCloud(uid) {
         localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
         renderPlanUI();
       }
+      if (data.exercise_history) {
+        exerciseHistory = data.exercise_history;
+        localStorage.setItem("gymbro_exercise_history", JSON.stringify(exerciseHistory));
+      }
     }
   });
 }
@@ -121,7 +126,8 @@ function saveUserDataToCloud() {
   db.ref(`users/${currentUser.uid}`).update({
     settings: userSettings,
     history: workoutHistory,
-    active_plan: activePlan
+    active_plan: activePlan,
+    exercise_history: exerciseHistory
   });
 }
 
@@ -529,21 +535,37 @@ window.togglePlanDay = function(weekNum, dayId) {
   renderPlanUI();
 };
 
-// Active Session Tracking
+// Active Session Tracking & Exercise History Auto-Populate
 function startActiveWorkout(session) {
   activeWorkout = {
     ...session,
     startTime: new Date().toISOString(),
-    logs: session.exercises.map(ex => ({
-      id: ex.id,
-      name: ex.name,
-      supersetGroup: ex.supersetGroup || null,
-      sets: [
+    logs: session.exercises.map(ex => {
+      const exKey = ex.id || ex.name;
+      const historyRecord = exerciseHistory[exKey];
+
+      let defaultSets = [
         { reps: 10, weight: 100 },
         { reps: 10, weight: 100 },
         { reps: 10, weight: 100 }
-      ]
-    }))
+      ];
+
+      // Auto-populate sets with last used weights and reps
+      if (historyRecord && historyRecord.sets && historyRecord.sets.length > 0) {
+        defaultSets = historyRecord.sets.map(s => ({
+          reps: s.reps || 10,
+          weight: s.weight || 100
+        }));
+      }
+
+      return {
+        id: ex.id || ex.name,
+        name: ex.name,
+        supersetGroup: ex.supersetGroup || null,
+        lastRecord: historyRecord || null,
+        sets: defaultSets
+      };
+    })
   };
 
   localStorage.setItem("gymbro_active_session", JSON.stringify(activeWorkout));
@@ -569,21 +591,35 @@ function renderActiveWorkoutModal() {
   document.getElementById("active-workout-name").innerText = activeWorkout.title;
 
   const container = document.getElementById("active-exercise-container");
-  container.innerHTML = activeWorkout.logs.map((ex, exIdx) => `
-    <div class="exercise-card margin-top">
-      ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
-      <h5>${ex.name}</h5>
-      <div class="sets-table">
-        ${ex.sets.map((set, setIdx) => `
-          <div class="day-row" style="padding: 5px 0;">
-            <span>Set ${setIdx + 1}</span>
-            <input type="number" value="${set.weight}" style="width: 70px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'weight', this.value)"> lbs
-            <input type="number" value="${set.reps}" style="width: 60px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'reps', this.value)"> reps
-          </div>
-        `).join("")}
+  container.innerHTML = activeWorkout.logs.map((ex, exIdx) => {
+    let lastBadge = "";
+    if (ex.lastRecord) {
+      const topWeight = ex.lastRecord.lastWeight || ex.lastRecord.sets?.[0]?.weight || 0;
+      const topReps = ex.lastRecord.lastReps || ex.lastRecord.sets?.[0]?.reps || 0;
+      if (topWeight > 0) {
+        lastBadge = `<div class="tag" style="background: #1e293b; color: var(--accent-gold); margin-bottom: 8px; border: 1px solid var(--accent-gold); display: inline-block;">
+          LAST TIME: ${topWeight} lbs × ${topReps} reps
+        </div>`;
+      }
+    }
+
+    return `
+      <div class="exercise-card margin-top">
+        ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
+        <h5>${ex.name}</h5>
+        ${lastBadge}
+        <div class="sets-table">
+          ${ex.sets.map((set, setIdx) => `
+            <div class="day-row" style="padding: 5px 0;">
+              <span>Set ${setIdx + 1}</span>
+              <input type="number" value="${set.weight}" style="width: 70px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'weight', this.value)"> lbs
+              <input type="number" value="${set.reps}" style="width: 60px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'reps', this.value)"> reps
+            </div>
+          `).join("")}
+        </div>
       </div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
 
 window.updateSetData = function(exIdx, setIdx, field, val) {
@@ -595,6 +631,30 @@ window.updateSetData = function(exIdx, setIdx, field, val) {
 function finishActiveWorkout() {
   if (!activeWorkout) return;
 
+  // 1. Save Per-Exercise Weight & Set History
+  activeWorkout.logs.forEach(ex => {
+    const exKey = ex.id || ex.name;
+    let maxWeight = 0;
+    let maxReps = 0;
+
+    ex.sets.forEach(s => {
+      if (s.weight >= maxWeight) {
+        maxWeight = s.weight;
+        maxReps = s.reps;
+      }
+    });
+
+    exerciseHistory[exKey] = {
+      lastWeight: maxWeight || ex.sets[0]?.weight || 0,
+      lastReps: maxReps || ex.sets[0]?.reps || 0,
+      sets: ex.sets.map(s => ({ weight: s.weight, reps: s.reps })),
+      lastUpdated: new Date().toLocaleDateString()
+    };
+  });
+
+  localStorage.setItem("gymbro_exercise_history", JSON.stringify(exerciseHistory));
+
+  // 2. Advance Multi-Month Plan
   if (activeWorkout.planDayRef && activePlan) {
     activePlan.weeks.forEach(w => {
       w.days.forEach(d => {
@@ -602,8 +662,10 @@ function finishActiveWorkout() {
       });
     });
     localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
+    renderPlanUI();
   }
 
+  // 3. Save Session Log History
   workoutHistory.unshift({
     title: activeWorkout.title,
     date: new Date().toLocaleDateString(),
@@ -612,6 +674,7 @@ function finishActiveWorkout() {
 
   localStorage.setItem("gymbro_history", JSON.stringify(workoutHistory));
   localStorage.removeItem("gymbro_active_session");
+
   saveUserDataToCloud();
 
   activeWorkout = null;
