@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IRON BRO TRACKER - Phase 3 Edition</title>
+  <title>IRON BRO TRACKER - Phase 4 Engine</title>
   <link rel="stylesheet" href="assets/css/styles.css">
   <link rel="manifest" href="manifest.json">
   <!-- Firebase Compatibility SDKs -->
@@ -11,9 +11,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
-<body class="metallic-theme">
+<body class="metallic-theme theme-standard">
   <header class="top-nav">
-    <h1 class="logo-text">IRON BRO <span>TRACKER</span></h1>
+    <h1 class="logo-text">IRON BRO <span id="app-subhead">TRACKER</span></h1>
     <button id="open-settings-btn" class="metal-btn icon-btn">⚙️ SETTINGS</button>
   </header>
 
@@ -35,7 +35,7 @@
     <section id="generator-tab" class="tab-content active">
       <div class="metal-card">
         <h2 class="section-header">QUICK WORKOUT GENERATOR</h2>
-        <p class="subtitle">Generates workouts dynamically based on your active Settings filters.</p>
+        <p class="subtitle">Generates workouts dynamically based on your active Settings & App Profile.</p>
         <div class="card-actions">
           <button id="generate-workout-btn" class="metal-btn primary-btn large-btn full-width">⚡ GENERATE SESSION</button>
         </div>
@@ -48,26 +48,25 @@
         <!-- Phase 3: Volume Balancing & Movement Pattern Audit Container -->
         <div id="balanceAuditContainer" class="balance-audit-wrapper margin-top"></div>
 
-        <!-- Phase 3: Dynamic Mobility Engine Cards -->
+        <!-- Phase 4: Calisthenics Skill Tree View (Rendered only in Calisthenics Mode) -->
+        <div id="calisthenicsSkillTreeContainer" class="hidden"></div>
+
+        <!-- Dynamic Mobility Engine Cards -->
         <div class="workout-section">
           <div class="mobility-wrapper">
-            <!-- Dynamic Warm-Up Card -->
             <div class="mobility-card metal-subcard">
               <div class="mobility-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <h4 style="color: var(--accent-gold); font-size: 0.9rem;">🔥 TARGETED DYNAMIC WARM-UP</h4>
                 <span id="warmupCountBadge" class="tag">0 Drills</span>
               </div>
-              <ul id="warmup-list" class="steel-list hidden"></ul>
               <div id="dynamicWarmupList" class="mobility-list"></div>
             </div>
 
-            <!-- Specific Cool-Down Stretch Card -->
             <div class="mobility-card metal-subcard margin-top">
               <div class="mobility-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                 <h4 style="color: var(--accent-silver); font-size: 0.9rem;">🧘 SPECIFIC COOL-DOWN STRETCHES</h4>
                 <span id="cooldownCountBadge" class="tag">0 Stretches</span>
               </div>
-              <ul id="cooldown-list" class="steel-list hidden"></ul>
               <div id="cooldownStretchList" class="mobility-list"></div>
             </div>
           </div>
@@ -89,9 +88,9 @@
         <div class="plan-setup-form">
           <label for="plan-duration" class="setting-label">Select Plan Duration:</label>
           <select id="plan-duration" class="metal-input">
-            <option value="1">1 Month (4 Weeks)</option>
-            <option value="2">2 Months (8 Weeks)</option>
-            <option value="3" selected>3 Months (12 Weeks)</option>
+            <option value="1">1 Month (4 Weeks - Week 4 Deload)</option>
+            <option value="2">2 Months (8 Weeks - Weeks 4 & 8 Deload)</option>
+            <option value="3" selected>3 Months (12 Weeks - Weeks 4, 8 & 12 Deload)</option>
           </select>
           <button id="create-plan-btn" class="metal-btn primary-btn full-width margin-top">BUILD PROGRAM PLAN</button>
         </div>
@@ -125,7 +124,7 @@
     </section>
   </main>
 
-  <!-- Sticky Floating Rest Timer Bar (Visible during active workout) -->
+  <!-- Sticky Floating Rest Timer Bar -->
   <div id="sticky-timer-bar" class="sticky-timer-bar hidden">
     <div class="timer-bar-content">
       <span class="timer-bar-label">REST TIMER:</span>
@@ -139,7 +138,7 @@
     </div>
   </div>
 
-  <!-- Active Workout Modal / Overlay -->
+  <!-- Active Workout Modal -->
   <div id="active-workout-modal" class="modal-overlay hidden">
     <div class="modal-content metal-modal large-modal">
       <header class="modal-header">
@@ -154,7 +153,7 @@
           <button onclick="adjustRestTimer(-15)" class="metal-btn timer-quick-btn">-15s</button>
           <button onclick="adjustRestTimer(15)" class="metal-btn timer-quick-btn">+15s</button>
           <button onclick="startRestTimer(60)" class="metal-btn timer-quick-btn">60s</button>
-          <button onclick="startRestTimer(90)" class="metal-btn timer-quick-btn">90s</button>
+          <button onclick="startRestTimer(180)" class="metal-btn timer-quick-btn">180s</button>
           <button id="modal-pause-btn" onclick="togglePauseRestTimer()" class="metal-btn primary-btn">PAUSE</button>
           <button onclick="skipRestTimer()" class="metal-btn danger-btn">SKIP</button>
         </div>
@@ -192,7 +191,7 @@
     </div>
   </div>
 
-  <!-- Settings Modal -->
+  <!-- Settings Modal with Phase 4 Options -->
   <div id="settings-modal" class="modal-overlay hidden">
     <div class="modal-content metal-modal">
       <header class="modal-header">
@@ -201,6 +200,27 @@
       </header>
       
       <div class="settings-body">
+        <!-- Phase 4: App Profile Selector -->
+        <div class="setting-group">
+          <label class="setting-label">Target App Profile Preset</label>
+          <select id="setting-profile" class="metal-input">
+            <option value="standard" selected>Standard Lifter (Hypertrophy 8-12 reps, Metallic Theme)</option>
+            <option value="powerlifter">Powerlifter Mode (Compounds 3-6 reps, Red Theme)</option>
+            <option value="calisthenics">Calisthenics Mode (Bodyweight Skill Trees, Purple Theme)</option>
+          </select>
+        </div>
+
+        <!-- Phase 4: Progression Scheme Selector -->
+        <div class="setting-group">
+          <label class="setting-label">Program Progression Scheme</label>
+          <select id="setting-progression" class="metal-input">
+            <option value="linear" selected>Linear Progression (Beginner - +5 lbs Auto Prompts)</option>
+            <option value="juggernaut">Juggernaut System (Intermediate - Wave Loading)</option>
+            <option value="five_three_one">5/3/1 Method (Intermediate - 5s / 3s / 1s Waves)</option>
+            <option value="conjugate">Conjugate Method (Advanced - Max / Dynamic Effort)</option>
+          </select>
+        </div>
+
         <div class="setting-group">
           <label class="setting-label">Active Workout Split</label>
           <select id="setting-split" class="metal-input">
@@ -228,7 +248,8 @@
             <option value="30">30 Seconds</option>
             <option value="60" selected>60 Seconds</option>
             <option value="90">90 Seconds</option>
-            <option value="120">120 Seconds</option>
+            <option value="180">180 Seconds (3 Mins)</option>
+            <option value="300">300 Seconds (5 Mins)</option>
           </select>
         </div>
 
