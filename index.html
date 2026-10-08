@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IRON BRO TRACKER - Phase 4 Engine</title>
+  <title>IRON BRO TRACKER</title>
   <link rel="stylesheet" href="assets/css/styles.css">
   <link rel="manifest" href="manifest.json">
   <!-- Firebase Compatibility SDKs -->
@@ -45,10 +45,10 @@
         <h3 id="workout-title" class="workout-title">UPPER BODY SESSION</h3>
         <div id="workout-meta" class="workout-meta"></div>
         
-        <!-- Phase 3: Volume Balancing & Movement Pattern Audit Container -->
+        <!-- Movement Pattern Audit Container -->
         <div id="balanceAuditContainer" class="balance-audit-wrapper margin-top"></div>
 
-        <!-- Phase 4: Calisthenics Skill Tree View (Rendered only in Calisthenics Mode) -->
+        <!-- Calisthenics Skill Tree View -->
         <div id="calisthenicsSkillTreeContainer" class="hidden"></div>
 
         <!-- Dynamic Mobility Engine Cards -->
@@ -191,7 +191,7 @@
     </div>
   </div>
 
-  <!-- Settings Modal with Phase 4 Options -->
+  <!-- Settings Modal -->
   <div id="settings-modal" class="modal-overlay hidden">
     <div class="modal-content metal-modal">
       <header class="modal-header">
@@ -200,7 +200,7 @@
       </header>
       
       <div class="settings-body">
-        <!-- Phase 4: App Profile Selector -->
+        <!-- App Profile Selector -->
         <div class="setting-group">
           <label class="setting-label">Target App Profile Preset</label>
           <select id="setting-profile" class="metal-input">
@@ -210,7 +210,7 @@
           </select>
         </div>
 
-        <!-- Phase 4: Progression Scheme Selector -->
+        <!-- Progression Scheme Selector -->
         <div class="setting-group">
           <label class="setting-label">Program Progression Scheme</label>
           <select id="setting-progression" class="metal-input">
@@ -271,11 +271,62 @@
         <div class="setting-group">
           <label class="metal-checkbox"><input type="checkbox" id="setting-supersets"> Enable Antagonistic Supersets</label>
         </div>
+
+        <!-- Custom Exercise Trigger Button -->
+        <div class="setting-group margin-top">
+          <button type="button" id="open-custom-ex-btn" class="metal-btn primary-btn full-width">
+            + CREATE CUSTOM EXERCISE
+          </button>
+        </div>
       </div>
 
       <div class="modal-footer">
         <button id="save-settings-btn" class="metal-btn primary-btn full-width">SAVE SETTINGS</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Custom Exercise Creator Modal -->
+  <div id="custom-ex-modal" class="modal-overlay hidden">
+    <div class="modal-content metal-modal">
+      <header class="modal-header">
+        <h2>CREATE CUSTOM EXERCISE</h2>
+        <button id="close-custom-ex-btn" class="close-btn">&times;</button>
+      </header>
+      <form id="custom-ex-form" class="settings-body">
+        <div class="setting-group">
+          <label class="setting-label" for="custom-ex-name">Exercise Name</label>
+          <input type="text" id="custom-ex-name" class="metal-input" placeholder="e.g. Incline Cable Fly" required>
+        </div>
+        <div class="setting-group">
+          <label class="setting-label" for="custom-ex-target">Primary Target Muscle</label>
+          <select id="custom-ex-target" class="metal-select metal-input">
+            <option value="chest">Chest</option>
+            <option value="lats">Lats / Back</option>
+            <option value="shoulders">Shoulders</option>
+            <option value="biceps">Biceps</option>
+            <option value="triceps">Triceps</option>
+            <option value="quads">Quads</option>
+            <option value="hamstrings">Hamstrings</option>
+            <option value="glutes">Glutes</option>
+            <option value="abs">Abs / Core</option>
+          </select>
+        </div>
+        <div class="setting-group">
+          <label class="setting-label" for="custom-ex-equipment">Equipment Required</label>
+          <select id="custom-ex-equipment" class="metal-select metal-input">
+            <option value="barbell">Barbell</option>
+            <option value="dumbbell">Dumbbell</option>
+            <option value="cable">Cable Machine</option>
+            <option value="leverage machine">Leverage Machine</option>
+            <option value="smith machine">Smith Machine</option>
+            <option value="body weight">Bodyweight</option>
+            <option value="kettlebell">Kettlebell</option>
+            <option value="band">Band</option>
+          </select>
+        </div>
+        <button type="submit" class="metal-btn primary-btn full-width margin-top">SAVE EXERCISE</button>
+      </form>
     </div>
   </div>
 
