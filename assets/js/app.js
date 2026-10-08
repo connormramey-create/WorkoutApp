@@ -1,5 +1,5 @@
 // ==========================================
-// IRON BRO TRACKER - PHASE 4 MASTER JS
+// IRON BRO TRACKER - MASTER JS CODEBASE
 // ==========================================
 
 // Firebase Configuration
@@ -38,7 +38,7 @@ const DEFAULT_SETTINGS = {
 };
 
 let userSettings = JSON.parse(localStorage.getItem("gymbro_settings")) || DEFAULT_SETTINGS;
-let activePlan = JSON.parse(localStorage.getItem("gymbro_active_plan")) || null;
+let activePlan = null; // Dynamically loaded per profile
 let workoutHistory = JSON.parse(localStorage.getItem("gymbro_history")) || [];
 let exerciseHistory = JSON.parse(localStorage.getItem("gymbro_exercise_history")) || {};
 let customExercises = JSON.parse(localStorage.getItem("gymbro_custom_exercises")) || [];
@@ -102,7 +102,7 @@ const CALISTHENICS_SKILL_TREES = {
   ]
 };
 
-// Targeted Dynamic Warm-up & Static Cool-down Libraries
+// Mobility Libraries
 const DYNAMIC_WARMUP_LIBRARY = {
   chest: [
     { name: "Arm Swings & Chest Openers", duration: "45 sec", desc: "Cross arms across chest, then pull back dynamically to open pectorals." },
@@ -139,7 +139,13 @@ const COOL_DOWN_STRETCH_LIBRARY = {
   glutes: [{ name: "Figure-Four / Pigeon Stretch", duration: "45 sec per side", desc: "Cross ankle over knee, lean forward to stretch deep glutes." }]
 };
 
-// Initialize App
+// Helper: Get Profile Storage Key for Multi-Month Program Plans
+function getPlanStorageKey() {
+  const preset = userSettings.profile || "standard";
+  return `gymbro_active_plan_${preset}`;
+}
+
+// Initialize Application
 document.addEventListener("DOMContentLoaded", async () => {
   await loadExercises();
   applyProfileThemeAndRules();
@@ -151,12 +157,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   checkActiveSession();
 });
 
-// Load Exercises & Merge Custom User Exercises
+// Load Exercises & Custom Merging
 async function loadExercises() {
   try {
     const response = await fetch("data/exercises.json");
-    const rawDataset = await response.json();
-    exerciseDataset = rawDataset;
+    exerciseDataset = await response.json();
     mergeCustomExercises();
   } catch (err) {
     console.error("Failed to load exercises dataset:", err);
@@ -169,7 +174,7 @@ function mergeCustomExercises() {
   exerciseDataset = [...exerciseDataset, ...taggedCustoms];
 }
 
-// Phase 4: App Profile & Theme Dynamic Applicator
+// App Profile & Theme Dynamic Applicator
 function applyProfileThemeAndRules() {
   const body = document.body;
   const profile = userSettings.profile || "standard";
@@ -219,14 +224,20 @@ function syncUserDataFromCloud(uid) {
         localStorage.setItem("gymbro_history", JSON.stringify(workoutHistory));
         renderHistoryUI();
       }
-      if (data.active_plan) {
-        activePlan = data.active_plan;
-        localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
+      const preset = userSettings.profile || "standard";
+      if (data.plans && data.plans[preset]) {
+        activePlan = data.plans[preset];
+        localStorage.setItem(getPlanStorageKey(), JSON.stringify(activePlan));
         renderPlanUI();
       }
       if (data.exercise_history) {
         exerciseHistory = data.exercise_history;
         localStorage.setItem("gymbro_exercise_history", JSON.stringify(exerciseHistory));
+      }
+      if (data.custom_exercises) {
+        customExercises = data.custom_exercises;
+        localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
+        mergeCustomExercises();
       }
     }
   });
@@ -234,13 +245,18 @@ function syncUserDataFromCloud(uid) {
 
 function saveUserDataToCloud() {
   if (!currentUser) return;
+  const preset = userSettings.profile || "standard";
+  
   db.ref(`users/${currentUser.uid}`).update({
     settings: userSettings,
     history: workoutHistory,
-    active_plan: activePlan,
     exercise_history: exerciseHistory,
     custom_exercises: customExercises
   });
+
+  if (activePlan) {
+    db.ref(`users/${currentUser.uid}/plans/${preset}`).set(activePlan);
+  }
 }
 
 // Sound & Haptic Feedback Engine
@@ -272,7 +288,7 @@ function playRestTimerFinishSound() {
     osc1.stop(ctx.currentTime + 1.2);
     osc2.stop(ctx.currentTime + 1.2);
   } catch (err) {
-    console.error("Audio error:", err);
+    console.error("Audio playback error:", err);
   }
 
   if ("vibrate" in navigator) {
@@ -352,34 +368,63 @@ function skipRestTimer() {
   document.getElementById("sticky-timer-bar").classList.add("hidden");
 }
 
-// Generator Engine with Phase 4 Profile Rules
+// Progression Target Calculator
+function getProgressionTarget(scheme, weekNum) {
+  switch (scheme) {
+    case "juggernaut": {
+      const wave = Math.ceil((weekNum % 16) / 4) || 1;
+      if (weekNum % 4 === 0) return { reps: 5, setLabel: "Deload (60%)" };
+      if (wave === 1) return { reps: 10, setLabel: "Wave 10s (70%)" };
+      if (wave === 2) return { reps: 8, setLabel: "Wave 8s (75%)" };
+      if (wave === 3) return { reps: 5, setLabel: "Wave 5s (80%)" };
+      return { reps: 3, setLabel: "Wave 3s (85%)" };
+    }
+    case "five_three_one": {
+      const weekInCycle = ((weekNum - 1) % 4) + 1;
+      if (weekInCycle === 1) return { reps: 5, setLabel: "5/5/5+ Set" };
+      if (weekInCycle === 2) return { reps: 3, setLabel: "3/3/3+ Set" };
+      if (weekInCycle === 3) return { reps: 1, setLabel: "5/3/1+ Set" };
+      return { reps: 5, setLabel: "Deload Set" };
+    }
+    case "conjugate": {
+      const isMaxEffort = weekNum % 2 !== 0;
+      return isMaxEffort 
+        ? { reps: 3, setLabel: "Max Effort (90%+)" } 
+        : { reps: 2, setLabel: "Dynamic Speed (50-60%)" };
+    }
+    default: // Linear
+      return { reps: userSettings.profile === "powerlifter" ? 5 : 10, setLabel: "Linear" };
+  }
+}
+
+// Workout Generator Logic
 function generateWorkoutSession(splitTypeOverride, isDeloadWeek = false) {
+  mergeCustomExercises();
+
   const profile = userSettings.profile || "standard";
   const split = splitTypeOverride || userSettings.split;
   const duration = parseInt(userSettings.duration, 10);
   let exerciseCount = Math.max(3, Math.floor(duration / 7.5));
 
   if (isDeloadWeek) {
-    exerciseCount = Math.max(2, Math.floor(exerciseCount * 0.8)); // 20% Volume Reduction
+    exerciseCount = Math.max(2, Math.floor(exerciseCount * 0.8));
   }
 
-  // Equipment Filtering by Profile
-  let activeEquipment = userSettings.equipment;
+  // Normalize equipment strings
+  let activeEquipment = userSettings.equipment.map(e => e.toLowerCase().trim());
   if (profile === "calisthenics") {
-    activeEquipment = ["body weight"];
+    activeEquipment = ["body weight", "bodyweight"];
   }
 
   let availableExercises = exerciseDataset.filter(ex => 
-    activeEquipment.includes(ex.equipment.toLowerCase())
+    activeEquipment.includes((ex.equipment || '').toLowerCase().trim())
   );
 
-  // Powerlifter Isolation Filtering
   if (profile === "powerlifter") {
     availableExercises = availableExercises.filter(ex => {
-      const name = ex.name.toLowerCase();
-      const isCompound = POWERLIFTER_COMPOUNDS.some(c => name.includes(c)) || 
-                         ['squat', 'bench', 'press', 'deadlift', 'row'].some(k => name.includes(k));
-      return isCompound;
+      const name = (ex.name || '').toLowerCase();
+      return POWERLIFTER_COMPOUNDS.some(c => name.includes(c)) || 
+             ['squat', 'bench', 'press', 'deadlift', 'row'].some(k => name.includes(k));
     });
   }
 
@@ -406,53 +451,62 @@ function generateWorkoutSession(splitTypeOverride, isDeloadWeek = false) {
   let pool = availableExercises;
   if (targetMuscles.length > 0) {
     pool = availableExercises.filter(ex => 
-      targetMuscles.includes(ex.target.toLowerCase()) ||
-      (ex.muscle_groups && ex.muscle_groups.primary.some(p => targetMuscles.includes(p.toLowerCase())))
+      targetMuscles.includes((ex.target || '').toLowerCase().trim()) ||
+      (ex.muscle_groups && ex.muscle_groups.primary.some(p => targetMuscles.includes(p.toLowerCase().trim())))
     );
   }
 
-  // Fallback Pool
   if (pool.length < exerciseCount) pool = availableExercises;
 
-  let poolCopy = [...pool];
-  const selected = [];
+  let selected = [];
+  const poolCopy = [...pool];
 
-  while (selected.length < exerciseCount && poolCopy.length > 0) {
-    const idx = Math.floor(Math.random() * poolCopy.length);
-    selected.push(poolCopy.splice(idx, 1)[0]);
+  if (userSettings.supersets) {
+    let pairCount = 1;
+    while (selected.length < exerciseCount && poolCopy.length > 0) {
+      const ex1Idx = Math.floor(Math.random() * poolCopy.length);
+      const ex1 = poolCopy.splice(ex1Idx, 1)[0];
+      const target1 = (ex1.target || '').toLowerCase().trim();
+      
+      ex1.supersetGroup = `SUPERSET ${pairCount} - A`;
+      selected.push(ex1);
+
+      if (selected.length >= exerciseCount) break;
+
+      const antagonists = ANTAGONIST_MAP[target1] || [];
+      
+      let ex2Idx = poolCopy.findIndex(ex => 
+        antagonists.includes((ex.target || '').toLowerCase().trim())
+      );
+
+      if (ex2Idx !== -1) {
+        const ex2 = poolCopy.splice(ex2Idx, 1)[0];
+        ex2.supersetGroup = `SUPERSET ${pairCount} - B`;
+        selected.push(ex2);
+      } else {
+        const globalAntagonist = availableExercises.find(ex => 
+          antagonists.includes((ex.target || '').toLowerCase().trim()) && 
+          !selected.some(s => (s.id || s.name) === (ex.id || ex.name))
+        );
+
+        if (globalAntagonist) {
+          const ex2 = { ...globalAntagonist, supersetGroup: `SUPERSET ${pairCount} - B` };
+          selected.push(ex2);
+        }
+      }
+      pairCount++;
+    }
+  } else {
+    while (selected.length < exerciseCount && poolCopy.length > 0) {
+      const idx = Math.floor(Math.random() * poolCopy.length);
+      selected.push(poolCopy.splice(idx, 1)[0]);
+    }
   }
 
   return { title, exercises: selected, isDeloadWeek };
 }
 
-// Phase 4: Calisthenics Skill Tree UI Renderer
-function renderCalisthenicsSkillTree() {
-  const container = document.getElementById("calisthenicsSkillTreeContainer");
-  if (!container) return;
-
-  if (userSettings.profile !== "calisthenics") {
-    container.classList.add("hidden");
-    return;
-  }
-
-  container.classList.remove("hidden");
-  container.innerHTML = `
-    <div class="skill-tree-card">
-      <h4 style="color: var(--accent-gold); font-size: 0.9rem; margin-bottom: 6px;">🤸 CALISTHENICS SKILL PROGRESSION PATHWAYS</h4>
-      <div class="skill-section">
-        <strong style="color: #c084fc; font-size: 0.8rem;">PUSH PATHWAY:</strong>
-        ${CALISTHENICS_SKILL_TREES.push.map(s => `
-          <div class="skill-step ${s.level === 1 ? 'active-step' : ''}">
-            <span>L${s.level}: ${s.name}</span>
-            <span style="color: #cbd5e1;">Target: ${s.reps}</span>
-          </div>
-        `).join("")}
-      </div>
-    </div>
-  `;
-}
-
-// Phase 3 Auditing & Dynamic Mobility Engine
+// Movement Pattern & Dynamic Mobility Engine
 function auditWorkoutBalance(workoutExercises) {
   const counts = { horizontalPush: 0, horizontalPull: 0, verticalPush: 0, verticalPull: 0, kneeDominant: 0, hipDominant: 0 };
   workoutExercises.forEach(ex => {
@@ -554,7 +608,33 @@ function renderTargetedMobilityLists(mobility) {
   }
 }
 
-// UI Setup & Event Listeners
+function renderCalisthenicsSkillTree() {
+  const container = document.getElementById("calisthenicsSkillTreeContainer");
+  if (!container) return;
+
+  if (userSettings.profile !== "calisthenics") {
+    container.classList.add("hidden");
+    return;
+  }
+
+  container.classList.remove("hidden");
+  container.innerHTML = `
+    <div class="skill-tree-card">
+      <h4 style="color: var(--accent-gold); font-size: 0.9rem; margin-bottom: 6px;">🤸 CALISTHENICS SKILL PROGRESSION PATHWAYS</h4>
+      <div class="skill-section">
+        <strong style="color: #c084fc; font-size: 0.8rem;">PUSH PATHWAY:</strong>
+        ${CALISTHENICS_SKILL_TREES.push.map(s => `
+          <div class="skill-step ${s.level === 1 ? 'active-step' : ''}">
+            <span>L${s.level}: ${s.name}</span>
+            <span style="color: #cbd5e1;">Target: ${s.reps}</span>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+// Event Listeners Initialization
 function initEventListeners() {
   document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -565,6 +645,75 @@ function initEventListeners() {
     });
   });
 
+  // Auth Form Submit Handler
+  const authForm = document.getElementById("auth-form");
+  if (authForm) {
+    authForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("auth-email").value.trim();
+      const password = document.getElementById("auth-password").value.trim();
+      const errorMsg = document.getElementById("auth-error-msg");
+      if (errorMsg) errorMsg.innerText = "";
+
+      if (!email || !password) {
+        if (errorMsg) errorMsg.innerText = "Please enter email and password.";
+        return;
+      }
+
+      try {
+        if (isSignUpMode) {
+          await auth.createUserWithEmailAndPassword(email, password);
+        } else {
+          await auth.signInWithEmailAndPassword(email, password);
+        }
+      } catch (err) {
+        if (errorMsg) errorMsg.innerText = err.message;
+      }
+    });
+  }
+
+  const toggleAuthBtn = document.getElementById("toggle-auth-mode-btn");
+  if (toggleAuthBtn) {
+    toggleAuthBtn.addEventListener("click", () => {
+      isSignUpMode = !isSignUpMode;
+      document.getElementById("auth-title").innerText = isSignUpMode ? "CREATE IRON BRO ACCOUNT" : "IRON BRO LOGIN";
+      document.getElementById("auth-submit-btn").innerText = isSignUpMode ? "SIGN UP" : "LOG IN";
+      toggleAuthBtn.innerText = isSignUpMode ? "ALREADY HAVE AN ACCOUNT? LOG IN" : "NEED AN ACCOUNT? SIGN UP";
+    });
+  }
+
+  // Custom Exercise Modal Listeners
+  const openCustomBtn = document.getElementById("open-custom-ex-btn");
+  const closeCustomBtn = document.getElementById("close-custom-ex-btn");
+  const customModal = document.getElementById("custom-ex-modal");
+  const customForm = document.getElementById("custom-ex-form");
+
+  if (openCustomBtn) openCustomBtn.addEventListener("click", () => customModal.classList.remove("hidden"));
+  if (closeCustomBtn) closeCustomBtn.addEventListener("click", () => customModal.classList.add("hidden"));
+
+  if (customForm) {
+    customForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const newEx = {
+        id: `custom_${Date.now()}`,
+        name: document.getElementById("custom-ex-name").value.trim(),
+        target: document.getElementById("custom-ex-target").value,
+        equipment: document.getElementById("custom-ex-equipment").value,
+        isCustom: true
+      };
+
+      customExercises.push(newEx);
+      localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
+      mergeCustomExercises();
+      saveUserDataToCloud();
+
+      customForm.reset();
+      customModal.classList.add("hidden");
+      alert("Custom exercise created successfully!");
+    });
+  }
+
+  // Settings Modal Controls
   document.getElementById("open-settings-btn").addEventListener("click", () => {
     document.getElementById("settings-modal").classList.remove("hidden");
   });
@@ -596,9 +745,9 @@ function initEventListeners() {
 
   document.getElementById("create-plan-btn").addEventListener("click", buildMultiMonthPlan);
   document.getElementById("reset-plan-btn").addEventListener("click", () => {
-    if (confirm("Reset current program plan?")) {
+    if (confirm("Reset current profile program plan?")) {
       activePlan = null;
-      localStorage.removeItem("gymbro_active_plan");
+      localStorage.removeItem(getPlanStorageKey());
       saveUserDataToCloud();
       renderPlanUI();
     }
@@ -636,8 +785,9 @@ function saveSettingsUI() {
   localStorage.setItem("gymbro_settings", JSON.stringify(userSettings));
   applyProfileThemeAndRules();
   saveUserDataToCloud();
+  renderPlanUI(); // Refresh active profile program view
   document.getElementById("settings-modal").classList.add("hidden");
-  alert("Iron Bro Settings saved!");
+  alert("Settings saved!");
 }
 
 function exportHistoryToCSV() {
@@ -666,6 +816,7 @@ function renderGeneratedWorkout(session) {
   const exDiv = document.getElementById("exercise-list");
   exDiv.innerHTML = session.exercises.map(ex => `
     <div class="exercise-card">
+      ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
       <h5>${ex.name}</h5>
       <div class="exercise-tags">
         <span class="tag">Target: ${ex.target}</span>
@@ -683,7 +834,7 @@ function renderGeneratedWorkout(session) {
   document.getElementById("generated-workout-view").classList.remove("hidden");
 }
 
-// Multi-Month Plan Builder with Automated Deload Weeks
+// Multi-Month Plan Builder
 function buildMultiMonthPlan() {
   const months = parseInt(document.getElementById("plan-duration").value, 10);
   const totalWeeks = months * 4;
@@ -701,7 +852,7 @@ function buildMultiMonthPlan() {
 
   const weeks = [];
   for (let w = 1; w <= totalWeeks; w++) {
-    const isDeload = (w % 4 === 0); // Weeks 4, 8, 12 are Deload Weeks
+    const isDeload = (w % 4 === 0);
     const days = schedulePattern.map((day, idx) => ({
       id: `w${w}_d${idx + 1}`,
       dayNum: idx + 1,
@@ -714,17 +865,20 @@ function buildMultiMonthPlan() {
   }
 
   activePlan = { months, totalWeeks, split, weeks, createdAt: new Date().toISOString() };
-  localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
+  localStorage.setItem(getPlanStorageKey(), JSON.stringify(activePlan));
   saveUserDataToCloud();
   renderPlanUI();
 }
 
 function renderPlanUI() {
+  const storageKey = getPlanStorageKey();
+  activePlan = JSON.parse(localStorage.getItem(storageKey)) || null;
+
   const container = document.getElementById("active-plan-container");
   if (!activePlan) { container.classList.add("hidden"); return; }
 
   container.classList.remove("hidden");
-  document.getElementById("plan-title").innerText = `${activePlan.months}-MONTH PROGRAM (${activePlan.totalWeeks} WEEKS)`;
+  document.getElementById("plan-title").innerText = `${userSettings.profile.toUpperCase()} - ${activePlan.months}-MONTH PROGRAM (${activePlan.totalWeeks} WEEKS)`;
 
   let totalWorkouts = 0;
   let completedWorkouts = 0;
@@ -761,6 +915,7 @@ function renderPlanUI() {
 }
 
 window.togglePlanDay = function(weekNum, dayId) {
+  if (!activePlan) return;
   const week = activePlan.weeks.find(w => w.weekNum == weekNum);
   if (!week) return;
   const day = week.days.find(d => d.id === dayId);
@@ -771,20 +926,21 @@ window.togglePlanDay = function(weekNum, dayId) {
   } else {
     const session = generateWorkoutSession(day.type, day.isDeload);
     session.title = `Week ${weekNum} - ${day.title}`;
+    session.weekNum = weekNum;
     session.planDayRef = dayId;
     startActiveWorkout(session);
     return;
   }
 
-  localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
+  localStorage.setItem(getPlanStorageKey(), JSON.stringify(activePlan));
   saveUserDataToCloud();
   renderPlanUI();
 };
 
-// Phase 4: Active Workout & Smart Weight Increase Badges
+// Active Workout Session Manager
 function startActiveWorkout(session) {
-  const profile = userSettings.profile || "standard";
-  let targetReps = profile === "powerlifter" ? 5 : 10;
+  const currentWeek = session.weekNum || 1;
+  const targetInfo = getProgressionTarget(userSettings.progressionScheme, currentWeek);
 
   activeWorkout = {
     ...session,
@@ -793,24 +949,23 @@ function startActiveWorkout(session) {
       const exKey = ex.id || ex.name;
       const historyRecord = exerciseHistory[exKey];
 
-      // Smart Weight Increase Prompt Evaluation
       let suggestIncrease = false;
       if (historyRecord && historyRecord.sets && historyRecord.sets.length > 0) {
-        const topRepsReached = historyRecord.sets.every(s => (s.reps || 0) >= targetReps);
+        const topRepsReached = historyRecord.sets.every(s => (s.reps || 0) >= targetInfo.reps);
         if (topRepsReached && userSettings.progressionScheme === "linear") {
           suggestIncrease = true;
         }
       }
 
       let defaultSets = [
-        { reps: targetReps, weight: 100, completed: false },
-        { reps: targetReps, weight: 100, completed: false },
-        { reps: targetReps, weight: 100, completed: false }
+        { reps: targetInfo.reps, weight: 100, completed: false },
+        { reps: targetInfo.reps, weight: 100, completed: false },
+        { reps: targetInfo.reps, weight: 100, completed: false }
       ];
 
       if (historyRecord && historyRecord.sets && historyRecord.sets.length > 0) {
         defaultSets = historyRecord.sets.map(s => ({
-          reps: s.reps || targetReps,
+          reps: s.reps || targetInfo.reps,
           weight: suggestIncrease ? (s.weight || 100) + 5 : (s.weight || 100),
           completed: false
         }));
@@ -819,7 +974,9 @@ function startActiveWorkout(session) {
       return {
         id: ex.id || ex.name,
         name: ex.name,
+        supersetGroup: ex.supersetGroup || null,
         suggestIncrease,
+        targetLabel: targetInfo.setLabel,
         lastRecord: historyRecord || null,
         sets: defaultSets
       };
@@ -854,9 +1011,10 @@ function renderActiveWorkoutModal() {
     return `
       <div class="exercise-card margin-top">
         <div class="exercise-card-header" style="display:flex; justify-content:space-between; align-items:center;">
-          <h5>${ex.name}</h5>
+          <h5>${ex.name} ${ex.targetLabel ? `<small>(${ex.targetLabel})</small>` : ''}</h5>
           ${increaseBadge}
         </div>
+        ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
         <div class="sets-table margin-top">
           ${ex.sets.map((set, setIdx) => `
             <div class="set-row ${set.completed ? 'completed-set' : ''}" style="display:flex; justify-content:space-between; align-items:center; padding: 4px 0;">
@@ -929,7 +1087,7 @@ function finishActiveWorkout() {
     activePlan.weeks.forEach(w => {
       w.days.forEach(d => { if (d.id === activeWorkout.planDayRef) d.completed = true; });
     });
-    localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
+    localStorage.setItem(getPlanStorageKey(), JSON.stringify(activePlan));
     renderPlanUI();
   }
 
