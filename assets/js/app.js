@@ -14,16 +14,18 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-// State Management
+// Application State
 let exerciseDataset = [];
 let activeWorkout = null;
 let timerInterval = null;
+let timerRemainingSeconds = 0;
+let isTimerPaused = false;
 let currentUser = null;
-let isSignUpMode = false;
 
 const DEFAULT_SETTINGS = {
   split: "upper_lower",
   duration: 45,
+  restTime: 60,
   equipment: ["barbell", "dumbbell", "cable", "leverage machine", "smith machine", "body weight", "kettlebell", "band", "other"],
   supersets: false
 };
@@ -32,7 +34,6 @@ let userSettings = JSON.parse(localStorage.getItem("gymbro_settings")) || DEFAUL
 let activePlan = JSON.parse(localStorage.getItem("gymbro_active_plan")) || null;
 let workoutHistory = JSON.parse(localStorage.getItem("gymbro_history")) || [];
 let exerciseHistory = JSON.parse(localStorage.getItem("gymbro_exercise_history")) || {};
-let customExercises = JSON.parse(localStorage.getItem("gymbro_custom_exercises")) || [];
 
 // Target Muscle Maps
 const UPPER_BODY_TARGETS = ["chest", "upper chest", "lower chest", "pectorals", "lats", "upper back", "shoulders", "front delts", "side delts", "rear delts", "traps", "biceps", "brachialis", "triceps", "forearms"];
@@ -66,40 +67,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   initFirebaseAuthListener();
   renderPlanUI();
   renderHistoryUI();
-  renderCustomExerciseListUI();
   checkActiveSession();
 });
 
-// Load exercises & merge custom user exercises
+// Load Dataset
 async function loadExercises() {
   try {
     const response = await fetch("data/exercises.json");
-    const rawDataset = await response.json();
-    exerciseDataset = rawDataset;
-    mergeCustomExercises();
+    exerciseDataset = await response.json();
   } catch (err) {
     console.error("Failed to load exercises dataset:", err);
   }
 }
 
-function mergeCustomExercises() {
-  // Remove previously merged custom exercises to prevent duplication
-  exerciseDataset = exerciseDataset.filter(ex => !ex.isCustom);
-  const taggedCustoms = customExercises.map(ex => ({ ...ex, isCustom: true }));
-  exerciseDataset = [...exerciseDataset, ...taggedCustoms];
-}
-
 // Firebase Auth Observer & Cloud Sync
 function initFirebaseAuthListener() {
   auth.onAuthStateChanged(async (user) => {
-    const authModal = document.getElementById("auth-modal");
     if (user) {
       currentUser = user;
-      if (authModal) authModal.classList.add("hidden");
       syncUserDataFromCloud(user.uid);
     } else {
       currentUser = null;
-      if (authModal) authModal.classList.remove("hidden");
     }
   });
 }
@@ -128,12 +116,6 @@ function syncUserDataFromCloud(uid) {
         exerciseHistory = data.exercise_history;
         localStorage.setItem("gymbro_exercise_history", JSON.stringify(exerciseHistory));
       }
-      if (data.custom_exercises) {
-        customExercises = data.custom_exercises;
-        localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
-        mergeCustomExercises();
-        renderCustomExerciseListUI();
-      }
     }
   });
 }
@@ -144,79 +126,115 @@ function saveUserDataToCloud() {
     settings: userSettings,
     history: workoutHistory,
     active_plan: activePlan,
-    exercise_history: exerciseHistory,
-    custom_exercises: customExercises
+    exercise_history: exerciseHistory
   });
 }
 
-// Custom Exercise Management
-function addCustomExercise() {
-  const nameInput = document.getElementById("custom-ex-name");
-  const name = nameInput.value.trim();
-  if (!name) {
-    alert("Please enter a custom exercise name.");
-    return;
+// Sound & Haptic Feedback Engine (Web Audio API)
+function playRestTimerFinishSound() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+
+    // Play dual metallic chime
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc1.type = "sine";
+    osc2.type = "triangle";
+
+    osc1.frequency.setValueAtTime(880, ctx.currentTime); // A5
+    osc2.frequency.setValueAtTime(1760, ctx.currentTime); // A6
+
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
+
+    osc1.connect(gain);
+    osc2.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc1.start();
+    osc2.start();
+    osc1.stop(ctx.currentTime + 1.2);
+    osc2.stop(ctx.currentTime + 1.2);
+  } catch (err) {
+    console.error("Audio playback error:", err);
   }
 
-  const target = document.getElementById("custom-ex-target").value;
-  const equipment = document.getElementById("custom-ex-equipment").value;
-  const pattern = document.getElementById("custom-ex-pattern").value;
-  const symmetry = document.getElementById("custom-ex-symmetry").value;
-  const difficulty = document.getElementById("custom-ex-difficulty").value;
-
-  const newEx = {
-    id: `custom_${Date.now()}`,
-    name: name,
-    target: target,
-    muscle_groups: {
-      primary: [target],
-      secondary: []
-    },
-    movement_pattern: pattern,
-    equipment: equipment,
-    symmetry: symmetry,
-    difficulty: difficulty,
-    isCustom: true
-  };
-
-  customExercises.push(newEx);
-  localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
-  mergeCustomExercises();
-  saveUserDataToCloud();
-  renderCustomExerciseListUI();
-
-  nameInput.value = "";
-  alert(`Added custom exercise: ${name}`);
+  // Trigger Haptic Vibration if supported
+  if ("vibrate" in navigator) {
+    navigator.vibrate([200, 100, 200, 100, 400]);
+  }
 }
 
-window.deleteCustomExercise = function(id) {
-  if (confirm("Delete this custom exercise?")) {
-    customExercises = customExercises.filter(ex => ex.id !== id);
-    localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
-    mergeCustomExercises();
-    saveUserDataToCloud();
-    renderCustomExerciseListUI();
-  }
-};
+// Timer Logic Engine
+function startRestTimer(seconds) {
+  clearInterval(timerInterval);
+  timerRemainingSeconds = seconds || parseInt(userSettings.restTime || 60, 10);
+  isTimerPaused = false;
 
-function renderCustomExerciseListUI() {
-  const container = document.getElementById("custom-exercise-list");
-  if (!container) return;
+  updateTimerButtonsUI();
+  document.getElementById("sticky-timer-bar").classList.remove("hidden");
 
-  if (customExercises.length === 0) {
-    container.innerHTML = '<p class="subtitle" style="font-size: 12px; margin-top: 5px;">No custom exercises added yet.</p>';
-    return;
-  }
+  const tick = () => {
+    if (isTimerPaused) return;
 
-  container.innerHTML = customExercises.map(ex => `
-    <div class="day-row" style="background: #0f172a; padding: 6px 10px; margin-top: 6px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
-      <div>
-        <strong style="color: var(--accent-gold); font-size: 13px;">${ex.name}</strong><br>
-        <small style="color: #cbd5e1; font-size: 11px;">${ex.target} • ${ex.equipment} • ${ex.movement_pattern}</small>
-      </div>
-      <button class="metal-btn danger-btn small-btn" onclick="deleteCustomExercise('${ex.id}')">✕</button>
-    </div>
-  `).join("");
+    const mins = Math.floor(timerRemainingSeconds / 60);
+    const secs = timerRemainingSeconds % 60;
+    const formatted = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+    document.getElementById("rest-timer-display").innerText = formatted;
+    document.getElementById("floating-timer-display").innerText = formatted;
+
+    if (timerRemainingSeconds <= 0) {
+      clearInterval(timerInterval);
+      document.getElementById("rest-timer-display").innerText = "TIME UP!";
+      document.getElementById("floating-timer-display").innerText = "TIME UP!";
+      playRestTimerFinishSound();
+      setTimeout(() => {
+        document.getElementById("sticky-timer-bar").classList.add("hidden");
+      }, 5000);
+      return;
+    }
+    timerRemainingSeconds--;
+  };
+
+  tick();
+  timerInterval = setInterval(tick, 1000);
+}
+
+function adjustRestTimer(secondsToAdd) {
+  timerRemainingSeconds = Math.max(0, timerRemainingSeconds + secondsToAdd);
+  const mins = Math.floor(timerRemainingSeconds / 60);
+  const secs = timerRemainingSeconds % 60;
+  const formatted = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+  document.getElementById("rest-timer-display").innerText = formatted;
+  document.getElementById("floating-timer-display").innerText = formatted;
+}
+
+function togglePauseRestTimer() {
+  isTimerPaused = !isTimerPaused;
+  updateTimerButtonsUI();
+}
+
+function updateTimerButtonsUI() {
+  const modalBtn = document.getElementById("modal-pause-btn");
+  const stickyBtn = document.getElementById("timer-pause-btn");
+  const label = isTimerPaused ? "RESUME" : "PAUSE";
+
+  if (modalBtn) modalBtn.innerText = label;
+  if (stickyBtn) stickyBtn.innerText = label;
+}
+
+function skipRestTimer() {
+  clearInterval(timerInterval);
+  timerRemainingSeconds = 0;
+  document.getElementById("rest-timer-display").innerText = "00:00";
+  document.getElementById("floating-timer-display").innerText = "00:00";
+  document.getElementById("sticky-timer-bar").classList.add("hidden");
 }
 
 // Workout Generator Logic
@@ -315,7 +333,6 @@ function generateWorkoutSession(splitTypeOverride) {
 
 // UI Event Handlers
 function initEventListeners() {
-  // Navigation
   document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".tab-btn").forEach(t => t.classList.remove("active"));
@@ -325,45 +342,6 @@ function initEventListeners() {
     });
   });
 
-  // Auth Modal Listeners
-  const toggleAuthBtn = document.getElementById("toggle-auth-mode-btn");
-  if (toggleAuthBtn) {
-    toggleAuthBtn.addEventListener("click", () => {
-      isSignUpMode = !isSignUpMode;
-      document.getElementById("auth-title").innerText = isSignUpMode ? "CREATE IRON BRO ACCOUNT" : "IRON BRO LOGIN";
-      document.getElementById("auth-submit-btn").innerText = isSignUpMode ? "SIGN UP" : "LOG IN";
-      toggleAuthBtn.innerText = isSignUpMode ? "ALREADY HAVE AN ACCOUNT? LOG IN" : "NEED AN ACCOUNT? SIGN UP";
-    });
-  }
-
-  const authForm = document.getElementById("auth-form");
-  if (authForm) {
-    authForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = document.getElementById("auth-email").value;
-      const password = document.getElementById("auth-password").value;
-      const errorMsg = document.getElementById("auth-error-msg");
-      if (errorMsg) errorMsg.innerText = "";
-
-      try {
-        if (isSignUpMode) {
-          await auth.createUserWithEmailAndPassword(email, password);
-        } else {
-          await auth.signInWithEmailAndPassword(email, password);
-        }
-      } catch (err) {
-        if (errorMsg) errorMsg.innerText = err.message;
-      }
-    });
-  }
-
-  // Custom Exercise Creation Listener
-  const addCustomBtn = document.getElementById("add-custom-ex-btn");
-  if (addCustomBtn) {
-    addCustomBtn.addEventListener("click", addCustomExercise);
-  }
-
-  // Settings Modal
   document.getElementById("open-settings-btn").addEventListener("click", () => {
     document.getElementById("settings-modal").classList.remove("hidden");
   });
@@ -372,11 +350,9 @@ function initEventListeners() {
   });
   document.getElementById("save-settings-btn").addEventListener("click", saveSettingsUI);
 
-  // CSV Export
   const exportBtn = document.getElementById("export-csv-btn");
   if (exportBtn) exportBtn.addEventListener("click", exportHistoryToCSV);
 
-  // Generator
   document.getElementById("generate-workout-btn").addEventListener("click", () => {
     const session = generateWorkoutSession();
     renderGeneratedWorkout(session);
@@ -387,7 +363,6 @@ function initEventListeners() {
     if (sessionData) startActiveWorkout(sessionData);
   });
 
-  // Active Session Controls
   document.getElementById("resume-workout-btn").addEventListener("click", () => {
     document.getElementById("active-workout-modal").classList.remove("hidden");
   });
@@ -396,7 +371,6 @@ function initEventListeners() {
   });
   document.getElementById("finish-workout-btn").addEventListener("click", finishActiveWorkout);
 
-  // Multi-Month Plan
   document.getElementById("create-plan-btn").addEventListener("click", buildMultiMonthPlan);
   document.getElementById("reset-plan-btn").addEventListener("click", () => {
     if (confirm("Reset current program plan?")) {
@@ -406,23 +380,12 @@ function initEventListeners() {
       renderPlanUI();
     }
   });
-
-  // Rest Timer Quick Buttons
-  document.querySelectorAll(".timer-quick-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      startRestTimer(parseInt(btn.dataset.time, 10));
-    });
-  });
-  document.getElementById("stop-timer-btn").addEventListener("click", () => {
-    clearInterval(timerInterval);
-    document.getElementById("rest-timer-display").innerText = "00:00";
-  });
 }
 
-// Settings UI Management
 function initSettingsUI() {
   document.getElementById("setting-split").value = userSettings.split;
   document.getElementById("setting-duration").value = userSettings.duration;
+  document.getElementById("setting-rest-time").value = userSettings.restTime || 60;
   document.getElementById("setting-supersets").checked = userSettings.supersets;
 
   const eqCheckboxes = document.querySelectorAll("#equipment-toggles input");
@@ -434,6 +397,7 @@ function initSettingsUI() {
 function saveSettingsUI() {
   userSettings.split = document.getElementById("setting-split").value;
   userSettings.duration = parseInt(document.getElementById("setting-duration").value, 10);
+  userSettings.restTime = parseInt(document.getElementById("setting-rest-time").value, 10);
   userSettings.supersets = document.getElementById("setting-supersets").checked;
 
   const selectedEquipment = [];
@@ -448,18 +412,17 @@ function saveSettingsUI() {
   alert("Iron Bro Settings saved!");
 }
 
-// CSV Export Logic
 function exportHistoryToCSV() {
   if (!workoutHistory || workoutHistory.length === 0) {
     alert("No logged workout history available to export.");
     return;
   }
 
-  let csvContent = "Date,Workout Title,Exercises Completed\n";
+  let csvContent = "Date,Workout Title,Exercises Completed,Total Volume (lbs)\n";
 
   workoutHistory.forEach(row => {
     const safeTitle = `"${(row.title || "").replace(/"/g, '""')}"`;
-    csvContent += `"${row.date || ''}",${safeTitle},${row.exerciseCount || 0}\n`;
+    csvContent += `"${row.date || ''}",${safeTitle},${row.exerciseCount || 0},${row.totalVolume || 0}\n`;
   });
 
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -471,7 +434,6 @@ function exportHistoryToCSV() {
   URL.revokeObjectURL(url);
 }
 
-// Render Generator View
 function renderGeneratedWorkout(session) {
   window.currentGeneratedSession = session;
   document.getElementById("workout-title").innerText = session.title;
@@ -487,11 +449,10 @@ function renderGeneratedWorkout(session) {
   exDiv.innerHTML = session.exercises.map(ex => `
     <div class="exercise-card">
       ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
-      <h5>${ex.name}${ex.isCustom ? ' <span class="tag" style="color:var(--accent-gold);">[CUSTOM]</span>' : ''}</h5>
+      <h5>${ex.name}</h5>
       <div class="exercise-tags">
         <span class="tag">Target: ${ex.target}</span>
         <span class="tag">Equip: ${ex.equipment}</span>
-        <span class="tag">Symmetry: ${ex.symmetry}</span>
         <span class="tag">Pattern: ${ex.movement_pattern}</span>
       </div>
     </div>
@@ -500,7 +461,6 @@ function renderGeneratedWorkout(session) {
   document.getElementById("generated-workout-view").classList.remove("hidden");
 }
 
-// Program Planning Logic
 function buildMultiMonthPlan() {
   const months = parseInt(document.getElementById("plan-duration").value, 10);
   const totalWeeks = months * 4;
@@ -629,7 +589,7 @@ window.togglePlanDay = function(weekNum, dayId) {
   renderPlanUI();
 };
 
-// Active Session Tracking & Exercise History Auto-Populate
+// Active Session Tracking & Self-Running Rest Timer Toggles
 function startActiveWorkout(session) {
   activeWorkout = {
     ...session,
@@ -639,15 +599,16 @@ function startActiveWorkout(session) {
       const historyRecord = exerciseHistory[exKey];
 
       let defaultSets = [
-        { reps: 10, weight: 100 },
-        { reps: 10, weight: 100 },
-        { reps: 10, weight: 100 }
+        { reps: 10, weight: 100, completed: false },
+        { reps: 10, weight: 100, completed: false },
+        { reps: 10, weight: 100, completed: false }
       ];
 
       if (historyRecord && historyRecord.sets && historyRecord.sets.length > 0) {
         defaultSets = historyRecord.sets.map(s => ({
           reps: s.reps || 10,
-          weight: s.weight || 100
+          weight: s.weight || 100,
+          completed: false
         }));
       }
 
@@ -690,23 +651,31 @@ function renderActiveWorkoutModal() {
       const topWeight = ex.lastRecord.lastWeight || ex.lastRecord.sets?.[0]?.weight || 0;
       const topReps = ex.lastRecord.lastReps || ex.lastRecord.sets?.[0]?.reps || 0;
       if (topWeight > 0) {
-        lastBadge = `<div class="tag" style="background: #1e293b; color: var(--accent-gold); margin-bottom: 8px; border: 1px solid var(--accent-gold); display: inline-block;">
-          LAST TIME: ${topWeight} lbs × ${topReps} reps
-        </div>`;
+        lastBadge = `<span class="tag" style="background: #1e293b; color: var(--accent-gold); border: 1px solid var(--accent-gold);">
+          LAST: ${topWeight} lbs × ${topReps} reps
+        </span>`;
       }
     }
 
     return `
       <div class="exercise-card margin-top">
+        <div class="exercise-card-header">
+          <h5>${ex.name}</h5>
+          ${lastBadge}
+        </div>
         ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
-        <h5>${ex.name}</h5>
-        ${lastBadge}
-        <div class="sets-table">
+        <div class="sets-table margin-top">
           ${ex.sets.map((set, setIdx) => `
-            <div class="day-row" style="padding: 5px 0;">
+            <div class="set-row ${set.completed ? 'completed-set' : ''}">
               <span>Set ${setIdx + 1}</span>
-              <input type="number" value="${set.weight}" style="width: 70px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'weight', this.value)"> lbs
-              <input type="number" value="${set.reps}" style="width: 60px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'reps', this.value)"> reps
+              <div>
+                <input type="number" value="${set.weight}" style="width: 65px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'weight', this.value)"> lbs
+                <input type="number" value="${set.reps}" style="width: 55px; margin-left:4px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'reps', this.value)"> reps
+              </div>
+              <label class="set-check-label">
+                <input type="checkbox" ${set.completed ? 'checked' : ''} class="set-check-input" onchange="toggleSetComplete(${exIdx},${setIdx}, this.checked)">
+                DONE
+              </label>
             </div>
           `).join("")}
         </div>
@@ -721,31 +690,62 @@ window.updateSetData = function(exIdx, setIdx, field, val) {
   localStorage.setItem("gymbro_active_session", JSON.stringify(activeWorkout));
 };
 
+window.toggleSetComplete = function(exIdx, setIdx, isChecked) {
+  if (!activeWorkout) return;
+  activeWorkout.logs[exIdx].sets[setIdx].completed = isChecked;
+  localStorage.setItem("gymbro_active_session", JSON.stringify(activeWorkout));
+
+  renderActiveWorkoutModal();
+
+  // Auto-start rest timer whenever a set is toggled completed
+  if (isChecked) {
+    startRestTimer(parseInt(userSettings.restTime || 60, 10));
+  }
+};
+
+// Finish Workout & Calculate Volume Analytics ($\text{sets} \times \text{reps} \times \text{weight}$)
 function finishActiveWorkout() {
   if (!activeWorkout) return;
 
-  activeWorkout.logs.forEach(ex => {
+  let totalSessionVolume = 0;
+  let totalCompletedSets = 0;
+
+  const exerciseBreakdowns = activeWorkout.logs.map(ex => {
     const exKey = ex.id || ex.name;
+    let exVolume = 0;
     let maxWeight = 0;
     let maxReps = 0;
 
     ex.sets.forEach(s => {
+      const setVol = (s.weight || 0) * (s.reps || 0);
+      exVolume += setVol;
+      totalSessionVolume += setVol;
+      totalCompletedSets++;
+
       if (s.weight >= maxWeight) {
         maxWeight = s.weight;
         maxReps = s.reps;
       }
     });
 
+    // Save Exercise Memory
     exerciseHistory[exKey] = {
       lastWeight: maxWeight || ex.sets[0]?.weight || 0,
       lastReps: maxReps || ex.sets[0]?.reps || 0,
       sets: ex.sets.map(s => ({ weight: s.weight, reps: s.reps })),
       lastUpdated: new Date().toLocaleDateString()
     };
+
+    return {
+      name: ex.name,
+      sets: ex.sets.map(s => ({ weight: s.weight, reps: s.reps })),
+      exerciseVolume: exVolume
+    };
   });
 
   localStorage.setItem("gymbro_exercise_history", JSON.stringify(exerciseHistory));
 
+  // Advance Multi-Month Program Plan
   if (activeWorkout.planDayRef && activePlan) {
     activePlan.weeks.forEach(w => {
       w.days.forEach(d => {
@@ -756,12 +756,18 @@ function finishActiveWorkout() {
     renderPlanUI();
   }
 
-  workoutHistory.unshift({
+  // Record Detailed History Entry
+  const historyEntry = {
+    id: `log_${Date.now()}`,
     title: activeWorkout.title,
     date: new Date().toLocaleDateString(),
-    exerciseCount: activeWorkout.logs.length
-  });
+    exerciseCount: activeWorkout.logs.length,
+    totalCompletedSets,
+    totalVolume: totalSessionVolume,
+    exercises: exerciseBreakdowns
+  };
 
+  workoutHistory.unshift(historyEntry);
   localStorage.setItem("gymbro_history", JSON.stringify(workoutHistory));
   localStorage.removeItem("gymbro_active_session");
 
@@ -769,45 +775,48 @@ function finishActiveWorkout() {
 
   activeWorkout = null;
   document.getElementById("active-workout-modal").classList.add("hidden");
+  document.getElementById("sticky-timer-bar").classList.add("hidden");
+  clearInterval(timerInterval);
+
   checkActiveSession();
   renderHistoryUI();
-  alert("Workout Completed & Logged!");
+  alert(`Workout Logged! Total Volume Lifted: ${totalSessionVolume.toLocaleString()} lbs`);
 }
 
+// Render Expandable History Cards & Volume Summaries
 function renderHistoryUI() {
   const container = document.getElementById("history-list");
-  if (workoutHistory.length === 0) {
+  if (!workoutHistory || workoutHistory.length === 0) {
     container.innerHTML = '<p class="empty-msg">No completed workouts logged yet.</p>';
     return;
   }
 
   container.innerHTML = workoutHistory.map(item => `
-    <div class="day-row" style="background: #0f172a; margin-bottom: 8px; border-radius: 4px; border-left: 3px solid var(--accent-gold);">
-      <div>
-        <strong>${item.title}</strong><br>
-        <small style="color: #cbd5e1;">${item.date} • ${item.exerciseCount} Exercises Completed</small>
+    <div class="history-card">
+      <div class="history-card-header" onclick="toggleHistoryCardDetails('${item.id}')">
+        <div>
+          <div class="history-title"><strong>${item.title}</strong></div>
+          <div class="history-meta">${item.date} • ${item.exerciseCount || 0} Exercises • ${item.totalCompletedSets || 0} Sets</div>
+        </div>
+        <div class="history-volume-badge">
+          ${(item.totalVolume || 0).toLocaleString()} lbs
+        </div>
+      </div>
+      <div id="card_details_${item.id}" class="history-card-body hidden">
+        ${item.exercises ? item.exercises.map(ex => `
+          <div class="history-exercise-block">
+            <div class="history-exercise-name">${ex.name}</div>
+            <div class="history-sets-summary">
+              ${ex.sets ? ex.sets.map((s, idx) => `Set ${idx + 1}: ${s.weight} lbs × ${s.reps} reps`).join(" | ") : ""}
+            </div>
+          </div>
+        `).join("") : '<p class="history-sets-summary">Standard session details recorded.</p>'}
       </div>
     </div>
   `).join("");
 }
 
-// Timer Logic
-function startRestTimer(seconds) {
-  clearInterval(timerInterval);
-  let remaining = seconds;
-  const display = document.getElementById("rest-timer-display");
-
-  const update = () => {
-    const mins = Math.floor(remaining / 60);
-    const secs = remaining % 60;
-    display.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    if (remaining <= 0) {
-      clearInterval(timerInterval);
-      display.innerText = "TIME UP!";
-    }
-    remaining--;
-  };
-
-  update();
-  timerInterval = setInterval(update, 1000);
-}
+window.toggleHistoryCardDetails = function(cardId) {
+  const el = document.getElementById(`card_details_${cardId}`);
+  if (el) el.classList.toggle("hidden");
+};
