@@ -458,6 +458,12 @@ function renderGeneratedWorkout(session) {
     </div>
   `).join("");
 
+  const balanceCounts = auditWorkoutBalance(session.exercises);
+  renderBalanceBadgesAndAlerts(balanceCounts);
+
+  const mobility = generateTargetedMobility(session.exercises);
+  renderTargetedMobilityLists(mobility);
+
   document.getElementById("generated-workout-view").classList.remove("hidden");
 }
 
@@ -820,3 +826,224 @@ window.toggleHistoryCardDetails = function(cardId) {
   const el = document.getElementById(`card_details_${cardId}`);
   if (el) el.classList.toggle("hidden");
 };
+
+// Workout Balancing
+const MOVEMENT_PATTERNS = {
+  HORIZONTAL_PUSH: ['horizontal push'],
+  HORIZONTAL_PULL: ['horizontal pull'],
+  VERTICAL_PUSH: ['vertical push'],
+  VERTICAL_PULL: ['vertical pull'],
+  KNEE_DOMINANT: ['squat', 'knee extension'],
+  HIP_DOMINANT: ['hinge', 'hip extension', 'knee flexion']
+};
+
+const DYNAMIC_WARMUP_LIBRARY = {
+  chest: [
+    { name: "Arm Swings & Chest Openers", duration: "45 sec", desc: "Cross arms across chest, then pull back dynamically to open pectorals." },
+    { name: "Band Pull-Aparts", duration: "15 reps", desc: "Hold light band at chest height, pull outward focusing on upper back activation." }
+  ],
+  shoulders: [
+    { name: "Shoulder Dislocates (PVC/Band)", duration: "12 reps", desc: "Pass band overhead from front to back with straight arms." },
+    { name: "Arm Circles (Forward & Reverse)", duration: "30 sec each", desc: "Small to large arm rotations to warm rotator cuff muscles." }
+  ],
+  lats: [
+    { name: "Lat Overhead Side Reaches", duration: "10 per side", desc: "Side bend with overhead reach to dynamically stretch lats." },
+    { name: "Cat-Cow Stretch", duration: "10 reps", desc: "Flex and extend spine to articulate thoracic spine and lats." }
+  ],
+  upper_back: [
+    { name: "Thoracic Windmills", duration: "8 per side", desc: "Side-lying rotational arm movement to open thoracic spine." },
+    { name: "Banded Face Pulls", duration: "15 reps", desc: "Light high pulls to activate rear delts and rhomboids." }
+  ],
+  quads: [
+    { name: "Bodyweight Goblet Squat Hold w/ Pry", duration: "45 sec", desc: "Sink into deep squat, gently prying knees out with elbows." },
+    { name: "Dynamic Walking Quad Stretch", duration: "10 per leg", desc: "Pull foot to glute while reaching opposite hand overhead." }
+  ],
+  hamstrings: [
+    { name: "Frankenstein Dynamic Sweeps", duration: "10 per leg", desc: "Hinge forward and sweep hands toward toes on extended heel." },
+    { name: "Good Morning Hip Hinges", duration: "12 reps", desc: "Hands behind head, hinge at hips with flat back to prime posterior chain." }
+  ],
+  glutes: [
+    { name: "Bodyweight Glute Bridges", duration: "15 reps", desc: "Squeeze glutes at top pause to prime posterior chain." },
+    { name: "Hip Openers / Fire Hydrants", duration: "10 per leg", desc: "Circle knees outward on all fours to activate glute medius." }
+  ],
+  abs: [
+    { name: "Plank to Downward Dog", duration: "8 reps", desc: "Shift from high plank into downward dog to warm core and shoulders." },
+    { name: "Standing Torso Twists", duration: "30 sec", desc: "Rotational torso turns with loose arms." }
+  ]
+};
+
+const COOL_DOWN_STRETCH_LIBRARY = {
+  chest: [
+    { name: "Doorway Pectoral Stretch", duration: "45 sec hold", desc: "Place forearm against doorframe, step forward to stretch chest." }
+  ],
+  shoulders: [
+    { name: "Cross-Body Shoulder Stretch", duration: "45 sec per side", desc: "Pull arm across chest with opposite arm." },
+    { name: "Overhead Triceps & Shoulder Stretch", duration: "40 sec per side", desc: "Reach elbow overhead and gently pull backward." }
+  ],
+  lats: [
+    { name: "Child's Pose w/ Lateral Reach", duration: "60 sec hold", desc: "Kneel, sit hips back, and walk hands diagonally to stretch lats." }
+  ],
+  quads: [
+    { name: "Standing / Lying Quad Stretch", duration: "45 sec per side", desc: "Hold foot to glute, keeping knees together and core tight." }
+  ],
+  hamstrings: [
+    { name: "Seated Single-Leg Hamstring Stretch", duration: "45 sec per side", desc: "Extend one leg, fold forward from hips with flat spine." }
+  ],
+  glutes: [
+    { name: "Figure-Four / Pigeon Stretch", duration: "45 sec per side", desc: "Cross ankle over knee, lean forward to stretch deep glutes." }
+  ],
+  abs: [
+    { name: "Cobra Abdominal Stretch", duration: "45 sec hold", desc: "Lie prone, press upper body up on forearms/hands to stretch abs." }
+  ]
+};
+
+function auditWorkoutBalance(workoutExercises) {
+  const counts = { horizontalPush: 0, horizontalPull: 0, verticalPush: 0, verticalPull: 0, kneeDominant: 0, hipDominant: 0 };
+  workoutExercises.forEach(ex => {
+    const pattern = (ex.movement_pattern || '').toLowerCase();
+    const target = (ex.target || ex.muscle_group || '').toLowerCase();
+
+    if (MOVEMENT_PATTERNS.HORIZONTAL_PUSH.includes(pattern)) counts.horizontalPush++;
+    else if (MOVEMENT_PATTERNS.HORIZONTAL_PULL.includes(pattern)) counts.horizontalPull++;
+    else if (MOVEMENT_PATTERNS.VERTICAL_PUSH.includes(pattern)) counts.verticalPush++;
+    else if (MOVEMENT_PATTERNS.VERTICAL_PULL.includes(pattern)) counts.verticalPull++;
+    else if (MOVEMENT_PATTERNS.KNEE_DOMINANT.includes(pattern)) counts.kneeDominant++;
+    else if (MOVEMENT_PATTERNS.HIP_DOMINANT.includes(pattern)) counts.hipDominant++;
+    else {
+      if (['chest', 'pectorals'].some(m => target.includes(m))) counts.horizontalPush++;
+      else if (['lats', 'upper back', 'rhomboids'].some(m => target.includes(m))) counts.horizontalPull++;
+      else if (['shoulders', 'front delts', 'side delts'].some(m => target.includes(m))) counts.verticalPush++;
+      else if (['quads'].some(m => target.includes(m))) counts.kneeDominant++;
+      else if (['hamstrings', 'glutes'].some(m => target.includes(m))) counts.hipDominant++;
+    }
+  });
+  return counts;
+}
+
+function renderBalanceBadgesAndAlerts(counts) {
+  const container = document.getElementById('balanceAuditContainer');
+  if (!container) return;
+
+  const badges = [];
+  const alerts = [];
+
+  const hPush = counts.horizontalPush;
+  const hPull = counts.horizontalPull;
+  if (hPush > 0 || hPull > 0) {
+    if (Math.abs(hPush - hPull) <= 1) {
+      badges.push({ text: `Horizontal Push/Pull Balanced (${hPush}:${hPull})`, type: 'success' });
+    } else if (hPush > hPull) {
+      alerts.push(`⚠️ Horizontal Push Overdominant (${hPush} Push vs ${hPull} Pull). Consider adding a Row movement!`);
+      badges.push({ text: `Push Heavy (${hPush}:${hPull})`, type: 'warning' });
+    } else {
+      alerts.push(`⚠️ Horizontal Pull Overdominant (${hPull} Pull vs ${hPush} Push). Consider adding a Chest Press!`);
+      badges.push({ text: `Pull Heavy (${hPull}:${hPush})`, type: 'warning' });
+    }
+  }
+
+  const vPush = counts.verticalPush;
+  const vPull = counts.verticalPull;
+  if (vPush > 0 || vPull > 0) {
+    if (Math.abs(vPush - vPull) <= 1) {
+      badges.push({ text: `Vertical Push/Pull Balanced (${vPush}:${vPull})`, type: 'success' });
+    } else if (vPush > vPull) {
+      alerts.push(`⚠️ Vertical Push Overdominant (${vPush} Push vs ${vPull} Pull). Consider adding Pull-ups or Lat Pulldowns!`);
+      badges.push({ text: `Overhead Heavy (${vPush}:${vPull})`, type: 'warning' });
+    } else {
+      alerts.push(`⚠️ Vertical Pull Overdominant (${vPull} Pull vs ${vPush} Push). Consider adding an Overhead Shoulder Press!`);
+      badges.push({ text: `Lat Heavy (${vPull}:${vPush})`, type: 'warning' });
+    }
+  }
+
+  const knee = counts.kneeDominant;
+  const hip = counts.hipDominant;
+  if (knee > 0 || hip > 0) {
+    if (Math.abs(knee - hip) <= 1) {
+      badges.push({ text: `Leg Ratio Balanced (${knee}:${hip})`, type: 'success' });
+    } else if (knee > hip) {
+      alerts.push(`⚠️ Knee Dominant Overdominant (${knee} Quads vs ${hip} Hamstrings/Glutes). Add RDLs or Leg Curls!`);
+      badges.push({ text: `Quad Heavy (${knee}:${hip})`, type: 'warning' });
+    } else {
+      alerts.push(`⚠️ Hip Dominant Overdominant (${hip} Hamstrings/Glutes vs ${knee} Quads). Add Squats or Lunges!`);
+      badges.push({ text: `Posterior Heavy (${hip}:${knee})`, type: 'warning' });
+    }
+  }
+
+  let html = `
+    <div class="balance-audit-card">
+      <div class="balance-header">
+        <span class="balance-title">⚖️ Movement Pattern & Volume Audit</span>
+      </div>
+      <div class="balance-badges">
+        ${badges.map(b => `<span class="badge-balance badge-balance-${b.type}">${b.type === 'success' ? '✓' : '⚠️'} ${b.text}</span>`).join('')}
+      </div>`;
+
+  if (alerts.length > 0) {
+    html += `<div class="balance-alerts">${alerts.map(a => `<div class="alert-item">${a}</div>`).join('')}</div>`;
+  }
+
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function generateTargetedMobility(workoutExercises) {
+  const targetMuscles = new Set();
+  workoutExercises.forEach(ex => {
+    const target = (ex.target || ex.muscle_group || '').toLowerCase();
+    if (target.includes('chest') || target.includes('pec')) targetMuscles.add('chest');
+    if (target.includes('shoulder') || target.includes('delt')) targetMuscles.add('shoulders');
+    if (target.includes('lat') || target.includes('back')) { targetMuscles.add('lats'); targetMuscles.add('upper_back'); }
+    if (target.includes('quad')) targetMuscles.add('quads');
+    if (target.includes('hamstring')) targetMuscles.add('hamstrings');
+    if (target.includes('glute')) targetMuscles.add('glutes');
+    if (target.includes('ab') || target.includes('waist') || target.includes('oblique')) targetMuscles.add('abs');
+  });
+
+  if (targetMuscles.size === 0) {
+    targetMuscles.add('shoulders');
+    targetMuscles.add('glutes');
+  }
+
+  const warmups = [];
+  const cooldowns = [];
+  targetMuscles.forEach(m => {
+    if (DYNAMIC_WARMUP_LIBRARY[m]) warmups.push(...DYNAMIC_WARMUP_LIBRARY[m]);
+    if (COOL_DOWN_STRETCH_LIBRARY[m]) cooldowns.push(...COOL_DOWN_STRETCH_LIBRARY[m]);
+  });
+
+  return { warmups, cooldowns };
+}
+
+function renderTargetedMobilityLists(mobility) {
+  const warmupContainer = document.getElementById('dynamicWarmupList');
+  const cooldownContainer = document.getElementById('cooldownStretchList');
+  const warmupBadge = document.getElementById('warmupCountBadge');
+  const cooldownBadge = document.getElementById('cooldownCountBadge');
+
+  if (warmupBadge) warmupBadge.textContent = `${mobility.warmups.length} Drills`;
+  if (cooldownBadge) cooldownBadge.textContent = `${mobility.cooldowns.length} Stretches`;
+
+  if (warmupContainer) {
+    warmupContainer.innerHTML = mobility.warmups.map(w => `
+      <div class="mobility-item flex flex-col justify-between">
+        <div class="flex items-center justify-between" style="display:flex; justify-content:space-between;">
+          <span class="mobility-title">${w.name}</span>
+          <span class="mobility-duration">${w.duration}</span>
+        </div>
+        <div class="mobility-desc">${w.desc}</div>
+      </div>
+    `).join('');
+  }
+
+  if (cooldownContainer) {
+    cooldownContainer.innerHTML = mobility.cooldowns.map(c => `
+      <div class="mobility-item flex flex-col justify-between">
+        <div class="flex items-center justify-between" style="display:flex; justify-content:space-between;">
+          <span class="mobility-title">${c.name}</span>
+          <span class="mobility-duration">${c.duration}</span>
+        </div>
+        <div class="mobility-desc">${c.desc}</div>
+      </div>
+    `).join('');
+  }
+}
