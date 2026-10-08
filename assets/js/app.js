@@ -1,4 +1,4 @@
-// Copy this configuration block directly from your Firebase Console
+// Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyA1fJ7pOsNQvmFQVXhFKji62c3TUbYfymg",
   authDomain: "omnipathworkout.firebaseapp.com",
@@ -9,7 +9,7 @@ const firebaseConfig = {
   measurementId: "G-9YDR5HP3DQ"
 };
 
-// Initialize Firebase services
+// Initialize Firebase Services
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
@@ -18,6 +18,8 @@ const db = firebase.database();
 let exerciseDataset = [];
 let activeWorkout = null;
 let timerInterval = null;
+let currentUser = null;
+let isSignUpMode = false;
 
 const DEFAULT_SETTINGS = {
   split: "upper_lower",
@@ -30,11 +32,10 @@ let userSettings = JSON.parse(localStorage.getItem("gymbro_settings")) || DEFAUL
 let activePlan = JSON.parse(localStorage.getItem("gymbro_active_plan")) || null;
 let workoutHistory = JSON.parse(localStorage.getItem("gymbro_history")) || [];
 
-// Muscle Group Categorization for Upper and Lower Splits
+// Target Muscle Maps
 const UPPER_BODY_TARGETS = ["chest", "upper chest", "lower chest", "pectorals", "lats", "upper back", "shoulders", "front delts", "side delts", "rear delts", "traps", "biceps", "brachialis", "triceps", "forearms"];
 const LOWER_BODY_TARGETS = ["quads", "hamstrings", "glutes", "glute medius", "calves", "soleus", "gastrocnemius", "adductors", "shin", "tibialis anterior", "abs", "obliques", "core", "lower back"];
 
-// Antagonistic Muscle Pair Map
 const ANTAGONIST_MAP = {
   "chest": ["lats", "upper back", "rhomboids"],
   "upper chest": ["lats", "upper back"],
@@ -60,12 +61,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadExercises();
   initSettingsUI();
   initEventListeners();
+  initFirebaseAuthListener();
   renderPlanUI();
   renderHistoryUI();
   checkActiveSession();
 });
 
-// Load exercises from exercises.json
+// Load exercises
 async function loadExercises() {
   try {
     const response = await fetch("data/exercises.json");
@@ -75,15 +77,60 @@ async function loadExercises() {
   }
 }
 
-// Generate Exercise Routines based on Settings & Antagonistic Supersets
+// Firebase Auth Observer & Cloud Sync
+function initFirebaseAuthListener() {
+  auth.onAuthStateChanged(async (user) => {
+    const authModal = document.getElementById("auth-modal");
+    if (user) {
+      currentUser = user;
+      if (authModal) authModal.classList.add("hidden");
+      syncUserDataFromCloud(user.uid);
+    } else {
+      currentUser = null;
+      if (authModal) authModal.classList.remove("hidden");
+    }
+  });
+}
+
+function syncUserDataFromCloud(uid) {
+  const userRef = db.ref(`users/${uid}`);
+  userRef.on("value", (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      if (data.settings) {
+        userSettings = data.settings;
+        localStorage.setItem("gymbro_settings", JSON.stringify(userSettings));
+        initSettingsUI();
+      }
+      if (data.history) {
+        workoutHistory = data.history;
+        localStorage.setItem("gymbro_history", JSON.stringify(workoutHistory));
+        renderHistoryUI();
+      }
+      if (data.active_plan) {
+        activePlan = data.active_plan;
+        localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
+        renderPlanUI();
+      }
+    }
+  });
+}
+
+function saveUserDataToCloud() {
+  if (!currentUser) return;
+  db.ref(`users/${currentUser.uid}`).update({
+    settings: userSettings,
+    history: workoutHistory,
+    active_plan: activePlan
+  });
+}
+
+// Workout Generator Logic
 function generateWorkoutSession(splitTypeOverride) {
   const split = splitTypeOverride || userSettings.split;
   const duration = parseInt(userSettings.duration, 10);
-  
-  // Exercise count based on duration
-  const exerciseCount = Math.max(3, Math.floor(duration / 7.5)); // 30m=4, 45m=6, 60m=8, 90m=12
+  const exerciseCount = Math.max(3, Math.floor(duration / 7.5));
 
-  // Filter exercises by equipment settings
   const availableExercises = exerciseDataset.filter(ex => 
     userSettings.equipment.includes(ex.equipment.toLowerCase())
   );
@@ -108,7 +155,6 @@ function generateWorkoutSession(splitTypeOverride) {
     title = "LEGS SESSION";
   }
 
-  // Filter pool by target muscles
   let pool = availableExercises;
   if (targetMuscles.length > 0) {
     pool = availableExercises.filter(ex => 
@@ -119,13 +165,11 @@ function generateWorkoutSession(splitTypeOverride) {
 
   let selected = [];
 
-  // Antagonistic Superset Logic
   if (userSettings.supersets) {
     const poolCopy = [...pool];
     let pairCount = 1;
 
     while (selected.length < exerciseCount && poolCopy.length > 0) {
-      // Select primary exercise
       const ex1Idx = Math.floor(Math.random() * poolCopy.length);
       const ex1 = poolCopy.splice(ex1Idx, 1)[0];
       const target1 = ex1.target.toLowerCase();
@@ -135,7 +179,6 @@ function generateWorkoutSession(splitTypeOverride) {
 
       if (selected.length >= exerciseCount) break;
 
-      // Find antagonistic exercise
       const antagonists = ANTAGONIST_MAP[target1] || [];
       const ex2Idx = poolCopy.findIndex(ex => 
         antagonists.includes(ex.target.toLowerCase()) ||
@@ -147,16 +190,13 @@ function generateWorkoutSession(splitTypeOverride) {
         ex2.supersetGroup = `SUPERSET ${pairCount} - B`;
         selected.push(ex2);
       } else if (poolCopy.length > 0) {
-        // Fallback: pick next available exercise if no exact antagonist match
         const ex2Fallback = poolCopy.splice(0, 1)[0];
         ex2Fallback.supersetGroup = `SUPERSET ${pairCount} - B`;
         selected.push(ex2Fallback);
       }
-
       pairCount++;
     }
   } else {
-    // Normal exercise selection
     const poolCopy = [...pool];
     while (selected.length < exerciseCount && poolCopy.length > 0) {
       const idx = Math.floor(Math.random() * poolCopy.length);
@@ -181,7 +221,7 @@ function generateWorkoutSession(splitTypeOverride) {
 
 // UI Event Handlers
 function initEventListeners() {
-  // Tab Navigation
+  // Navigation
   document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".tab-btn").forEach(t => t.classList.remove("active"));
@@ -190,6 +230,38 @@ function initEventListeners() {
       document.getElementById(btn.dataset.tab).classList.add("active");
     });
   });
+
+  // Auth Modal Listeners
+  const toggleAuthBtn = document.getElementById("toggle-auth-mode-btn");
+  if (toggleAuthBtn) {
+    toggleAuthBtn.addEventListener("click", () => {
+      isSignUpMode = !isSignUpMode;
+      document.getElementById("auth-title").innerText = isSignUpMode ? "CREATE IRON BRO ACCOUNT" : "IRON BRO LOGIN";
+      document.getElementById("auth-submit-btn").innerText = isSignUpMode ? "SIGN UP" : "LOG IN";
+      toggleAuthBtn.innerText = isSignUpMode ? "ALREADY HAVE AN ACCOUNT? LOG IN" : "NEED AN ACCOUNT? SIGN UP";
+    });
+  }
+
+  const authForm = document.getElementById("auth-form");
+  if (authForm) {
+    authForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("auth-email").value;
+      const password = document.getElementById("auth-password").value;
+      const errorMsg = document.getElementById("auth-error-msg");
+      if (errorMsg) errorMsg.innerText = "";
+
+      try {
+        if (isSignUpMode) {
+          await auth.createUserWithEmailAndPassword(email, password);
+        } else {
+          await auth.signInWithEmailAndPassword(email, password);
+        }
+      } catch (err) {
+        if (errorMsg) errorMsg.innerText = err.message;
+      }
+    });
+  }
 
   // Settings Modal
   document.getElementById("open-settings-btn").addEventListener("click", () => {
@@ -201,9 +273,10 @@ function initEventListeners() {
   document.getElementById("save-settings-btn").addEventListener("click", saveSettingsUI);
 
   // CSV Export
-  document.getElementById("export-csv-btn").addEventListener("click", exportHistoryToCSV);
+  const exportBtn = document.getElementById("export-csv-btn");
+  if (exportBtn) exportBtn.addEventListener("click", exportHistoryToCSV);
 
-  // Quick Generator
+  // Generator
   document.getElementById("generate-workout-btn").addEventListener("click", () => {
     const session = generateWorkoutSession();
     renderGeneratedWorkout(session);
@@ -214,7 +287,7 @@ function initEventListeners() {
     if (sessionData) startActiveWorkout(sessionData);
   });
 
-  // Active Session Banner
+  // Active Session Controls
   document.getElementById("resume-workout-btn").addEventListener("click", () => {
     document.getElementById("active-workout-modal").classList.remove("hidden");
   });
@@ -229,6 +302,7 @@ function initEventListeners() {
     if (confirm("Reset current program plan?")) {
       activePlan = null;
       localStorage.removeItem("gymbro_active_plan");
+      saveUserDataToCloud();
       renderPlanUI();
     }
   });
@@ -269,6 +343,7 @@ function saveSettingsUI() {
   userSettings.equipment = selectedEquipment;
 
   localStorage.setItem("gymbro_settings", JSON.stringify(userSettings));
+  saveUserDataToCloud();
   document.getElementById("settings-modal").classList.add("hidden");
   alert("Iron Bro Settings saved!");
 }
@@ -325,7 +400,7 @@ function renderGeneratedWorkout(session) {
   document.getElementById("generated-workout-view").classList.remove("hidden");
 }
 
-// Multi-Month Plan Logic (1, 2, or 3 Months)
+// Program Planning Logic
 function buildMultiMonthPlan() {
   const months = parseInt(document.getElementById("plan-duration").value, 10);
   const totalWeeks = months * 4;
@@ -385,6 +460,7 @@ function buildMultiMonthPlan() {
   };
 
   localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
+  saveUserDataToCloud();
   renderPlanUI();
 }
 
@@ -449,6 +525,7 @@ window.togglePlanDay = function(weekNum, dayId) {
   }
 
   localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
+  saveUserDataToCloud();
   renderPlanUI();
 };
 
@@ -525,7 +602,6 @@ function finishActiveWorkout() {
       });
     });
     localStorage.setItem("gymbro_active_plan", JSON.stringify(activePlan));
-    renderPlanUI();
   }
 
   workoutHistory.unshift({
@@ -536,8 +612,9 @@ function finishActiveWorkout() {
 
   localStorage.setItem("gymbro_history", JSON.stringify(workoutHistory));
   localStorage.removeItem("gymbro_active_session");
-  activeWorkout = null;
+  saveUserDataToCloud();
 
+  activeWorkout = null;
   document.getElementById("active-workout-modal").classList.add("hidden");
   checkActiveSession();
   renderHistoryUI();
@@ -561,7 +638,7 @@ function renderHistoryUI() {
   `).join("");
 }
 
-// Timer
+// Timer Logic
 function startRestTimer(seconds) {
   clearInterval(timerInterval);
   let remaining = seconds;
