@@ -25,7 +25,7 @@ body.metallic-theme {
   background: var(--bg-gradient);
   color: var(--text-main);
   min-height: 100vh;
-  padding-bottom: 40px;
+  padding-bottom: 70px;
 }
 
 h1, h2, h3, h4 {
@@ -46,7 +46,6 @@ h1, h2, h3, h4 {
 }
 
 .logo-text span { color: var(--accent-gold); }
-
 .container { max-width: 900px; margin: 20px auto; padding: 0 15px; }
 
 .metal-card {
@@ -56,6 +55,12 @@ h1, h2, h3, h4 {
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: inset 0 1px 1px rgba(255,255,255,0.15), 0 8px 20px rgba(0,0,0,0.7);
+}
+
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .subtitle { font-size: 0.9rem; color: var(--text-muted); margin-top: 5px; font-family: sans-serif; }
@@ -84,10 +89,6 @@ h1, h2, h3, h4 {
   border-color: #ffd700;
   color: #1a1a1a;
   font-weight: bold;
-}
-
-.metal-btn.primary-btn:hover {
-  background: linear-gradient(180deg, #ffe082 0%, #d4af37 50%, #a37f1a 100%);
 }
 
 .metal-btn.danger-btn {
@@ -129,19 +130,19 @@ h1, h2, h3, h4 {
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
-.exercise-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  margin-top: 15px;
-}
-
 .exercise-card {
   background: #0f172a;
   border: 1px solid #475569;
   border-left: 4px solid var(--accent-gold);
   padding: 12px 16px;
   border-radius: 4px;
+}
+
+.exercise-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
 .superset-badge {
@@ -151,13 +152,9 @@ h1, h2, h3, h4 {
   font-size: 0.75rem;
   padding: 2px 6px;
   border-radius: 3px;
-  margin-bottom: 6px;
   font-weight: bold;
-  letter-spacing: 1px;
 }
 
-.exercise-card h5 { font-size: 1.1rem; color: #fff; }
-.exercise-tags { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
 .tag {
   background: #1e293b;
   color: var(--accent-silver);
@@ -168,19 +165,6 @@ h1, h2, h3, h4 {
   text-transform: uppercase;
   font-family: sans-serif;
 }
-
-.steel-list { list-style: none; padding-left: 0; margin-top: 8px; }
-.steel-list li {
-  padding: 8px 12px;
-  background: #1e293b;
-  margin-bottom: 6px;
-  border-left: 3px solid #94a3b8;
-  font-size: 0.9rem;
-  font-family: sans-serif;
-  color: var(--accent-silver);
-}
-
-.workout-section { margin-top: 15px; }
 
 .modal-overlay {
   position: fixed;
@@ -216,66 +200,148 @@ h1, h2, h3, h4 {
 
 .close-btn { background: none; border: none; color: #fff; font-size: 1.8rem; cursor: pointer; }
 
-.setting-group { margin-bottom: 18px; }
-.setting-label { display: block; margin-bottom: 6px; color: var(--accent-silver); font-size: 0.9rem; }
-
 .metal-input {
   width: 100%;
-  padding: 10px;
+  padding: 8px;
   background: #020617;
   border: 1px solid #64748b;
   color: #fff;
   border-radius: 4px;
 }
 
-.checkbox-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 8px;
-}
-
-.metal-checkbox {
+.set-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  cursor: pointer;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #1e293b;
   font-family: sans-serif;
-  color: var(--accent-silver);
+  font-size: 0.9rem;
 }
 
-.hidden { display: none !important; }
+.set-row.completed-set {
+  background: rgba(34, 197, 94, 0.12);
+}
 
-/* Progress & Accordion */
-.progress-bar-container {
+.set-check-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--accent-gold);
+  font-size: 0.8rem;
+}
+
+.set-check-input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-gold);
+  cursor: pointer;
+}
+
+/* Sticky Floating Timer Bar */
+.sticky-timer-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
   width: 100%;
-  height: 16px;
-  background: #020617;
-  border-radius: 8px;
-  border: 1px solid #475569;
-  overflow: hidden;
-  margin: 12px 0 6px 0;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  border-top: 2px solid var(--accent-gold);
+  padding: 10px 15px;
+  z-index: 1100;
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.8);
 }
-.progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #c59b27, #ffd700); transition: width 0.3s ease; }
-.plan-stats { font-size: 0.85rem; color: var(--text-muted); font-family: sans-serif; margin-bottom: 15px; }
 
-.week-card { background: #1e293b; border: 1px solid #475569; margin-bottom: 10px; border-radius: 4px; }
-.week-header { background: #334155; padding: 10px 15px; cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; }
-.day-row { padding: 10px 15px; border-top: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; font-family: sans-serif; font-size: 0.9rem; }
-.day-row.completed { background: rgba(34, 197, 94, 0.15); text-decoration: line-through; color: #a1a1aa; }
-
-.active-banner {
-  background: linear-gradient(90deg, #8a6a12, #0f172a);
-  padding: 12px 18px;
-  border-radius: 6px;
+.timer-bar-content {
+  max-width: 900px;
+  margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
-  border: 1px solid #ffd700;
+}
+
+.timer-bar-label {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.timer-bar-digits {
+  font-size: 1.6rem;
+  color: var(--accent-gold);
+  letter-spacing: 2px;
+}
+
+.timer-bar-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* Expandable History Cards */
+.history-card {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-left: 4px solid var(--accent-gold);
+  border-radius: 6px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.history-card-header {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  background: #182232;
+}
+
+.history-title {
+  font-size: 1.05rem;
+  color: var(--accent-silver);
+}
+
+.history-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-family: sans-serif;
+  margin-top: 3px;
+}
+
+.history-volume-badge {
+  background: linear-gradient(180deg, #f5d061 0%, #c59b27 100%);
+  color: #000;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.history-card-body {
+  padding: 12px 16px;
+  border-top: 1px solid #1e293b;
+  background: #0b1120;
+}
+
+.history-exercise-block {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #1e293b;
+}
+
+.history-exercise-name {
+  color: var(--accent-gold);
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.history-sets-summary {
+  font-family: sans-serif;
+  font-size: 0.82rem;
+  color: var(--text-muted);
 }
 
 .timer-card { background: #020617; padding: 15px; border-radius: 6px; text-align: center; margin-bottom: 15px; border: 1px solid #475569; }
 .timer-display { font-size: 2.2rem; color: var(--accent-gold); margin: 8px 0; }
-.timer-controls { display: flex; justify-content: center; gap: 8px; }
+.timer-controls { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+.hidden { display: none !important; }
