@@ -3,20 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OmniPathWorkout - Metallic Gold Edition</title>
-  
-  <!-- Firebase Compatibility SDKs -->
+  <title>IRON BRO TRACKER - Phase 2 Edition</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="manifest" href="manifest.json">
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
-
-  <!-- Styles & Manifest -->
-  <link rel="stylesheet" href="assets/css/styles.css">
-  <link rel="manifest" href="manifest.json">
 </head>
 <body class="metallic-theme">
   <header class="top-nav">
-    <h1 class="logo-text">OmniPathWorkout <span>TRACKER</span></h1>
+    <h1 class="logo-text">IRON BRO <span>TRACKER</span></h1>
     <button id="open-settings-btn" class="metal-btn icon-btn">⚙️ SETTINGS</button>
   </header>
 
@@ -78,7 +75,7 @@
             <option value="2">2 Months (8 Weeks)</option>
             <option value="3" selected>3 Months (12 Weeks)</option>
           </select>
-          <button id="create-plan-btn" class="metal-btn primary-btn full-width">BUILD PROGRAM PLAN</button>
+          <button id="create-plan-btn" class="metal-btn primary-btn full-width margin-top">BUILD PROGRAM PLAN</button>
         </div>
       </div>
 
@@ -99,13 +96,30 @@
     <!-- Tab 3: Tracker Log -->
     <section id="tracker-tab" class="tab-content">
       <div class="metal-card">
-        <h2 class="section-header">WORKOUT LOG & HISTORY</h2>
-        <div id="history-list" class="history-container">
+        <div class="section-header-row">
+          <h2 class="section-header">WORKOUT LOG & VOLUME ANALYTICS</h2>
+          <button id="export-csv-btn" class="metal-btn small-btn">📥 EXPORT CSV</button>
+        </div>
+        <div id="history-list" class="history-container margin-top">
           <p class="empty-msg">No completed workouts logged yet.</p>
         </div>
       </div>
     </section>
   </main>
+
+  <!-- Sticky Floating Rest Timer Bar (Visible during active workout) -->
+  <div id="sticky-timer-bar" class="sticky-timer-bar hidden">
+    <div class="timer-bar-content">
+      <span class="timer-bar-label">REST TIMER:</span>
+      <span id="floating-timer-display" class="timer-bar-digits">01:00</span>
+      <div class="timer-bar-actions">
+        <button onclick="adjustRestTimer(-15)" class="metal-btn small-btn">-15s</button>
+        <button onclick="adjustRestTimer(15)" class="metal-btn small-btn">+15s</button>
+        <button id="timer-pause-btn" onclick="togglePauseRestTimer()" class="metal-btn small-btn primary-btn">PAUSE</button>
+        <button onclick="skipRestTimer()" class="metal-btn small-btn danger-btn">SKIP</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Active Workout Modal / Overlay -->
   <div id="active-workout-modal" class="modal-overlay hidden">
@@ -114,14 +128,17 @@
         <h2 id="active-workout-name">SESSION IN PROGRESS</h2>
         <button id="minimize-workout-btn" class="metal-btn small-btn">🗕 MINIMIZE</button>
       </header>
+      
       <div class="timer-card metal-subcard">
         <div class="timer-label">REST TIMER</div>
         <div class="timer-display" id="rest-timer-display">00:00</div>
         <div class="timer-controls">
-          <button class="metal-btn timer-quick-btn" data-time="30">+30s</button>
-          <button class="metal-btn timer-quick-btn" data-time="60">+60s</button>
-          <button class="metal-btn timer-quick-btn" data-time="90">+90s</button>
-          <button id="stop-timer-btn" class="metal-btn danger-btn">STOP</button>
+          <button onclick="adjustRestTimer(-15)" class="metal-btn timer-quick-btn">-15s</button>
+          <button onclick="adjustRestTimer(15)" class="metal-btn timer-quick-btn">+15s</button>
+          <button onclick="startRestTimer(60)" class="metal-btn timer-quick-btn">60s</button>
+          <button onclick="startRestTimer(90)" class="metal-btn timer-quick-btn">90s</button>
+          <button id="modal-pause-btn" onclick="togglePauseRestTimer()" class="metal-btn primary-btn">PAUSE</button>
+          <button onclick="skipRestTimer()" class="metal-btn danger-btn">SKIP</button>
         </div>
       </div>
 
@@ -137,12 +154,11 @@
   <div id="settings-modal" class="modal-overlay hidden">
     <div class="modal-content metal-modal">
       <header class="modal-header">
-        <h2>⚙️ OmniPathWorkout SETTINGS</h2>
+        <h2>⚙️ IRON BRO SETTINGS</h2>
         <button id="close-settings-btn" class="close-btn">&times;</button>
       </header>
       
       <div class="settings-body">
-        <!-- Workout Split -->
         <div class="setting-group">
           <label class="setting-label">Active Workout Split</label>
           <select id="setting-split" class="metal-input">
@@ -154,18 +170,26 @@
           </select>
         </div>
 
-        <!-- Workout Duration -->
         <div class="setting-group">
           <label class="setting-label">Workout Duration</label>
           <select id="setting-duration" class="metal-input">
-            <option value="30">30 Minutes (Short & Intense - 4 Exercises)</option>
-            <option value="45" selected>45 Minutes (Standard - 6 Exercises)</option>
-            <option value="60">60 Minutes (High Volume - 8 Exercises)</option>
-            <option value="90">90 Minutes (Beast Mode - 10 Exercises)</option>
+            <option value="30">30 Minutes (4 Exercises)</option>
+            <option value="45" selected>45 Minutes (6 Exercises)</option>
+            <option value="60">60 Minutes (8 Exercises)</option>
+            <option value="90">90 Minutes (10 Exercises)</option>
           </select>
         </div>
 
-        <!-- Equipment Selection -->
+        <div class="setting-group">
+          <label class="setting-label">Default Rest Duration (Seconds)</label>
+          <select id="setting-rest-time" class="metal-input">
+            <option value="30">30 Seconds</option>
+            <option value="60" selected>60 Seconds</option>
+            <option value="90">90 Seconds</option>
+            <option value="120">120 Seconds</option>
+          </select>
+        </div>
+
         <div class="setting-group">
           <label class="setting-label">Equipment Available</label>
           <div id="equipment-toggles" class="checkbox-grid">
@@ -181,94 +205,12 @@
           </div>
         </div>
 
-        <!-- Additional Options -->
         <div class="setting-group">
           <label class="metal-checkbox"><input type="checkbox" id="setting-supersets"> Enable Antagonistic Supersets</label>
         </div>
-
-        <!-- Data Export -->
-        <div class="setting-group margin-top">
-          <label class="setting-label">Data Management</label>
-          <button id="export-csv-btn" class="metal-btn primary-btn full-width">📥 EXPORT LOG TO CSV</button>
-        </div>
       </div>
 
-      <!-- Custom Exercise Creator -->
-        <div class="setting-group margin-top" style="border-top: 1px solid var(--accent-gold); padding-top: 15px;">
-          <label class="setting-label">➕ CREATE CUSTOM EXERCISE</label>
-          <div class="custom-ex-form">
-            <input type="text" id="custom-ex-name" class="metal-input" placeholder="Exercise Name (e.g., Cable Belt Squat)" style="margin-bottom: 8px;">
-            
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-          <select id="custom-ex-target" class="metal-input">
-            <option value="chest">Target: Chest</option>
-            <option value="upper chest">Target: Upper Chest</option>
-            <option value="lower chest">Target: Lower Chest</option>
-            <option value="lats">Target: Lats</option>
-            <option value="upper back">Target: Upper Back</option>
-            <option value="shoulders">Target: Shoulders</option>
-            <option value="front delts">Target: Front Delts</option>
-            <option value="side delts">Target: Side Delts</option>
-            <option value="rear delts">Target: Rear Delts</option>
-            <option value="biceps">Target: Biceps</option>
-            <option value="triceps">Target: Triceps</option>
-            <option value="quads">Target: Quads</option>
-            <option value="hamstrings">Target: Hamstrings</option>
-            <option value="glutes">Target: Glutes</option>
-            <option value="calves">Target: Calves</option>
-            <option value="abs">Target: Abs</option>
-            <option value="obliques">Target: Obliques</option>
-          </select>
-
-          <select id="custom-ex-equipment" class="metal-input">
-            <option value="barbell">Equip: Barbell</option>
-            <option value="dumbbell">Equip: Dumbbell</option>
-            <option value="cable">Equip: Cable</option>
-            <option value="leverage machine">Equip: Leverage Machine</option>
-            <option value="smith machine">Equip: Smith Machine</option>
-            <option value="body weight">Equip: Bodyweight</option>
-            <option value="kettlebell">Equip: Kettlebell</option>
-            <option value="band">Equip: Resistance Band</option>
-            <option value="other">Equip: Other</option>
-          </select>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px;">
-          <select id="custom-ex-pattern" class="metal-input">
-            <option value="horizontal push">Horizontal Push</option>
-            <option value="horizontal pull">Horizontal Pull</option>
-            <option value="vertical push">Vertical Push</option>
-            <option value="vertical pull">Vertical Pull</option>
-            <option value="squat">Squat</option>
-            <option value="hinge">Hinge</option>
-            <option value="elbow flexion">Elbow Flexion</option>
-            <option value="elbow extension">Elbow Extension</option>
-            <option value="knee flexion">Knee Flexion</option>
-            <option value="knee extension">Knee Extension</option>
-            <option value="flexion">Flexion</option>
-            <option value="isolation">Isolation</option>
-          </select>
-
-          <select id="custom-ex-symmetry" class="metal-input">
-            <option value="bilateral">Bilateral</option>
-            <option value="unilateral">Unilateral</option>
-          </select>
-
-          <select id="custom-ex-difficulty" class="metal-input">
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
-          </select>
-        </div>
-
-        <button type="button" id="add-custom-ex-btn" class="metal-btn primary-btn full-width">SAVE CUSTOM EXERCISE</button>
-      </div>
-
-      <label class="setting-label margin-top">YOUR CUSTOM EXERCISES</label>
-      <div id="custom-exercise-list" style="max-height: 150px; overflow-y: auto;"></div>
-    </div>
-      
-      <div class="modal-footer margin-top">
+      <div class="modal-footer">
         <button id="save-settings-btn" class="metal-btn primary-btn full-width">SAVE SETTINGS</button>
       </div>
     </div>
