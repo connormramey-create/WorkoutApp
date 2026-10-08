@@ -32,6 +32,7 @@ let userSettings = JSON.parse(localStorage.getItem("gymbro_settings")) || DEFAUL
 let activePlan = JSON.parse(localStorage.getItem("gymbro_active_plan")) || null;
 let workoutHistory = JSON.parse(localStorage.getItem("gymbro_history")) || [];
 let exerciseHistory = JSON.parse(localStorage.getItem("gymbro_exercise_history")) || {};
+let customExercises = JSON.parse(localStorage.getItem("gymbro_custom_exercises")) || [];
 
 // Target Muscle Maps
 const UPPER_BODY_TARGETS = ["chest", "upper chest", "lower chest", "pectorals", "lats", "upper back", "shoulders", "front delts", "side delts", "rear delts", "traps", "biceps", "brachialis", "triceps", "forearms"];
@@ -65,17 +66,27 @@ document.addEventListener("DOMContentLoaded", async () => {
   initFirebaseAuthListener();
   renderPlanUI();
   renderHistoryUI();
+  renderCustomExerciseListUI();
   checkActiveSession();
 });
 
-// Load exercises
+// Load exercises & merge custom user exercises
 async function loadExercises() {
   try {
     const response = await fetch("data/exercises.json");
-    exerciseDataset = await response.json();
+    const rawDataset = await response.json();
+    exerciseDataset = rawDataset;
+    mergeCustomExercises();
   } catch (err) {
     console.error("Failed to load exercises dataset:", err);
   }
+}
+
+function mergeCustomExercises() {
+  // Remove previously merged custom exercises to prevent duplication
+  exerciseDataset = exerciseDataset.filter(ex => !ex.isCustom);
+  const taggedCustoms = customExercises.map(ex => ({ ...ex, isCustom: true }));
+  exerciseDataset = [...exerciseDataset, ...taggedCustoms];
 }
 
 // Firebase Auth Observer & Cloud Sync
@@ -117,6 +128,12 @@ function syncUserDataFromCloud(uid) {
         exerciseHistory = data.exercise_history;
         localStorage.setItem("gymbro_exercise_history", JSON.stringify(exerciseHistory));
       }
+      if (data.custom_exercises) {
+        customExercises = data.custom_exercises;
+        localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
+        mergeCustomExercises();
+        renderCustomExerciseListUI();
+      }
     }
   });
 }
@@ -127,8 +144,79 @@ function saveUserDataToCloud() {
     settings: userSettings,
     history: workoutHistory,
     active_plan: activePlan,
-    exercise_history: exerciseHistory
+    exercise_history: exerciseHistory,
+    custom_exercises: customExercises
   });
+}
+
+// Custom Exercise Management
+function addCustomExercise() {
+  const nameInput = document.getElementById("custom-ex-name");
+  const name = nameInput.value.trim();
+  if (!name) {
+    alert("Please enter a custom exercise name.");
+    return;
+  }
+
+  const target = document.getElementById("custom-ex-target").value;
+  const equipment = document.getElementById("custom-ex-equipment").value;
+  const pattern = document.getElementById("custom-ex-pattern").value;
+  const symmetry = document.getElementById("custom-ex-symmetry").value;
+  const difficulty = document.getElementById("custom-ex-difficulty").value;
+
+  const newEx = {
+    id: `custom_${Date.now()}`,
+    name: name,
+    target: target,
+    muscle_groups: {
+      primary: [target],
+      secondary: []
+    },
+    movement_pattern: pattern,
+    equipment: equipment,
+    symmetry: symmetry,
+    difficulty: difficulty,
+    isCustom: true
+  };
+
+  customExercises.push(newEx);
+  localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
+  mergeCustomExercises();
+  saveUserDataToCloud();
+  renderCustomExerciseListUI();
+
+  nameInput.value = "";
+  alert(`Added custom exercise: ${name}`);
+}
+
+window.deleteCustomExercise = function(id) {
+  if (confirm("Delete this custom exercise?")) {
+    customExercises = customExercises.filter(ex => ex.id !== id);
+    localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
+    mergeCustomExercises();
+    saveUserDataToCloud();
+    renderCustomExerciseListUI();
+  }
+};
+
+function renderCustomExerciseListUI() {
+  const container = document.getElementById("custom-exercise-list");
+  if (!container) return;
+
+  if (customExercises.length === 0) {
+    container.innerHTML = '<p class="subtitle" style="font-size: 12px; margin-top: 5px;">No custom exercises added yet.</p>';
+    return;
+  }
+
+  container.innerHTML = customExercises.map(ex => `
+    <div class="day-row" style="background: #0f172a; padding: 6px 10px; margin-top: 6px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <strong style="color: var(--accent-gold); font-size: 13px;">${ex.name}</strong><br>
+        <small style="color: #cbd5e1; font-size: 11px;">${ex.target} • ${ex.equipment} • ${ex.movement_pattern}</small>
+      </div>
+      <button class="metal-btn danger-btn small-btn" onclick="deleteCustomExercise('${ex.id}')">✕</button>
+    </div>
+  `).join("");
 }
 
 // Workout Generator Logic
@@ -269,6 +357,12 @@ function initEventListeners() {
     });
   }
 
+  // Custom Exercise Creation Listener
+  const addCustomBtn = document.getElementById("add-custom-ex-btn");
+  if (addCustomBtn) {
+    addCustomBtn.addEventListener("click", addCustomExercise);
+  }
+
   // Settings Modal
   document.getElementById("open-settings-btn").addEventListener("click", () => {
     document.getElementById("settings-modal").classList.remove("hidden");
@@ -393,7 +487,7 @@ function renderGeneratedWorkout(session) {
   exDiv.innerHTML = session.exercises.map(ex => `
     <div class="exercise-card">
       ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
-      <h5>${ex.name}</h5>
+      <h5>${ex.name}${ex.isCustom ? ' <span class="tag" style="color:var(--accent-gold);">[CUSTOM]</span>' : ''}</h5>
       <div class="exercise-tags">
         <span class="tag">Target: ${ex.target}</span>
         <span class="tag">Equip: ${ex.equipment}</span>
@@ -550,7 +644,6 @@ function startActiveWorkout(session) {
         { reps: 10, weight: 100 }
       ];
 
-      // Auto-populate sets with last used weights and reps
       if (historyRecord && historyRecord.sets && historyRecord.sets.length > 0) {
         defaultSets = historyRecord.sets.map(s => ({
           reps: s.reps || 10,
@@ -631,7 +724,6 @@ window.updateSetData = function(exIdx, setIdx, field, val) {
 function finishActiveWorkout() {
   if (!activeWorkout) return;
 
-  // 1. Save Per-Exercise Weight & Set History
   activeWorkout.logs.forEach(ex => {
     const exKey = ex.id || ex.name;
     let maxWeight = 0;
@@ -654,7 +746,6 @@ function finishActiveWorkout() {
 
   localStorage.setItem("gymbro_exercise_history", JSON.stringify(exerciseHistory));
 
-  // 2. Advance Multi-Month Plan
   if (activeWorkout.planDayRef && activePlan) {
     activePlan.weeks.forEach(w => {
       w.days.forEach(d => {
@@ -665,7 +756,6 @@ function finishActiveWorkout() {
     renderPlanUI();
   }
 
-  // 3. Save Session Log History
   workoutHistory.unshift({
     title: activeWorkout.title,
     date: new Date().toLocaleDateString(),
