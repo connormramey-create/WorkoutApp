@@ -27,18 +27,28 @@ let isTimerPaused = false;
 let currentUser = null;
 let isSignUpMode = false;
 
+const DEFAULT_MAX_LIFTS = {
+  benchPress: 185,
+  squat: 225,
+  deadlift: 275,
+  overheadPress: 115
+};
+
 const DEFAULT_SETTINGS = {
   profile: "standard",           // "standard", "powerlifter", "calisthenics"
-  progressionScheme: "linear",   // "linear", "juggernaut", "five_three_one", "conjugate"
+  progressionScheme: "linear",   // "linear", "five_three_one", "juggernaut", "conjugate"
   split: "upper_lower",
   duration: 45,
   restTime: 60,
   equipment: ["barbell", "dumbbell", "cable", "leverage machine", "smith machine", "body weight", "kettlebell", "band", "other"],
-  supersets: false
+  supersets: false,
+  maxLifts: DEFAULT_MAX_LIFTS
 };
 
 let userSettings = JSON.parse(localStorage.getItem("gymbro_settings")) || DEFAULT_SETTINGS;
-let activePlan = null; // Dynamically loaded per profile
+if (!userSettings.maxLifts) userSettings.maxLifts = DEFAULT_MAX_LIFTS;
+
+let activePlan = null;
 let workoutHistory = JSON.parse(localStorage.getItem("gymbro_history")) || [];
 let exerciseHistory = JSON.parse(localStorage.getItem("gymbro_exercise_history")) || {};
 let customExercises = JSON.parse(localStorage.getItem("gymbro_custom_exercises")) || [];
@@ -139,7 +149,6 @@ const COOL_DOWN_STRETCH_LIBRARY = {
   glutes: [{ name: "Figure-Four / Pigeon Stretch", duration: "45 sec per side", desc: "Cross ankle over knee, lean forward to stretch deep glutes." }]
 };
 
-// Helper: Get Profile Storage Key for Multi-Month Program Plans
 function getPlanStorageKey() {
   const preset = userSettings.profile || "standard";
   return `gymbro_active_plan_${preset}`;
@@ -174,6 +183,23 @@ function mergeCustomExercises() {
   exerciseDataset = [...exerciseDataset, ...taggedCustoms];
 }
 
+// UI Profile Change Logic
+function onProfileChangeUI(profile) {
+  const schemeGroup = document.getElementById("progression-scheme-group");
+  const maxLiftsGroup = document.getElementById("max-lifts-group");
+  const calisthenicsCard = document.getElementById("calisthenics-flow-info");
+
+  if (profile === "calisthenics") {
+    if (schemeGroup) schemeGroup.classList.add("hidden");
+    if (maxLiftsGroup) maxLiftsGroup.classList.add("hidden");
+    if (calisthenicsCard) calisthenicsCard.classList.remove("hidden");
+  } else {
+    if (schemeGroup) schemeGroup.classList.remove("hidden");
+    if (maxLiftsGroup) maxLiftsGroup.classList.remove("hidden");
+    if (calisthenicsCard) calisthenicsCard.classList.add("hidden");
+  }
+}
+
 // App Profile & Theme Dynamic Applicator
 function applyProfileThemeAndRules() {
   const body = document.body;
@@ -191,6 +217,8 @@ function applyProfileThemeAndRules() {
     body.classList.add("theme-standard");
     document.getElementById("app-subhead").innerText = "TRACKER";
   }
+
+  onProfileChangeUI(profile);
 }
 
 // Firebase Auth Listener & Cloud Sync
@@ -215,6 +243,7 @@ function syncUserDataFromCloud(uid) {
     if (data) {
       if (data.settings) {
         userSettings = data.settings;
+        if (!userSettings.maxLifts) userSettings.maxLifts = DEFAULT_MAX_LIFTS;
         localStorage.setItem("gymbro_settings", JSON.stringify(userSettings));
         applyProfileThemeAndRules();
         initSettingsUI();
@@ -368,36 +397,114 @@ function skipRestTimer() {
   document.getElementById("sticky-timer-bar").classList.add("hidden");
 }
 
-// Progression Target Calculator
-function getProgressionTarget(scheme, weekNum) {
+// ==========================================================
+// MAX LIFTS & PROGRAM PROGRESSION CALCULATOR
+// ==========================================================
+
+function getExerciseMaxLift(exercise) {
+  const maxes = userSettings.maxLifts || DEFAULT_MAX_LIFTS;
+  const name = (exercise.name || '').toLowerCase();
+  const target = (exercise.target || '').toLowerCase();
+
+  if (name.includes('bench') || name.includes('chest press') || target.includes('chest')) {
+    return parseFloat(maxes.benchPress) || 185;
+  }
+  if (name.includes('squat') || name.includes('leg press') || target.includes('quad')) {
+    return parseFloat(maxes.squat) || 225;
+  }
+  if (name.includes('deadlift') || name.includes('rdl') || name.includes('hip thrust') || target.includes('hamstring')) {
+    return parseFloat(maxes.deadlift) || 275;
+  }
+  if (name.includes('press') || name.includes('shoulder') || target.includes('shoulder')) {
+    return parseFloat(maxes.overheadPress) || 115;
+  }
+  return 135;
+}
+
+function roundTo5(weight) {
+  return Math.max(10, Math.round(weight / 5) * 5);
+}
+
+function calculateProgressionSetTargets(exercise, scheme, weekNum, setIdx) {
+  const profile = userSettings.profile || "standard";
+
+  if (profile === "calisthenics") {
+    return { reps: 10, weight: 0, label: "Natural Bodyweight Flow", isBodyweight: true };
+  }
+
+  const maxLift = getExerciseMaxLift(exercise);
+  let pct = 0.70;
+  let reps = 10;
+  let label = "";
+
   switch (scheme) {
-    case "juggernaut": {
-      const wave = Math.ceil((weekNum % 16) / 4) || 1;
-      if (weekNum % 4 === 0) return { reps: 5, setLabel: "Deload (60%)" };
-      if (wave === 1) return { reps: 10, setLabel: "Wave 10s (70%)" };
-      if (wave === 2) return { reps: 8, setLabel: "Wave 8s (75%)" };
-      if (wave === 3) return { reps: 5, setLabel: "Wave 5s (80%)" };
-      return { reps: 3, setLabel: "Wave 3s (85%)" };
-    }
     case "five_three_one": {
       const weekInCycle = ((weekNum - 1) % 4) + 1;
-      if (weekInCycle === 1) return { reps: 5, setLabel: "5/5/5+ Set" };
-      if (weekInCycle === 2) return { reps: 3, setLabel: "3/3/3+ Set" };
-      if (weekInCycle === 3) return { reps: 1, setLabel: "5/3/1+ Set" };
-      return { reps: 5, setLabel: "Deload Set" };
+      if (weekInCycle === 1) {
+        const pcts = [0.65, 0.75, 0.85];
+        pct = pcts[Math.min(setIdx, 2)];
+        reps = 5;
+        label = `5/3/1 W1 (${Math.round(pct * 100)}%)`;
+      } else if (weekInCycle === 2) {
+        const pcts = [0.70, 0.80, 0.90];
+        pct = pcts[Math.min(setIdx, 2)];
+        reps = 3;
+        label = `5/3/1 W2 (${Math.round(pct * 100)}%)`;
+      } else if (weekInCycle === 3) {
+        const pcts = [0.75, 0.85, 0.95];
+        const repList = [5, 3, 1];
+        pct = pcts[Math.min(setIdx, 2)];
+        reps = repList[Math.min(setIdx, 2)];
+        label = `5/3/1 W3 (${Math.round(pct * 100)}%)`;
+      } else {
+        pct = 0.50;
+        reps = 5;
+        label = `5/3/1 Deload (50%)`;
+      }
+      break;
+    }
+    case "juggernaut": {
+      const wave = Math.ceil((weekNum % 16) / 4) || 1;
+      if (weekNum % 4 === 0) {
+        pct = 0.50; reps = 5; label = "Juggernaut Deload (50%)";
+      } else if (wave === 1) {
+        pct = 0.70; reps = 10; label = "Juggernaut 10s (70%)";
+      } else if (wave === 2) {
+        pct = 0.75; reps = 8; label = "Juggernaut 8s (75%)";
+      } else if (wave === 3) {
+        pct = 0.80; reps = 5; label = "Juggernaut 5s (80%)";
+      } else {
+        pct = 0.85; reps = 3; label = "Juggernaut 3s (85%)";
+      }
+      break;
     }
     case "conjugate": {
       const isMaxEffort = weekNum % 2 !== 0;
-      return isMaxEffort 
-        ? { reps: 3, setLabel: "Max Effort (90%+)" } 
-        : { reps: 2, setLabel: "Dynamic Speed (50-60%)" };
+      if (isMaxEffort) {
+        pct = 0.90; reps = 3; label = "Conjugate Max Effort (90%)";
+      } else {
+        pct = 0.55; reps = 2; label = "Conjugate Dynamic Speed (55%)";
+      }
+      break;
     }
-    default: // Linear
-      return { reps: userSettings.profile === "powerlifter" ? 5 : 10, setLabel: "Linear" };
+    default: {
+      if (profile === "powerlifter") {
+        pct = 0.80; reps = 5; label = "Powerlifter Linear (80%)";
+      } else {
+        pct = 0.70; reps = 10; label = "Standard Linear (70%)";
+      }
+      break;
+    }
   }
+
+  const calculatedWeight = roundTo5(maxLift * pct);
+  return { reps, weight: calculatedWeight, label, pct: Math.round(pct * 100), isBodyweight: false };
 }
 
-// Workout Generator Logic
+// ==========================================================
+// ACTIVE EXERCISE BALANCING ROUTINE GENERATOR
+// ==========================================================
+
 function generateWorkoutSession(splitTypeOverride, isDeloadWeek = false) {
   mergeCustomExercises();
 
@@ -410,7 +517,6 @@ function generateWorkoutSession(splitTypeOverride, isDeloadWeek = false) {
     exerciseCount = Math.max(2, Math.floor(exerciseCount * 0.8));
   }
 
-  // Normalize equipment strings
   let activeEquipment = userSettings.equipment.map(e => e.toLowerCase().trim());
   if (profile === "calisthenics") {
     activeEquipment = ["body weight", "bodyweight"];
@@ -458,49 +564,46 @@ function generateWorkoutSession(splitTypeOverride, isDeloadWeek = false) {
 
   if (pool.length < exerciseCount) pool = availableExercises;
 
-  let selected = [];
-  const poolCopy = [...pool];
+  function getPatternCategory(ex) {
+    const pattern = (ex.movement_pattern || '').toLowerCase();
+    const target = (ex.target || ex.muscle_group || '').toLowerCase();
 
-  if (userSettings.supersets) {
-    let pairCount = 1;
-    while (selected.length < exerciseCount && poolCopy.length > 0) {
-      const ex1Idx = Math.floor(Math.random() * poolCopy.length);
-      const ex1 = poolCopy.splice(ex1Idx, 1)[0];
-      const target1 = (ex1.target || '').toLowerCase().trim();
-      
-      ex1.supersetGroup = `SUPERSET ${pairCount} - A`;
-      selected.push(ex1);
+    if (MOVEMENT_PATTERNS.HORIZONTAL_PUSH.includes(pattern) || ['chest', 'pectorals'].some(m => target.includes(m))) return 'hPush';
+    if (MOVEMENT_PATTERNS.HORIZONTAL_PULL.includes(pattern) || ['upper back', 'rhomboids'].some(m => target.includes(m))) return 'hPull';
+    if (MOVEMENT_PATTERNS.VERTICAL_PUSH.includes(pattern) || ['shoulders', 'front delts', 'side delts'].some(m => target.includes(m))) return 'vPush';
+    if (MOVEMENT_PATTERNS.VERTICAL_PULL.includes(pattern) || ['lats'].some(m => target.includes(m))) return 'vPull';
+    if (MOVEMENT_PATTERNS.KNEE_DOMINANT.includes(pattern) || ['quads'].some(m => target.includes(m))) return 'knee';
+    if (MOVEMENT_PATTERNS.HIP_DOMINANT.includes(pattern) || ['hamstrings', 'glutes'].some(m => target.includes(m))) return 'hip';
+    return 'other';
+  }
 
-      if (selected.length >= exerciseCount) break;
+  let poolCopy = [...pool];
+  const selected = [];
+  const counts = { hPush: 0, hPull: 0, vPush: 0, vPull: 0, knee: 0, hip: 0, other: 0 };
 
-      const antagonists = ANTAGONIST_MAP[target1] || [];
-      
-      let ex2Idx = poolCopy.findIndex(ex => 
-        antagonists.includes((ex.target || '').toLowerCase().trim())
-      );
+  while (selected.length < exerciseCount && poolCopy.length > 0) {
+    let requiredCategory = null;
 
-      if (ex2Idx !== -1) {
-        const ex2 = poolCopy.splice(ex2Idx, 1)[0];
-        ex2.supersetGroup = `SUPERSET ${pairCount} - B`;
-        selected.push(ex2);
-      } else {
-        const globalAntagonist = availableExercises.find(ex => 
-          antagonists.includes((ex.target || '').toLowerCase().trim()) && 
-          !selected.some(s => (s.id || s.name) === (ex.id || ex.name))
-        );
+    if (counts.hPush > counts.hPull) requiredCategory = 'hPull';
+    else if (counts.hPull > counts.hPush) requiredCategory = 'hPush';
+    else if (counts.vPush > counts.vPull) requiredCategory = 'vPull';
+    else if (counts.vPull > counts.vPush) requiredCategory = 'vPush';
+    else if (counts.knee > counts.hip) requiredCategory = 'hip';
+    else if (counts.hip > counts.knee) requiredCategory = 'knee';
 
-        if (globalAntagonist) {
-          const ex2 = { ...globalAntagonist, supersetGroup: `SUPERSET ${pairCount} - B` };
-          selected.push(ex2);
-        }
-      }
-      pairCount++;
+    let chosenIdx = -1;
+    if (requiredCategory) {
+      chosenIdx = poolCopy.findIndex(ex => getPatternCategory(ex) === requiredCategory);
     }
-  } else {
-    while (selected.length < exerciseCount && poolCopy.length > 0) {
-      const idx = Math.floor(Math.random() * poolCopy.length);
-      selected.push(poolCopy.splice(idx, 1)[0]);
+
+    if (chosenIdx === -1) {
+      chosenIdx = Math.floor(Math.random() * poolCopy.length);
     }
+
+    const chosenEx = poolCopy.splice(chosenIdx, 1)[0];
+    const cat = getPatternCategory(chosenEx);
+    counts[cat] = (counts[cat] || 0) + 1;
+    selected.push(chosenEx);
   }
 
   return { title, exercises: selected, isDeloadWeek };
@@ -546,7 +649,7 @@ function renderBalanceBadgesAndAlerts(counts) {
 
   let html = `
     <div class="balance-audit-card">
-      <div class="balance-header"><span class="balance-title">⚖️ Movement Pattern & Volume Audit</span></div>
+      <div class="balance-header"><span class="balance-title">⚖️ Active Movement Pattern Balance</span></div>
       <div class="balance-badges">
         ${badges.map(b => `<span class="badge-balance badge-balance-${b.type}">✓ ${b.text}</span>`).join('')}
       </div>`;
@@ -645,7 +748,6 @@ function initEventListeners() {
     });
   });
 
-  // Auth Form Submit Handler
   const authForm = document.getElementById("auth-form");
   if (authForm) {
     authForm.addEventListener("submit", async (e) => {
@@ -682,7 +784,6 @@ function initEventListeners() {
     });
   }
 
-  // Custom Exercise Modal Listeners
   const openCustomBtn = document.getElementById("open-custom-ex-btn");
   const closeCustomBtn = document.getElementById("close-custom-ex-btn");
   const customModal = document.getElementById("custom-ex-modal");
@@ -713,7 +814,6 @@ function initEventListeners() {
     });
   }
 
-  // Settings Modal Controls
   document.getElementById("open-settings-btn").addEventListener("click", () => {
     document.getElementById("settings-modal").classList.remove("hidden");
   });
@@ -762,10 +862,18 @@ function initSettingsUI() {
   document.getElementById("setting-rest-time").value = userSettings.restTime || 60;
   document.getElementById("setting-supersets").checked = userSettings.supersets;
 
+  const maxes = userSettings.maxLifts || DEFAULT_MAX_LIFTS;
+  if (document.getElementById("maxBench")) document.getElementById("maxBench").value = maxes.benchPress || 185;
+  if (document.getElementById("maxSquat")) document.getElementById("maxSquat").value = maxes.squat || 225;
+  if (document.getElementById("maxDeadlift")) document.getElementById("maxDeadlift").value = maxes.deadlift || 275;
+  if (document.getElementById("maxOHP")) document.getElementById("maxOHP").value = maxes.overheadPress || 115;
+
   const eqCheckboxes = document.querySelectorAll("#equipment-toggles input");
   eqCheckboxes.forEach(cb => {
     cb.checked = userSettings.equipment.includes(cb.value);
   });
+
+  onProfileChangeUI(userSettings.profile);
 }
 
 function saveSettingsUI() {
@@ -776,6 +884,13 @@ function saveSettingsUI() {
   userSettings.restTime = parseInt(document.getElementById("setting-rest-time").value, 10);
   userSettings.supersets = document.getElementById("setting-supersets").checked;
 
+  userSettings.maxLifts = {
+    benchPress: parseFloat(document.getElementById("maxBench").value) || 185,
+    squat: parseFloat(document.getElementById("maxSquat").value) || 225,
+    deadlift: parseFloat(document.getElementById("maxDeadlift").value) || 275,
+    overheadPress: parseFloat(document.getElementById("maxOHP").value) || 115
+  };
+
   const selectedEquipment = [];
   document.querySelectorAll("#equipment-toggles input:checked").forEach(cb => {
     selectedEquipment.push(cb.value);
@@ -785,7 +900,7 @@ function saveSettingsUI() {
   localStorage.setItem("gymbro_settings", JSON.stringify(userSettings));
   applyProfileThemeAndRules();
   saveUserDataToCloud();
-  renderPlanUI(); // Refresh active profile program view
+  renderPlanUI();
   document.getElementById("settings-modal").classList.add("hidden");
   alert("Settings saved!");
 }
@@ -816,7 +931,6 @@ function renderGeneratedWorkout(session) {
   const exDiv = document.getElementById("exercise-list");
   exDiv.innerHTML = session.exercises.map(ex => `
     <div class="exercise-card">
-      ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
       <h5>${ex.name}</h5>
       <div class="exercise-tags">
         <span class="tag">Target: ${ex.target}</span>
@@ -834,11 +948,9 @@ function renderGeneratedWorkout(session) {
   document.getElementById("generated-workout-view").classList.remove("hidden");
 }
 
-// Multi-Month Plan Builder
 function buildMultiMonthPlan() {
   const months = parseInt(document.getElementById("plan-duration").value, 10);
   const totalWeeks = months * 4;
-  const split = userSettings.split;
 
   let schedulePattern = [
     { name: "Session A", type: "upper_lower_upper" },
@@ -864,7 +976,7 @@ function buildMultiMonthPlan() {
     weeks.push({ weekNum: w, isDeload, days });
   }
 
-  activePlan = { months, totalWeeks, split, weeks, createdAt: new Date().toISOString() };
+  activePlan = { months, totalWeeks, split: userSettings.split, weeks, createdAt: new Date().toISOString() };
   localStorage.setItem(getPlanStorageKey(), JSON.stringify(activePlan));
   saveUserDataToCloud();
   renderPlanUI();
@@ -937,48 +1049,29 @@ window.togglePlanDay = function(weekNum, dayId) {
   renderPlanUI();
 };
 
-// Active Workout Session Manager
 function startActiveWorkout(session) {
   const currentWeek = session.weekNum || 1;
-  const targetInfo = getProgressionTarget(userSettings.progressionScheme, currentWeek);
+  const scheme = userSettings.progressionScheme || "linear";
 
   activeWorkout = {
     ...session,
     startTime: new Date().toISOString(),
     logs: session.exercises.map(ex => {
-      const exKey = ex.id || ex.name;
-      const historyRecord = exerciseHistory[exKey];
-
-      let suggestIncrease = false;
-      if (historyRecord && historyRecord.sets && historyRecord.sets.length > 0) {
-        const topRepsReached = historyRecord.sets.every(s => (s.reps || 0) >= targetInfo.reps);
-        if (topRepsReached && userSettings.progressionScheme === "linear") {
-          suggestIncrease = true;
-        }
+      const sets = [];
+      for (let i = 0; i < 3; i++) {
+        const target = calculateProgressionSetTargets(ex, scheme, currentWeek, i);
+        sets.push({
+          reps: target.reps,
+          weight: target.isBodyweight ? 0 : target.weight,
+          completed: false,
+          label: target.label
+        });
       }
-
-      let defaultSets = [
-        { reps: targetInfo.reps, weight: 100, completed: false },
-        { reps: targetInfo.reps, weight: 100, completed: false },
-        { reps: targetInfo.reps, weight: 100, completed: false }
-      ];
-
-      if (historyRecord && historyRecord.sets && historyRecord.sets.length > 0) {
-        defaultSets = historyRecord.sets.map(s => ({
-          reps: s.reps || targetInfo.reps,
-          weight: suggestIncrease ? (s.weight || 100) + 5 : (s.weight || 100),
-          completed: false
-        }));
-      }
-
       return {
         id: ex.id || ex.name,
         name: ex.name,
-        supersetGroup: ex.supersetGroup || null,
-        suggestIncrease,
-        targetLabel: targetInfo.setLabel,
-        lastRecord: historyRecord || null,
-        sets: defaultSets
+        target: ex.target,
+        sets: sets
       };
     })
   };
@@ -1006,19 +1099,15 @@ function renderActiveWorkoutModal() {
 
   const container = document.getElementById("active-exercise-container");
   container.innerHTML = activeWorkout.logs.map((ex, exIdx) => {
-    let increaseBadge = ex.suggestIncrease ? `<span class="badge-suggested-weight">🚀 +5 lbs Suggested</span>` : "";
-
     return `
       <div class="exercise-card margin-top">
         <div class="exercise-card-header" style="display:flex; justify-content:space-between; align-items:center;">
-          <h5>${ex.name} ${ex.targetLabel ? `<small>(${ex.targetLabel})</small>` : ''}</h5>
-          ${increaseBadge}
+          <h5>${ex.name}</h5>
         </div>
-        ${ex.supersetGroup ? `<div class="superset-badge">${ex.supersetGroup}</div>` : ""}
         <div class="sets-table margin-top">
           ${ex.sets.map((set, setIdx) => `
             <div class="set-row ${set.completed ? 'completed-set' : ''}" style="display:flex; justify-content:space-between; align-items:center; padding: 4px 0;">
-              <span>Set ${setIdx + 1}</span>
+              <span>Set ${setIdx + 1} <small class="set-loading-badge">${set.label || ''}</small></span>
               <div>
                 <input type="number" value="${set.weight}" style="width: 65px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'weight', this.value)"> lbs
                 <input type="number" value="${set.reps}" style="width: 55px; margin-left:4px;" class="metal-input" onchange="updateSetData(${exIdx},${setIdx}, 'reps', this.value)"> reps
