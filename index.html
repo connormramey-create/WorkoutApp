@@ -45,7 +45,7 @@
         <h3 id="workout-title" class="workout-title">UPPER BODY SESSION</h3>
         <div id="workout-meta" class="workout-meta"></div>
         
-        <!-- Movement Pattern Audit Container -->
+        <!-- Active Movement Pattern Balance Container -->
         <div id="balanceAuditContainer" class="balance-audit-wrapper margin-top"></div>
 
         <!-- Calisthenics Skill Tree View -->
@@ -203,22 +203,56 @@
         <!-- App Profile Selector -->
         <div class="setting-group">
           <label class="setting-label">Target App Profile Preset</label>
-          <select id="setting-profile" class="metal-input">
+          <select id="setting-profile" class="metal-input" onchange="onProfileChangeUI(this.value)">
             <option value="standard" selected>Standard Lifter (Hypertrophy 8-12 reps, Metallic Theme)</option>
             <option value="powerlifter">Powerlifter Mode (Compounds 3-6 reps, Red Theme)</option>
             <option value="calisthenics">Calisthenics Mode (Bodyweight Skill Trees, Purple Theme)</option>
           </select>
         </div>
 
-        <!-- Progression Scheme Selector -->
-        <div class="setting-group">
+        <!-- Progression Scheme Selector (Hidden in Calisthenics Mode) -->
+        <div id="progression-scheme-group" class="setting-group">
           <label class="setting-label">Program Progression Scheme</label>
           <select id="setting-progression" class="metal-input">
             <option value="linear" selected>Linear Progression (Beginner - +5 lbs Auto Prompts)</option>
-            <option value="juggernaut">Juggernaut System (Intermediate - Wave Loading)</option>
-            <option value="five_three_one">5/3/1 Method (Intermediate - 5s / 3s / 1s Waves)</option>
-            <option value="conjugate">Conjugate Method (Advanced - Max / Dynamic Effort)</option>
+            <option value="five_three_one">5/3/1 Method (Intermediate - Dynamic 1RM % Loading)</option>
+            <option value="juggernaut">Juggernaut System (Intermediate - 16-Week Wave Loading)</option>
+            <option value="conjugate">Conjugate Method (Advanced - Max & Speed Effort)</option>
           </select>
+        </div>
+
+        <!-- Max Lifts Baseline (1RM) Section -->
+        <div id="max-lifts-group" class="setting-group">
+          <label class="setting-label">🏋️ Core Exercise Max Lifts / 1RM (lbs)</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
+            <div>
+              <span style="font-size: 0.75rem; color: #94a3b8;">Bench Press</span>
+              <input type="number" id="maxBench" class="metal-input" value="185" step="5">
+            </div>
+            <div>
+              <span style="font-size: 0.75rem; color: #94a3b8;">Back Squat</span>
+              <input type="number" id="maxSquat" class="metal-input" value="225" step="5">
+            </div>
+            <div>
+              <span style="font-size: 0.75rem; color: #94a3b8;">Deadlift</span>
+              <input type="number" id="maxDeadlift" class="metal-input" value="275" step="5">
+            </div>
+            <div>
+              <span style="font-size: 0.75rem; color: #94a3b8;">Overhead Press</span>
+              <input type="number" id="maxOHP" class="metal-input" value="115" step="5">
+            </div>
+          </div>
+        </div>
+
+        <!-- Calisthenics Natural Flow Info Card -->
+        <div id="calisthenics-flow-info" class="calisthenics-info-card hidden">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.2rem;">🤸</span>
+            <span style="font-weight: bold; color: #c084fc;">Natural Calisthenics Progression</span>
+          </div>
+          <p style="font-size: 0.75rem; color: #cbd5e1; margin-top: 4px;">
+            Calisthenics mode bypasses external weight loading percentages and routes workouts through natural bodyweight skill progression pathways.
+          </p>
         </div>
 
         <div class="setting-group">
