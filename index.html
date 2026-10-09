@@ -28,7 +28,7 @@
     <nav class="tab-bar">
       <button class="tab-btn active" data-tab="generator-tab">WORKOUT GENERATOR</button>
       <button class="tab-btn" data-tab="plan-tab">MULTI-MONTH PLAN</button>
-      <button class="tab-btn" data-tab="pathways-tab">PROGRESSION PATHWAYS</button>
+      <button class="tab-btn hidden" data-tab="pathways-tab">PROGRESSION PATHWAYS</button>
       <button class="tab-btn" data-tab="tracker-tab">PROGRESS LOG</button>
     </nav>
 
@@ -110,7 +110,7 @@
       </div>
     </section>
 
-    <!-- Tab 3: Progression Pathways -->
+    <!-- Tab 3: Progression Pathways (Only Visible in Calisthenics Profile) -->
     <section id="pathways-tab" class="tab-content">
       <div class="metal-card">
         <h2 class="section-header">🤸 CALISTHENICS PROGRESSION PATHWAYS</h2>
@@ -168,18 +168,63 @@
         </div>
       </div>
 
-      <!-- Warm-up drills at the top of Active Workout -->
+      <!-- Warm-up drills at top -->
       <div id="active-warmup-container" class="margin-top"></div>
 
-      <!-- Active exercise list in the middle -->
+      <!-- Active exercise list in middle -->
       <div id="active-exercise-container" class="active-exercises-list margin-top"></div>
 
-      <!-- Cool-down stretches at the bottom of Active Workout -->
+      <!-- Cool-down stretches at bottom -->
       <div id="active-cooldown-container" class="margin-top"></div>
 
       <div class="modal-footer margin-top">
         <button id="finish-workout-btn" class="metal-btn primary-btn full-width">✅ COMPLETE WORKOUT</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Custom Exercise Modal -->
+  <div id="custom-ex-modal" class="modal-overlay hidden">
+    <div class="modal-content metal-modal">
+      <header class="modal-header">
+        <h2>➕ ADD CUSTOM EXERCISE</h2>
+        <button id="close-custom-ex-btn" class="close-btn">&times;</button>
+      </header>
+      <form id="custom-ex-form" class="settings-body">
+        <div class="setting-group margin-top">
+          <label class="setting-label">Exercise Name</label>
+          <input type="text" id="custom-ex-name" class="metal-input" placeholder="e.g. Incline Cable Flye" required>
+        </div>
+        <div class="setting-group margin-top">
+          <label class="setting-label">Target Muscle</label>
+          <select id="custom-ex-target" class="metal-input">
+            <option value="chest">Chest</option>
+            <option value="lats">Lats / Upper Back</option>
+            <option value="shoulders">Shoulders</option>
+            <option value="biceps">Biceps</option>
+            <option value="triceps">Triceps</option>
+            <option value="quads">Quads</option>
+            <option value="hamstrings">Hamstrings</option>
+            <option value="glutes">Glutes</option>
+            <option value="abs">Abs / Core</option>
+          </select>
+        </div>
+        <div class="setting-group margin-top">
+          <label class="setting-label">Equipment Required</label>
+          <select id="custom-ex-equipment" class="metal-input">
+            <option value="barbell">Barbell</option>
+            <option value="dumbbell">Dumbbell</option>
+            <option value="cable">Cable Machine</option>
+            <option value="leverage machine">Leverage Machine</option>
+            <option value="smith machine">Smith Machine</option>
+            <option value="body weight">Bodyweight</option>
+            <option value="kettlebell">Kettlebell</option>
+            <option value="band">Resistance Band</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <button type="submit" class="metal-btn primary-btn full-width margin-top">SAVE CUSTOM EXERCISE</button>
+      </form>
     </div>
   </div>
 
@@ -216,18 +261,23 @@
       </header>
       
       <div class="settings-body">
-        <!-- Profile Presets cleaned -->
+        <!-- Target Profile Preset -->
         <div class="setting-group margin-top">
           <label class="setting-label">Target App Profile Preset</label>
-          <select id="setting-profile" class="metal-input">
+          <select id="setting-profile" class="metal-input" onchange="updateProfileSelectionUI(this.value)">
             <option value="standard" selected>Standard Lifter</option>
             <option value="powerlifter">Powerlifter Mode</option>
             <option value="calisthenics">Calisthenics Mode</option>
           </select>
         </div>
 
-        <!-- Progression Schemes -->
+        <!-- Custom Exercise Trigger Button -->
         <div class="setting-group margin-top">
+          <button id="open-custom-ex-btn" class="metal-btn primary-btn full-width">➕ CREATE CUSTOM EXERCISE</button>
+        </div>
+
+        <!-- Program Progression Scheme (Hidden in Calisthenics) -->
+        <div id="setting-progression-group" class="setting-group margin-top">
           <label class="setting-label">Program Progression Scheme</label>
           <select id="setting-progression" class="metal-input">
             <option value="linear" selected>Linear Progression (Beginner - +5 lbs Auto Prompts)</option>
@@ -237,7 +287,30 @@
           </select>
         </div>
 
-        <!-- Active Splits expanded -->
+        <!-- Max Lifts Baseline (1RM) Section -->
+        <div id="setting-max-lifts-group" class="setting-group margin-top">
+          <label class="setting-label">🏋️ Max Lifts / 1RM Baseline (lbs)</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;" class="margin-top">
+            <div>
+              <span style="font-size: 0.75rem; color: var(--accent-silver);">Bench Press</span>
+              <input type="number" id="setting-max-bench" class="metal-input" value="185" step="5">
+            </div>
+            <div>
+              <span style="font-size: 0.75rem; color: var(--accent-silver);">Back Squat</span>
+              <input type="number" id="setting-max-squat" class="metal-input" value="225" step="5">
+            </div>
+            <div>
+              <span style="font-size: 0.75rem; color: var(--accent-silver);">Deadlift</span>
+              <input type="number" id="setting-max-deadlift" class="metal-input" value="275" step="5">
+            </div>
+            <div>
+              <span style="font-size: 0.75rem; color: var(--accent-silver);">Overhead Press</span>
+              <input type="number" id="setting-max-ohp" class="metal-input" value="115" step="5">
+            </div>
+          </div>
+        </div>
+
+        <!-- Active Split Options -->
         <div class="setting-group margin-top">
           <label class="setting-label">Active Workout Split</label>
           <select id="setting-split" class="metal-input">
@@ -273,7 +346,7 @@
           </select>
         </div>
 
-        <!-- Clean styled equipment selector grid -->
+        <!-- Clean Equipment Selector Grid -->
         <div class="setting-group margin-top">
           <label class="setting-label">Equipment Available</label>
           <div id="equipment-toggles" class="equipment-grid margin-top">
