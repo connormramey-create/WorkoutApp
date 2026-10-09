@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IRON BRO TRACKER</title>
+  <title>OmniPathWorkout</title>
   <link rel="stylesheet" href="assets/css/styles.css">
   <link rel="manifest" href="manifest.json">
   <!-- Firebase Compatibility SDKs -->
@@ -13,7 +13,7 @@
 </head>
 <body class="metallic-theme theme-standard">
   <header class="top-nav">
-    <h1 class="logo-text">IRON BRO <span id="app-subhead">TRACKER</span></h1>
+    <h1 class="logo-text">OmniPath<span id="app-subhead">WORKOUT</span></h1>
     <button id="open-settings-btn" class="metal-btn icon-btn">⚙️ SETTINGS</button>
   </header>
 
@@ -28,6 +28,7 @@
     <nav class="tab-bar">
       <button class="tab-btn active" data-tab="generator-tab">WORKOUT GENERATOR</button>
       <button class="tab-btn" data-tab="plan-tab">MULTI-MONTH PLAN</button>
+      <button class="tab-btn" data-tab="pathways-tab">PROGRESSION PATHWAYS</button>
       <button class="tab-btn" data-tab="tracker-tab">PROGRESS LOG</button>
     </nav>
 
@@ -45,36 +46,35 @@
         <h3 id="workout-title" class="workout-title">UPPER BODY SESSION</h3>
         <div id="workout-meta" class="workout-meta"></div>
         
-        <!-- Active Movement Pattern Balance Container -->
+        <!-- Movement Pattern Audit Container -->
         <div id="balanceAuditContainer" class="balance-audit-wrapper margin-top"></div>
 
-        <!-- Calisthenics Skill Tree View -->
-        <div id="calisthenicsSkillTreeContainer" class="hidden"></div>
-
-        <!-- Dynamic Mobility Engine Cards -->
-        <div class="workout-section">
-          <div class="mobility-wrapper">
-            <div class="mobility-card metal-subcard">
-              <div class="mobility-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <h4 style="color: var(--accent-gold); font-size: 0.9rem;">🔥 TARGETED DYNAMIC WARM-UP</h4>
-                <span id="warmupCountBadge" class="tag">0 Drills</span>
-              </div>
-              <div id="dynamicWarmupList" class="mobility-list"></div>
+        <!-- Dynamic Mobility Engine: Warm-up Top -->
+        <div class="workout-section margin-top">
+          <div class="mobility-card metal-subcard">
+            <div class="mobility-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <h4 style="color: var(--accent-gold); font-size: 0.9rem;">🔥 TARGETED DYNAMIC WARM-UP</h4>
+              <span id="warmupCountBadge" class="tag">0 Drills</span>
             </div>
-
-            <div class="mobility-card metal-subcard margin-top">
-              <div class="mobility-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <h4 style="color: var(--accent-silver); font-size: 0.9rem;">🧘 SPECIFIC COOL-DOWN STRETCHES</h4>
-                <span id="cooldownCountBadge" class="tag">0 Stretches</span>
-              </div>
-              <div id="cooldownStretchList" class="mobility-list"></div>
-            </div>
+            <div id="dynamicWarmupList" class="mobility-list"></div>
           </div>
         </div>
 
-        <div class="workout-section">
+        <!-- Exercises Section Middle -->
+        <div class="workout-section margin-top">
           <h4>🏋️ EXERCISES</h4>
-          <div id="exercise-list" class="exercise-grid"></div>
+          <div id="exercise-list" class="exercise-grid margin-top"></div>
+        </div>
+
+        <!-- Dynamic Mobility Engine: Cool-down Bottom -->
+        <div class="workout-section margin-top">
+          <div class="mobility-card metal-subcard">
+            <div class="mobility-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <h4 style="color: var(--accent-silver); font-size: 0.9rem;">🧘 SPECIFIC COOL-DOWN STRETCHES</h4>
+              <span id="cooldownCountBadge" class="tag">0 Stretches</span>
+            </div>
+            <div id="cooldownStretchList" class="mobility-list"></div>
+          </div>
         </div>
 
         <button id="start-workout-btn" class="metal-btn action-btn full-width margin-top">🚀 START THIS WORKOUT</button>
@@ -101,19 +101,28 @@
           <h3 id="plan-title">PROGRAM PLAN</h3>
           <button id="reset-plan-btn" class="metal-btn danger-btn small-btn">RESET PLAN</button>
         </div>
-        <div id="plan-progress-bar" class="progress-bar-container">
+        <div id="plan-progress-bar" class="progress-bar-container margin-top">
           <div id="plan-progress-fill" class="progress-fill"></div>
         </div>
-        <p id="plan-stats-text" class="plan-stats">0 of 0 Workouts Completed (0%)</p>
+        <p id="plan-stats-text" class="plan-stats margin-top">0 of 0 Workouts Completed (0%)</p>
 
-        <div id="plan-weeks-accordion" class="weeks-accordion"></div>
+        <div id="plan-weeks-accordion" class="weeks-accordion margin-top"></div>
       </div>
     </section>
 
-    <!-- Tab 3: Tracker Log -->
+    <!-- Tab 3: Progression Pathways -->
+    <section id="pathways-tab" class="tab-content">
+      <div class="metal-card">
+        <h2 class="section-header">🤸 CALISTHENICS PROGRESSION PATHWAYS</h2>
+        <p class="subtitle">Check off mastered skills. Workouts will only pull from checked skills and the skill immediately following them!</p>
+        <div id="pathways-container" class="pathways-grid margin-top"></div>
+      </div>
+    </section>
+
+    <!-- Tab 4: Tracker Log -->
     <section id="tracker-tab" class="tab-content">
       <div class="metal-card">
-        <div class="section-header-row">
+        <div class="section-header-row" style="display: flex; justify-content: space-between; align-items: center;">
           <h2 class="section-header">WORKOUT LOG & VOLUME ANALYTICS</h2>
           <button id="export-csv-btn" class="metal-btn small-btn">📥 EXPORT CSV</button>
         </div>
@@ -159,9 +168,16 @@
         </div>
       </div>
 
-      <div id="active-exercise-container" class="active-exercises-list"></div>
+      <!-- Warm-up drills at the top of Active Workout -->
+      <div id="active-warmup-container" class="margin-top"></div>
 
-      <div class="modal-footer">
+      <!-- Active exercise list in the middle -->
+      <div id="active-exercise-container" class="active-exercises-list margin-top"></div>
+
+      <!-- Cool-down stretches at the bottom of Active Workout -->
+      <div id="active-cooldown-container" class="margin-top"></div>
+
+      <div class="modal-footer margin-top">
         <button id="finish-workout-btn" class="metal-btn primary-btn full-width">✅ COMPLETE WORKOUT</button>
       </div>
     </div>
@@ -171,21 +187,21 @@
   <div id="auth-modal" class="modal-overlay hidden">
     <div class="modal-content metal-modal">
       <header class="modal-header">
-        <h2 id="auth-title">IRON BRO LOGIN</h2>
+        <h2 id="auth-title">OmniPathWorkout LOGIN</h2>
       </header>
       <form id="auth-form" class="settings-body">
-        <div class="setting-group">
+        <div class="setting-group margin-top">
           <label class="setting-label">Email Address</label>
-          <input type="email" id="auth-email" class="metal-input" placeholder="bro@ironbro.com" required>
+          <input type="email" id="auth-email" class="metal-input" placeholder="user@omnipathworkout.com" required>
         </div>
-        <div class="setting-group">
+        <div class="setting-group margin-top">
           <label class="setting-label">Password</label>
           <input type="password" id="auth-password" class="metal-input" placeholder="••••••••" required>
         </div>
-        <div id="auth-error-msg" style="color: var(--danger-color); font-size: 0.85rem; margin-bottom: 10px;"></div>
-        <button type="submit" id="auth-submit-btn" class="metal-btn primary-btn full-width">LOG IN</button>
+        <div id="auth-error-msg" style="color: var(--danger-color); font-size: 0.85rem; margin-top: 10px;"></div>
+        <button type="submit" id="auth-submit-btn" class="metal-btn primary-btn full-width margin-top">LOG IN</button>
       </form>
-      <div class="modal-footer">
+      <div class="modal-footer margin-top">
         <button id="toggle-auth-mode-btn" class="metal-btn small-btn full-width">NEED AN ACCOUNT? SIGN UP</button>
       </div>
     </div>
@@ -195,78 +211,48 @@
   <div id="settings-modal" class="modal-overlay hidden">
     <div class="modal-content metal-modal">
       <header class="modal-header">
-        <h2>⚙️ IRON BRO SETTINGS</h2>
+        <h2>⚙️ OmniPathWorkout SETTINGS</h2>
         <button id="close-settings-btn" class="close-btn">&times;</button>
       </header>
       
       <div class="settings-body">
-        <!-- App Profile Selector -->
-        <div class="setting-group">
+        <!-- Profile Presets cleaned -->
+        <div class="setting-group margin-top">
           <label class="setting-label">Target App Profile Preset</label>
-          <select id="setting-profile" class="metal-input" onchange="onProfileChangeUI(this.value)">
-            <option value="standard" selected>Standard Lifter (Hypertrophy 8-12 reps, Metallic Theme)</option>
-            <option value="powerlifter">Powerlifter Mode (Compounds 3-6 reps, Red Theme)</option>
-            <option value="calisthenics">Calisthenics Mode (Bodyweight Skill Trees, Purple Theme)</option>
+          <select id="setting-profile" class="metal-input">
+            <option value="standard" selected>Standard Lifter</option>
+            <option value="powerlifter">Powerlifter Mode</option>
+            <option value="calisthenics">Calisthenics Mode</option>
           </select>
         </div>
 
-        <!-- Progression Scheme Selector (Hidden in Calisthenics Mode) -->
-        <div id="progression-scheme-group" class="setting-group">
+        <!-- Progression Schemes -->
+        <div class="setting-group margin-top">
           <label class="setting-label">Program Progression Scheme</label>
           <select id="setting-progression" class="metal-input">
             <option value="linear" selected>Linear Progression (Beginner - +5 lbs Auto Prompts)</option>
-            <option value="five_three_one">5/3/1 Method (Intermediate - Dynamic 1RM % Loading)</option>
-            <option value="juggernaut">Juggernaut System (Intermediate - 16-Week Wave Loading)</option>
-            <option value="conjugate">Conjugate Method (Advanced - Max & Speed Effort)</option>
+            <option value="juggernaut">Juggernaut System (Intermediate - 4 Week Wave Loading)</option>
+            <option value="five_three_one">5/3/1 Method (Intermediate - 5s / 3s / 1s Waves)</option>
+            <option value="conjugate">Conjugate Method (Advanced - Max / Dynamic Effort)</option>
           </select>
         </div>
 
-        <!-- Max Lifts Baseline (1RM) Section -->
-        <div id="max-lifts-group" class="setting-group">
-          <label class="setting-label">🏋️ Core Exercise Max Lifts / 1RM (lbs)</label>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px;">
-            <div>
-              <span style="font-size: 0.75rem; color: #94a3b8;">Bench Press</span>
-              <input type="number" id="maxBench" class="metal-input" value="185" step="5">
-            </div>
-            <div>
-              <span style="font-size: 0.75rem; color: #94a3b8;">Back Squat</span>
-              <input type="number" id="maxSquat" class="metal-input" value="225" step="5">
-            </div>
-            <div>
-              <span style="font-size: 0.75rem; color: #94a3b8;">Deadlift</span>
-              <input type="number" id="maxDeadlift" class="metal-input" value="275" step="5">
-            </div>
-            <div>
-              <span style="font-size: 0.75rem; color: #94a3b8;">Overhead Press</span>
-              <input type="number" id="maxOHP" class="metal-input" value="115" step="5">
-            </div>
-          </div>
-        </div>
-
-        <!-- Calisthenics Natural Flow Info Card -->
-        <div id="calisthenics-flow-info" class="calisthenics-info-card hidden">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.2rem;">🤸</span>
-            <span style="font-weight: bold; color: #c084fc;">Natural Calisthenics Progression</span>
-          </div>
-          <p style="font-size: 0.75rem; color: #cbd5e1; margin-top: 4px;">
-            Calisthenics mode bypasses external weight loading percentages and routes workouts through natural bodyweight skill progression pathways.
-          </p>
-        </div>
-
-        <div class="setting-group">
+        <!-- Active Splits expanded -->
+        <div class="setting-group margin-top">
           <label class="setting-label">Active Workout Split</label>
           <select id="setting-split" class="metal-input">
             <option value="upper_lower">Upper / Lower Split (4-Day Cycle)</option>
             <option value="upper">Upper Body Only</option>
             <option value="lower">Lower Body Only</option>
-            <option value="ppl">Push / Pull / Legs (PPL)</option>
+            <option value="ppl">Push / Pull / Legs (PPL Combined)</option>
+            <option value="ppl_push">Push Only (PPL)</option>
+            <option value="ppl_pull">Pull Only (PPL)</option>
+            <option value="ppl_legs">Legs Only (PPL)</option>
             <option value="full_body">Full Body Split</option>
           </select>
         </div>
 
-        <div class="setting-group">
+        <div class="setting-group margin-top">
           <label class="setting-label">Workout Duration</label>
           <select id="setting-duration" class="metal-input">
             <option value="30">30 Minutes (4 Exercises)</option>
@@ -276,7 +262,7 @@
           </select>
         </div>
 
-        <div class="setting-group">
+        <div class="setting-group margin-top">
           <label class="setting-label">Default Rest Duration (Seconds)</label>
           <select id="setting-rest-time" class="metal-input">
             <option value="30">30 Seconds</option>
@@ -287,80 +273,30 @@
           </select>
         </div>
 
-        <div class="setting-group">
+        <!-- Clean styled equipment selector grid -->
+        <div class="setting-group margin-top">
           <label class="setting-label">Equipment Available</label>
-          <div id="equipment-toggles" class="checkbox-grid">
-            <label class="metal-checkbox"><input type="checkbox" value="barbell" checked> Barbell</label>
-            <label class="metal-checkbox"><input type="checkbox" value="dumbbell" checked> Dumbbell</label>
-            <label class="metal-checkbox"><input type="checkbox" value="cable" checked> Cable Machine</label>
-            <label class="metal-checkbox"><input type="checkbox" value="leverage machine" checked> Leverage Machine</label>
-            <label class="metal-checkbox"><input type="checkbox" value="smith machine" checked> Smith Machine</label>
-            <label class="metal-checkbox"><input type="checkbox" value="body weight" checked> Bodyweight</label>
-            <label class="metal-checkbox"><input type="checkbox" value="kettlebell" checked> Kettlebell</label>
-            <label class="metal-checkbox"><input type="checkbox" value="band" checked> Resistance Bands</label>
-            <label class="metal-checkbox"><input type="checkbox" value="other" checked> Other / Specialty</label>
+          <div id="equipment-toggles" class="equipment-grid margin-top">
+            <label class="equipment-tile"><input type="checkbox" value="barbell" checked> <span>Barbell</span></label>
+            <label class="equipment-tile"><input type="checkbox" value="dumbbell" checked> <span>Dumbbell</span></label>
+            <label class="equipment-tile"><input type="checkbox" value="cable" checked> <span>Cable Machine</span></label>
+            <label class="equipment-tile"><input type="checkbox" value="leverage machine" checked> <span>Leverage Machine</span></label>
+            <label class="equipment-tile"><input type="checkbox" value="smith machine" checked> <span>Smith Machine</span></label>
+            <label class="equipment-tile"><input type="checkbox" value="body weight" checked> <span>Bodyweight</span></label>
+            <label class="equipment-tile"><input type="checkbox" value="kettlebell" checked> <span>Kettlebell</span></label>
+            <label class="equipment-tile"><input type="checkbox" value="band" checked> <span>Resistance Bands</span></label>
+            <label class="equipment-tile"><input type="checkbox" value="other" checked> <span>Other / Specialty</span></label>
           </div>
         </div>
 
-        <div class="setting-group">
+        <div class="setting-group margin-top">
           <label class="metal-checkbox"><input type="checkbox" id="setting-supersets"> Enable Antagonistic Supersets</label>
         </div>
-
-        <!-- Custom Exercise Trigger Button -->
-        <div class="setting-group margin-top">
-          <button type="button" id="open-custom-ex-btn" class="metal-btn primary-btn full-width">
-            + CREATE CUSTOM EXERCISE
-          </button>
-        </div>
       </div>
 
-      <div class="modal-footer">
+      <div class="modal-footer margin-top">
         <button id="save-settings-btn" class="metal-btn primary-btn full-width">SAVE SETTINGS</button>
       </div>
-    </div>
-  </div>
-
-  <!-- Custom Exercise Creator Modal -->
-  <div id="custom-ex-modal" class="modal-overlay hidden">
-    <div class="modal-content metal-modal">
-      <header class="modal-header">
-        <h2>CREATE CUSTOM EXERCISE</h2>
-        <button id="close-custom-ex-btn" class="close-btn">&times;</button>
-      </header>
-      <form id="custom-ex-form" class="settings-body">
-        <div class="setting-group">
-          <label class="setting-label" for="custom-ex-name">Exercise Name</label>
-          <input type="text" id="custom-ex-name" class="metal-input" placeholder="e.g. Incline Cable Fly" required>
-        </div>
-        <div class="setting-group">
-          <label class="setting-label" for="custom-ex-target">Primary Target Muscle</label>
-          <select id="custom-ex-target" class="metal-select metal-input">
-            <option value="chest">Chest</option>
-            <option value="lats">Lats / Back</option>
-            <option value="shoulders">Shoulders</option>
-            <option value="biceps">Biceps</option>
-            <option value="triceps">Triceps</option>
-            <option value="quads">Quads</option>
-            <option value="hamstrings">Hamstrings</option>
-            <option value="glutes">Glutes</option>
-            <option value="abs">Abs / Core</option>
-          </select>
-        </div>
-        <div class="setting-group">
-          <label class="setting-label" for="custom-ex-equipment">Equipment Required</label>
-          <select id="custom-ex-equipment" class="metal-select metal-input">
-            <option value="barbell">Barbell</option>
-            <option value="dumbbell">Dumbbell</option>
-            <option value="cable">Cable Machine</option>
-            <option value="leverage machine">Leverage Machine</option>
-            <option value="smith machine">Smith Machine</option>
-            <option value="body weight">Bodyweight</option>
-            <option value="kettlebell">Kettlebell</option>
-            <option value="band">Band</option>
-          </select>
-        </div>
-        <button type="submit" class="metal-btn primary-btn full-width margin-top">SAVE EXERCISE</button>
-      </form>
     </div>
   </div>
 
