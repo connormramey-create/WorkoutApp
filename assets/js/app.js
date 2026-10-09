@@ -27,6 +27,13 @@ let isTimerPaused = false;
 let currentUser = null;
 let isSignUpMode = false;
 
+const DEFAULT_MAX_LIFTS = {
+  benchPress: 185,
+  squat: 225,
+  deadlift: 275,
+  overheadPress: 115
+};
+
 const DEFAULT_SETTINGS = {
   profile: "standard",           // "standard", "powerlifter", "calisthenics"
   progressionScheme: "linear",   // "linear", "juggernaut", "five_three_one", "conjugate"
@@ -35,12 +42,16 @@ const DEFAULT_SETTINGS = {
   restTime: 60,
   equipment: ["barbell", "dumbbell", "cable", "leverage machine", "smith machine", "body weight", "kettlebell", "band", "other"],
   supersets: false,
+  maxLifts: DEFAULT_MAX_LIFTS,
   calisthenicsUnlocked: { push: [1], pull: [1], legs: [1] } // Checked skill levels per pathway
 };
 
 let userSettings = JSON.parse(localStorage.getItem("gymbro_settings")) || DEFAULT_SETTINGS;
 if (!userSettings.calisthenicsUnlocked) {
   userSettings.calisthenicsUnlocked = { push: [1], pull: [1], legs: [1] };
+}
+if (!userSettings.maxLifts) {
+  userSettings.maxLifts = DEFAULT_MAX_LIFTS;
 }
 
 let activePlan = null;
@@ -144,7 +155,7 @@ const COOL_DOWN_STRETCH_LIBRARY = {
   glutes: [{ name: "Figure-Four / Pigeon Stretch", duration: "45 sec per side", desc: "Cross ankle over knee, lean forward to stretch deep glutes." }]
 };
 
-// Helper: Get Profile Storage Key for Multi-Month Program Plans
+// Helper: Get Profile Storage Key
 function getPlanStorageKey() {
   const preset = userSettings.profile || "standard";
   return `gymbro_active_plan_${preset}`;
@@ -180,22 +191,51 @@ function mergeCustomExercises() {
   exerciseDataset = [...exerciseDataset, ...taggedCustoms];
 }
 
-// App Profile & Theme Dynamic Applicator
+// Profile UI Control & Dynamic Pathway Visibility
 function applyProfileThemeAndRules() {
   const body = document.body;
   const profile = userSettings.profile || "standard";
   
   body.classList.remove("theme-standard", "theme-powerlifter", "theme-calisthenics");
   
-  if (profile === "powerlifter") {
-    body.classList.add("theme-powerlifter");
-    document.getElementById("app-subhead").innerText = "POWERLIFTER";
-  } else if (profile === "calisthenics") {
+  const pathwaysTabBtn = document.querySelector('.tab-btn[data-tab="pathways-tab"]');
+  const pathwaysTabContent = document.getElementById("pathways-tab");
+
+  if (profile === "calisthenics") {
     body.classList.add("theme-calisthenics");
     document.getElementById("app-subhead").innerText = "CALISTHENICS";
+    if (pathwaysTabBtn) pathwaysTabBtn.classList.remove("hidden");
   } else {
-    body.classList.add("theme-standard");
-    document.getElementById("app-subhead").innerText = "WORKOUT";
+    if (profile === "powerlifter") {
+      body.classList.add("theme-powerlifter");
+      document.getElementById("app-subhead").innerText = "POWERLIFTER";
+    } else {
+      body.classList.add("theme-standard");
+      document.getElementById("app-subhead").innerText = "WORKOUT";
+    }
+    // Hide Progression Pathways Tab for non-Calisthenics profiles
+    if (pathwaysTabBtn) pathwaysTabBtn.classList.add("hidden");
+    if (pathwaysTabContent && pathwaysTabContent.classList.contains("active")) {
+      document.querySelectorAll(".tab-btn").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+      document.querySelector('.tab-btn[data-tab="generator-tab"]').classList.add("active");
+      document.getElementById("generator-tab").classList.add("active");
+    }
+  }
+
+  updateProfileSelectionUI(profile);
+}
+
+function updateProfileSelectionUI(profile) {
+  const schemeGroup = document.getElementById("setting-progression-group");
+  const maxLiftsGroup = document.getElementById("setting-max-lifts-group");
+
+  if (profile === "calisthenics") {
+    if (schemeGroup) schemeGroup.classList.add("hidden");
+    if (maxLiftsGroup) maxLiftsGroup.classList.add("hidden");
+  } else {
+    if (schemeGroup) schemeGroup.classList.remove("hidden");
+    if (maxLiftsGroup) maxLiftsGroup.classList.remove("hidden");
   }
 }
 
@@ -223,6 +263,9 @@ function syncUserDataFromCloud(uid) {
         userSettings = data.settings;
         if (!userSettings.calisthenicsUnlocked) {
           userSettings.calisthenicsUnlocked = { push: [1], pull: [1], legs: [1] };
+        }
+        if (!userSettings.maxLifts) {
+          userSettings.maxLifts = DEFAULT_MAX_LIFTS;
         }
         localStorage.setItem("gymbro_settings", JSON.stringify(userSettings));
         applyProfileThemeAndRules();
@@ -378,36 +421,106 @@ function skipRestTimer() {
   document.getElementById("sticky-timer-bar").classList.add("hidden");
 }
 
-// Progression Target Calculator
-function getProgressionTarget(scheme, weekNum) {
+// 1RM Max Lift Helper and Dynamic Scheme Target Calculations
+function roundTo5(weight) {
+  return Math.max(10, Math.round(weight / 5) * 5);
+}
+
+function getExerciseMaxLift(exercise) {
+  const maxes = userSettings.maxLifts || DEFAULT_MAX_LIFTS;
+  const name = (exercise.name || '').toLowerCase();
+  const target = (exercise.target || '').toLowerCase();
+
+  if (name.includes('bench') || name.includes('chest press') || target.includes('chest')) {
+    return parseFloat(maxes.benchPress) || 185;
+  }
+  if (name.includes('squat') || name.includes('leg press') || target.includes('quad')) {
+    return parseFloat(maxes.squat) || 225;
+  }
+  if (name.includes('deadlift') || name.includes('rdl') || name.includes('hip thrust') || target.includes('hamstring')) {
+    return parseFloat(maxes.deadlift) || 275;
+  }
+  if (name.includes('press') || name.includes('shoulder') || target.includes('shoulder')) {
+    return parseFloat(maxes.overheadPress) || 115;
+  }
+  return 135;
+}
+
+function calculateProgressionSetTargets(exercise, scheme, weekNum, setIdx) {
+  const profile = userSettings.profile || "standard";
+
+  if (profile === "calisthenics") {
+    return { reps: 10, weight: 0, label: "Bodyweight Natural Flow", isBodyweight: true };
+  }
+
+  const maxLift = getExerciseMaxLift(exercise);
+  let pct = 0.70;
+  let reps = 10;
+  let label = "";
+
   switch (scheme) {
-    case "juggernaut": {
-      const wave = Math.ceil((weekNum % 16) / 4) || 1;
-      if (weekNum % 4 === 0) return { reps: 5, setLabel: "Deload (60%)" };
-      if (wave === 1) return { reps: 10, setLabel: "Wave 10s (70%)" };
-      if (wave === 2) return { reps: 8, setLabel: "Wave 8s (75%)" };
-      if (wave === 3) return { reps: 5, setLabel: "Wave 5s (80%)" };
-      return { reps: 3, setLabel: "Wave 3s (85%)" };
-    }
     case "five_three_one": {
       const weekInCycle = ((weekNum - 1) % 4) + 1;
-      if (weekInCycle === 1) return { reps: 5, setLabel: "5/5/5+ Set" };
-      if (weekInCycle === 2) return { reps: 3, setLabel: "3/3/3+ Set" };
-      if (weekInCycle === 3) return { reps: 1, setLabel: "5/3/1+ Set" };
-      return { reps: 5, setLabel: "Deload Set" };
+      if (weekInCycle === 1) {
+        const pcts = [0.65, 0.75, 0.85];
+        pct = pcts[Math.min(setIdx, 2)];
+        reps = 5;
+        label = `5/3/1 W1 Set ${setIdx + 1} (${Math.round(pct * 100)}%)`;
+      } else if (weekInCycle === 2) {
+        const pcts = [0.70, 0.80, 0.90];
+        pct = pcts[Math.min(setIdx, 2)];
+        reps = 3;
+        label = `5/3/1 W2 Set ${setIdx + 1} (${Math.round(pct * 100)}%)`;
+      } else if (weekInCycle === 3) {
+        const pcts = [0.75, 0.85, 0.95];
+        const repList = [5, 3, 1];
+        pct = pcts[Math.min(setIdx, 2)];
+        reps = repList[Math.min(setIdx, 2)];
+        label = `5/3/1 W3 Set ${setIdx + 1} (${Math.round(pct * 100)}%)`;
+      } else {
+        pct = 0.50; reps = 5; label = `5/3/1 Deload (${Math.round(pct * 100)}%)`;
+      }
+      break;
+    }
+    case "juggernaut": {
+      const wave = Math.ceil((weekNum % 16) / 4) || 1;
+      if (weekNum % 4 === 0) {
+        pct = 0.50; reps = 5; label = "Juggernaut Deload (50%)";
+      } else if (wave === 1) {
+        pct = 0.70; reps = 10; label = "4 Wk Wave 10s (70%)";
+      } else if (wave === 2) {
+        pct = 0.75; reps = 8; label = "4 Wk Wave 8s (75%)";
+      } else if (wave === 3) {
+        pct = 0.80; reps = 5; label = "4 Wk Wave 5s (80%)";
+      } else {
+        pct = 0.85; reps = 3; label = "4 Wk Wave 3s (85%)";
+      }
+      break;
     }
     case "conjugate": {
       const isMaxEffort = weekNum % 2 !== 0;
-      return isMaxEffort 
-        ? { reps: 3, setLabel: "Max Effort (90%+)" } 
-        : { reps: 2, setLabel: "Dynamic Speed (50-60%)" };
+      if (isMaxEffort) {
+        pct = 0.90; reps = 3; label = "Conjugate Max Effort (90%)";
+      } else {
+        pct = 0.55; reps = 2; label = "Conjugate Dynamic Speed (55%)";
+      }
+      break;
     }
-    default: // Linear
-      return { reps: userSettings.profile === "powerlifter" ? 5 : 10, setLabel: "Linear" };
+    default: { // Linear
+      if (profile === "powerlifter") {
+        pct = 0.80; reps = 5; label = "Powerlifter Linear (80%)";
+      } else {
+        pct = 0.70; reps = 10; label = "Standard Linear (70%)";
+      }
+      break;
+    }
   }
+
+  const calculatedWeight = roundTo5(maxLift * pct);
+  return { reps, weight: calculatedWeight, label, pct: Math.round(pct * 100), isBodyweight: false };
 }
 
-// Calisthenics Available Pool Helper based on Checkboxes
+// Calisthenics Available Pool Helper
 function getAvailableCalisthenicsExercises() {
   const availablePool = [];
   const unlockedMap = userSettings.calisthenicsUnlocked || { push: [1], pull: [1], legs: [1] };
@@ -416,7 +529,6 @@ function getAvailableCalisthenicsExercises() {
     const pathway = CALISTHENICS_SKILL_TREES[category];
     const checkedLevels = unlockedMap[category] || [1];
 
-    // Build set of allowed levels: checked levels + level immediately after each checked level
     const allowedLevels = new Set(checkedLevels);
     checkedLevels.forEach(lvl => {
       if (lvl < pathway.length) {
@@ -460,7 +572,6 @@ function generateWorkoutSession(splitTypeOverride, isDeloadWeek = false) {
   if (profile === "calisthenics") {
     availableExercises = getAvailableCalisthenicsExercises();
   } else {
-    // Normalize equipment strings
     let activeEquipment = userSettings.equipment.map(e => e.toLowerCase().trim());
     availableExercises = exerciseDataset.filter(ex => 
       activeEquipment.includes((ex.equipment || '').toLowerCase().trim())
@@ -555,7 +666,7 @@ function generateWorkoutSession(splitTypeOverride, isDeloadWeek = false) {
   return { title, exercises: selected, isDeloadWeek };
 }
 
-// Movement Pattern & Dynamic Mobility Engine
+// Balance Auditing & Mobility Generator
 function auditWorkoutBalance(workoutExercises) {
   const counts = { horizontalPush: 0, horizontalPull: 0, verticalPush: 0, verticalPull: 0, kneeDominant: 0, hipDominant: 0 };
   workoutExercises.forEach(ex => {
@@ -657,7 +768,7 @@ function renderTargetedMobilityLists(mobility) {
   }
 }
 
-// Render Pathways Tab UI with Checkboxes
+// Render Pathways Tab
 function renderPathwaysTabUI() {
   const container = document.getElementById("pathways-container");
   if (!container) return;
@@ -770,6 +881,42 @@ function initEventListeners() {
     });
   }
 
+  // Custom Exercise Creator Modal Listeners
+  const openCustomBtns = document.querySelectorAll("#open-custom-ex-btn");
+  const closeCustomBtn = document.getElementById("close-custom-ex-btn");
+  const customModal = document.getElementById("custom-ex-modal");
+  const customForm = document.getElementById("custom-ex-form");
+
+  openCustomBtns.forEach(btn => {
+    btn.addEventListener("click", () => customModal.classList.remove("hidden"));
+  });
+
+  if (closeCustomBtn) {
+    closeCustomBtn.addEventListener("click", () => customModal.classList.add("hidden"));
+  }
+
+  if (customForm) {
+    customForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const newEx = {
+        id: `custom_${Date.now()}`,
+        name: document.getElementById("custom-ex-name").value.trim(),
+        target: document.getElementById("custom-ex-target").value,
+        equipment: document.getElementById("custom-ex-equipment").value,
+        isCustom: true
+      };
+
+      customExercises.push(newEx);
+      localStorage.setItem("gymbro_custom_exercises", JSON.stringify(customExercises));
+      mergeCustomExercises();
+      saveUserDataToCloud();
+
+      customForm.reset();
+      customModal.classList.add("hidden");
+      alert("Custom exercise created successfully!");
+    });
+  }
+
   // Settings Modal Controls
   document.getElementById("open-settings-btn").addEventListener("click", () => {
     document.getElementById("settings-modal").classList.remove("hidden");
@@ -819,10 +966,18 @@ function initSettingsUI() {
   document.getElementById("setting-rest-time").value = userSettings.restTime || 60;
   document.getElementById("setting-supersets").checked = userSettings.supersets;
 
+  const maxes = userSettings.maxLifts || DEFAULT_MAX_LIFTS;
+  document.getElementById("setting-max-bench").value = maxes.benchPress || 185;
+  document.getElementById("setting-max-squat").value = maxes.squat || 225;
+  document.getElementById("setting-max-deadlift").value = maxes.deadlift || 275;
+  document.getElementById("setting-max-ohp").value = maxes.overheadPress || 115;
+
   const eqCheckboxes = document.querySelectorAll("#equipment-toggles input");
   eqCheckboxes.forEach(cb => {
     cb.checked = userSettings.equipment.includes(cb.value);
   });
+
+  updateProfileSelectionUI(userSettings.profile || "standard");
 }
 
 function saveSettingsUI() {
@@ -832,6 +987,13 @@ function saveSettingsUI() {
   userSettings.duration = parseInt(document.getElementById("setting-duration").value, 10);
   userSettings.restTime = parseInt(document.getElementById("setting-rest-time").value, 10);
   userSettings.supersets = document.getElementById("setting-supersets").checked;
+
+  userSettings.maxLifts = {
+    benchPress: parseFloat(document.getElementById("setting-max-bench").value) || 185,
+    squat: parseFloat(document.getElementById("setting-max-squat").value) || 225,
+    deadlift: parseFloat(document.getElementById("setting-max-deadlift").value) || 275,
+    overheadPress: parseFloat(document.getElementById("setting-max-ohp").value) || 115
+  };
 
   const selectedEquipment = [];
   document.querySelectorAll("#equipment-toggles input:checked").forEach(cb => {
@@ -865,7 +1027,7 @@ function exportHistoryToCSV() {
   URL.revokeObjectURL(url);
 }
 
-// Render Generated Workout Card View
+// Render Generated Workout View
 function renderGeneratedWorkout(session) {
   window.currentGeneratedSession = session;
   document.getElementById("workout-title").innerText = session.title;
@@ -996,8 +1158,7 @@ window.togglePlanDay = function(weekNum, dayId) {
 // Active Workout Session Manager
 function startActiveWorkout(session) {
   const currentWeek = session.weekNum || 1;
-  const targetInfo = getProgressionTarget(userSettings.progressionScheme, currentWeek);
-
+  const scheme = userSettings.progressionScheme || "linear";
   const mobility = generateTargetedMobility(session.exercises);
 
   activeWorkout = {
@@ -1009,36 +1170,39 @@ function startActiveWorkout(session) {
       const exKey = ex.id || ex.name;
       const historyRecord = exerciseHistory[exKey];
 
-      let suggestIncrease = false;
-      if (historyRecord && historyRecord.sets && historyRecord.sets.length > 0) {
-        const topRepsReached = historyRecord.sets.every(s => (s.reps || 0) >= targetInfo.reps);
-        if (topRepsReached && userSettings.progressionScheme === "linear") {
-          suggestIncrease = true;
+      const sets = [];
+      for (let i = 0; i < 3; i++) {
+        const target = calculateProgressionSetTargets(ex, scheme, currentWeek, i);
+        
+        let suggestIncrease = false;
+        if (historyRecord && historyRecord.sets && historyRecord.sets.length > 0) {
+          const topRepsReached = historyRecord.sets.every(s => (s.reps || 0) >= target.reps);
+          if (topRepsReached && scheme === "linear") {
+            suggestIncrease = true;
+          }
         }
-      }
 
-      let defaultSets = [
-        { reps: targetInfo.reps, weight: 100, completed: false },
-        { reps: targetInfo.reps, weight: 100, completed: false },
-        { reps: targetInfo.reps, weight: 100, completed: false }
-      ];
+        let defaultWeight = target.isBodyweight ? 0 : target.weight;
+        if (historyRecord && historyRecord.sets && historyRecord.sets[i]) {
+          defaultWeight = suggestIncrease ? (historyRecord.sets[i].weight || defaultWeight) + 5 : (historyRecord.sets[i].weight || defaultWeight);
+        }
 
-      if (historyRecord && historyRecord.sets && historyRecord.sets.length > 0) {
-        defaultSets = historyRecord.sets.map(s => ({
-          reps: s.reps || targetInfo.reps,
-          weight: suggestIncrease ? (s.weight || 100) + 5 : (s.weight || 100),
-          completed: false
-        }));
+        sets.push({
+          reps: target.reps,
+          weight: defaultWeight,
+          completed: false,
+          label: target.label,
+          targetPct: target.pct ? `${target.pct}%` : null,
+          suggestIncrease
+        });
       }
 
       return {
         id: ex.id || ex.name,
         name: ex.name,
         supersetGroup: ex.supersetGroup || null,
-        suggestIncrease,
-        targetLabel: targetInfo.setLabel,
         lastRecord: historyRecord || null,
-        sets: defaultSets
+        sets
       };
     })
   };
@@ -1064,7 +1228,7 @@ function renderActiveWorkoutModal() {
   if (!activeWorkout) return;
   document.getElementById("active-workout-name").innerText = activeWorkout.title;
 
-  // Render Dynamic Warm-up at TOP of Active Workout Modal
+  // Render Warm-ups at top
   const warmupContainer = document.getElementById("active-warmup-container");
   if (warmupContainer && activeWorkout.warmups && activeWorkout.warmups.length > 0) {
     warmupContainer.innerHTML = `
@@ -1080,15 +1244,16 @@ function renderActiveWorkoutModal() {
     `;
   }
 
-  // Render Exercises List in MIDDLE
+  // Render Exercise Cards in middle
   const container = document.getElementById("active-exercise-container");
   container.innerHTML = activeWorkout.logs.map((ex, exIdx) => {
-    let increaseBadge = ex.suggestIncrease ? `<span class="badge-suggested-weight">🚀 +5 lbs Suggested</span>` : "";
+    const hasSuggestedIncrease = ex.sets.some(s => s.suggestIncrease);
+    let increaseBadge = hasSuggestedIncrease ? `<span class="badge-suggested-weight">🚀 +5 lbs Suggested</span>` : "";
 
     return `
       <div class="exercise-card margin-top">
         <div class="exercise-card-header" style="display:flex; justify-content:space-between; align-items:center;">
-          <h5>${ex.name} ${ex.targetLabel ? `<small>(${ex.targetLabel})</small>` : ''}</h5>
+          <h5>${ex.name} ${ex.sets[0]?.label ? `<small style="font-size: 0.75rem; color: var(--accent-silver);">(${ex.sets[0].label})</small>` : ''}</h5>
           ${increaseBadge}
         </div>
         ${ex.supersetGroup ? `<div class="superset-badge margin-top">${ex.supersetGroup}</div>` : ""}
@@ -1110,7 +1275,7 @@ function renderActiveWorkoutModal() {
     `;
   }).join("");
 
-  // Render Cool-down Stretches at BOTTOM of Active Workout Modal
+  // Render Cool-downs at bottom
   const cooldownContainer = document.getElementById("active-cooldown-container");
   if (cooldownContainer && activeWorkout.cooldowns && activeWorkout.cooldowns.length > 0) {
     cooldownContainer.innerHTML = `
